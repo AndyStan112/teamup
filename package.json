@@ -10,6 +10,7 @@
         "migrate": "npx dotenv -e .env -c development -- npx prisma  migrate dev"
     },
     "dependencies": {
+        "@clerk/nextjs": "^6.12.5",
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.0",
         "@fontsource/roboto": "^5.2.5",
