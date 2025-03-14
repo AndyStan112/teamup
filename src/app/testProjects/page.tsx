@@ -5,6 +5,7 @@ import {
     getCurrentUserProjects,
     getUserProjects,
     likeProject,
+    getMostLikedProjects,
 } from "./actions"; // Import Server Action
 
 export default function Page() {
@@ -105,10 +106,18 @@ export default function Page() {
             </button>
             <button
                 onClick={() =>
-                    likeProject("b109ba1a-e273-431c-a30c-3c35c0445af1")
+                    likeProject("362b093a-8659-4f57-a9cf-efeb0a5a8cc0")
                 }
             >
                 test like project
+            </button>
+            <button
+                onClick={async () => {
+                    const projects = await getMostLikedProjects();
+                    console.log(projects);
+                }}
+            >
+                get most liked
             </button>
         </div>
     );

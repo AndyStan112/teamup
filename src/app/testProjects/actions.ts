@@ -3,6 +3,7 @@ import { prisma } from "@/utils";
 import { put } from "@vercel/blob"; // Import Vercel Blob SDK
 import { auth } from "@clerk/nextjs/server";
 import { Project } from "@prisma/client";
+import { startOfMonth, endOfMonth } from "date-fns";
 
 export async function createProject(formData: FormData) {
     const { userId } = await auth();
@@ -66,4 +67,23 @@ export async function likeProject(projectId: string) {
         },
     });
     return updatedProject;
+}
+
+export async function getMostLikedProjects() {
+    const now = new Date();
+    const start = startOfMonth(now);
+    const end = endOfMonth(now);
+
+    const projects = await prisma.project.findMany({
+        orderBy: {
+            likes: "desc",
+        },
+        where: {
+            dateCreated: {
+                gte: start,
+                lte: end,
+            },
+        },
+    });
+    return projects;
 }
