@@ -7,15 +7,11 @@ const theme = createTheme({
     },
     palette: {
         primary: {
-            light: "#757ce8",
             main: "#ca5a29",
-            dark: "#002884",
             contrastText: "#fff",
         },
         secondary: {
-            light: "#294892",
             main: "#a31755",
-            dark: "#081554",
             contrastText: "#fff",
         },
         background: {
@@ -25,10 +21,17 @@ const theme = createTheme({
         mode: "dark",
     },
     components: {
+        MuiCard: {
+            styleOverrides: {
+                root: {
+                    borderRadius: "32px",
+                },
+            },
+        },
         MuiButton: {
             styleOverrides: {
                 root: {
-                    borderRadius: "12px",
+                    borderRadius: "18px",
                 },
                 contained: {
                     boxShadow: "none",
