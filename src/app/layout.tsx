@@ -7,6 +7,8 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
+import { ClerkProvider } from "@clerk/nextjs";
+
 export const metadata: Metadata = {
     title: { default: "TeamUp", template: "%s | TeamUp" },
     description: "Find people to collaborate with",
@@ -20,7 +22,9 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body>
-                <ThemeProvider theme={theme}>{children}</ThemeProvider>
+                <ClerkProvider>
+                    <ThemeProvider theme={theme}>{children}</ThemeProvider>
+                </ClerkProvider>
             </body>
         </html>
     );
