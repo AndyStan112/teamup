@@ -25,8 +25,8 @@ const pages = [
 ];
 
 const settings = [
-    { label: "My Profile", href: "/my-profile" },
-    { label: "My Projects", href: "/my-projects" },
+    { label: "My Profile", href: "/profile" },
+    { label: "My Projects", href: "/projects" },
     { label: "Logout", href: "/logout" },
 ];
 
@@ -54,7 +54,13 @@ export default function Navbar(): React.ReactElement {
     };
 
     return (
-        <AppBar position="static">
+        <AppBar
+            position="fixed"
+            sx={{
+                backgroundImage: "linear-gradient(to right, #ca5a29, #a31755)",
+                boxShadow: "none",
+            }}
+        >
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Typography
