@@ -41,6 +41,7 @@ model Project {
   originalCreator   User            @relation(fields: [originalCreatorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   originalCreatorId String
   members           ProjectMember[]
+  likes             Int @default(0)
 }
 
 model ProjectMember {
@@ -58,12 +59,12 @@ model Chat {
 }
 
 model Messages {
-  id       String @id @default(uuid())
-  message  String
-  sender   User   @relation(fields: [senderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  senderId String
-  chat     Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  chatId   String
+  id        String   @id @default(uuid())
+  message   String
+  sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  senderId  String
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  chatId    String
   timestamp DateTime @default(now())
 }
 
