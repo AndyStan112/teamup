@@ -24,3 +24,28 @@ export async function addUser(formData: FormData) {
     });
     return user;
 }
+
+export async function getCurrentUser() {
+    const { userId } = await auth();
+    const user = await prisma.user.findUnique({
+        where: {
+            id: userId!,
+        },
+        select: {
+            name: true,
+            profileImage: true,
+            age: true,
+            gender: true,
+            country: true,
+            city: true,
+            languages: true,
+            technologies: true,
+            description: true,
+            createdProjects: true,
+            githubLink: true,
+            codingTimePreference: true,
+            joinedProjects: true,
+        },
+    });
+    return user;
+}

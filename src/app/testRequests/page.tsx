@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { addUser } from "./actions";
+import { addUser, getCurrentUser } from "./actions";
 
 const UserForm = () => {
     const [formData, setFormData] = useState({
@@ -159,6 +159,14 @@ const UserForm = () => {
                     Submit
                 </button>
             </form>
+            <button
+                onClick={() => {
+                    const user = getCurrentUser();
+                    console.log(user);
+                }}
+            >
+                Get User
+            </button>
         </div>
     );
 };
