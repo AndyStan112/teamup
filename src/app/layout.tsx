@@ -39,7 +39,7 @@ export default function RootLayout({
                             <Navbar />
                             <Container>
                                 <Toolbar />
-                                <Box p={2}>
+                                <Box py={4}>
                                     <CssBaseline />
                                     {children}
                                 </Box>

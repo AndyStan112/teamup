@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { addUser, getCurrentUser } from "./actions";
+import { addOrUpdateUser, getCurrentUser } from "./actions";
 
 const UserForm = () => {
     const [formData, setFormData] = useState({
@@ -42,7 +42,7 @@ const UserForm = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const formData = new FormData(event.target);
-        await addUser(formData);
+        await addOrUpdateUser(formData);
     };
 
     return (
