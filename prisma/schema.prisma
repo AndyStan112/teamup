@@ -12,3 +12,72 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id                   String                 @id @default(uuid())
+  name                 String
+  profileImage         String?
+  age                  Int
+  gender               Gender
+  githubLink           String
+  codingTimePreference CodingTimePreference[]
+  country              String
+  city                 String
+  languages            String[]
+  technologies         String[]
+  description          String?
+  createdProjects      Project[]
+  joinedProjects       ProjectMember[]
+  Messages             Messages[]
+}
+
+model Project {
+  id                String          @id @default(uuid())
+  title             String
+  description       String
+  githubLink        String
+  images            String[]
+  technologies      String[]
+  originalCreator   User            @relation(fields: [originalCreatorId], references: [id])
+  originalCreatorId String
+  members           ProjectMember[]
+}
+
+model ProjectMember {
+  project   Project @relation(fields: [projectId], references: [id])
+  projectId String
+  member    User    @relation(fields: [memberId], references: [id])
+  memberId  String
+
+  @@id([projectId, memberId])
+}
+
+model Chat {
+  id       String     @id @default(uuid())
+  messages Messages[]
+}
+
+model Messages {
+  id       String @id @default(uuid())
+  message  String
+  sender   User   @relation(fields: [senderId], references: [id])
+  senderId String
+  chat     Chat   @relation(fields: [chatId], references: [id])
+  chatId   String
+  timestamp DateTime @default(now())
+}
+
+enum Gender {
+  FEMALE
+  MALE
+  OTHER
+  DONOTWANTTOSAY
+}
+
+enum CodingTimePreference {
+  MORNING
+  AFTERNOON
+  EVENING
+  NIGHT
+  ANYTIME
+}
