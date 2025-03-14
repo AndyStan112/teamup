@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { CssBaseline, ThemeProvider } from "@mui/material";
+import {
+    Box,
+    Container,
+    CssBaseline,
+    ThemeProvider,
+    Toolbar,
+} from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import { Roboto } from "next/font/google";
 import theme from "../theme";
@@ -31,8 +37,13 @@ export default function RootLayout({
                     <AppRouterCacheProvider>
                         <ThemeProvider theme={theme}>
                             <Navbar />
-                            <CssBaseline />
-                            {children}
+                            <Container>
+                                <Toolbar />
+                                <Box p={2}>
+                                    <CssBaseline />
+                                    {children}
+                                </Box>
+                            </Container>
                         </ThemeProvider>
                     </AppRouterCacheProvider>
                 </ClerkProvider>
