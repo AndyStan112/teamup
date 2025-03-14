@@ -7,6 +7,7 @@ import { Roboto } from "next/font/google";
 
 import theme from "../theme";
 import Navbar from "@/components/layout/Navbar";
+import "./globals.css";
 
 export const metadata: Metadata = {
     title: { default: "TeamUp", template: "%s | TeamUp" },
