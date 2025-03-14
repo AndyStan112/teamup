@@ -31,3 +31,39 @@ export async function createProject(formData: FormData) {
 
     return project;
 }
+
+export async function getCurrentUserProjects() {
+    const { userId } = await auth();
+
+    const projects = await prisma.project.findMany({
+        where: {
+            originalCreatorId: userId!,
+        },
+    });
+
+    return projects;
+}
+
+export async function getUserProjects(userId: string) {
+    const projects = await prisma.project.findMany({
+        where: {
+            originalCreatorId: userId!,
+        },
+    });
+
+    return projects;
+}
+
+export async function likeProject(projectId: string) {
+    const updatedProject = await prisma.project.update({
+        where: {
+            id: projectId,
+        },
+        data: {
+            likes: {
+                increment: 1,
+            },
+        },
+    });
+    return updatedProject;
+}

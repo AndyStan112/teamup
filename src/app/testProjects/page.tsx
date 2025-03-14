@@ -1,6 +1,11 @@
 "use client";
 import { useState } from "react";
-import { createProject } from "./actions"; // Import Server Action
+import {
+    createProject,
+    getCurrentUserProjects,
+    getUserProjects,
+    likeProject,
+} from "./actions"; // Import Server Action
 
 export default function Page() {
     const [form, setForm] = useState({
@@ -39,7 +44,7 @@ export default function Page() {
     };
 
     return (
-        <div>
+        <div className="flex flex-col h-[200px] justify-between">
             <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <input
                     name="title"
@@ -80,6 +85,31 @@ export default function Page() {
 
                 <button type="submit">Submit</button>
             </form>
+            <button
+                onClick={async () => {
+                    const projects = await getCurrentUserProjects();
+                    console.log(projects);
+                }}
+            >
+                Get current user projects
+            </button>
+            <button
+                onClick={async () => {
+                    const projects = await getUserProjects(
+                        "user_2uK71lfC7JgpFRUtk9Uob2kd8e2"
+                    );
+                    console.log(projects);
+                }}
+            >
+                Test user projects
+            </button>
+            <button
+                onClick={() =>
+                    likeProject("b109ba1a-e273-431c-a30c-3c35c0445af1")
+                }
+            >
+                test like project
+            </button>
         </div>
     );
 }
