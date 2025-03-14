@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body>
+            <body cz-shortcut-listen="true">
                 <ClerkProvider>
                     <AppRouterCacheProvider>
                         <ThemeProvider theme={theme}>{children}</ThemeProvider>
