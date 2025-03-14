@@ -2,9 +2,7 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
-
 import { Roboto } from "next/font/google";
-
 import theme from "../theme";
 import Navbar from "@/components/layout/Navbar";
 
