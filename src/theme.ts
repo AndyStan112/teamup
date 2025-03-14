@@ -7,23 +7,35 @@ const theme = createTheme({
     },
     palette: {
         primary: {
-          light: '#757ce8',
-          main: '#ca5a29',
-          dark: '#002884',
-          contrastText: '#fff',
+            light: "#757ce8",
+            main: "#ca5a29",
+            dark: "#002884",
+            contrastText: "#fff",
         },
         secondary: {
-          light: '#294892',
-          main: '#a31755',
-          dark: '#081554',
-          contrastText: '#000',
+            light: "#294892",
+            main: "#a31755",
+            dark: "#081554",
+            contrastText: "#fff",
         },
         background: {
-            default: "#0d1117", 
-            paper: "#161b22",  
+            default: "#0d1117",
+            paper: "#161b22",
         },
-      },
-
+        mode: "dark",
+    },
+    components: {
+        MuiButton: {
+            styleOverrides: {
+                root: {
+                    borderRadius: "12px",
+                },
+                contained: {
+                    boxShadow: "none",
+                },
+            },
+        },
+    },
 });
 
 export default theme;
