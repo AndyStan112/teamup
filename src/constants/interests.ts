@@ -1,0 +1,31 @@
+const languages = ["English", "Romanian", "Hungarian", "German", "French", "Dutch"];
+const technologies = [
+    ".NET",
+    "C#",
+    "C++",
+    "C",
+    "Rust",
+    "Go",
+    "Typescript",
+    "Javascript",
+    "HTML",
+    "CSS",
+    "Python",
+    "Java",
+    "Ruby",
+    "Swift",
+    "Kotlin",
+    "PHP",
+    "Scala",
+    "Perl",
+    "Haskell",
+    "Elixir",
+    "Dart",
+    "Objective-C",
+    "SQL",
+    "R",
+    "MATLAB",
+    "Visual FoxPro",
+];
+
+export { technologies, languages };
