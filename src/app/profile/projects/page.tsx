@@ -12,16 +12,17 @@ import {
     Chip,
     CardMedia,
 } from "@mui/material";
-import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
+import ProjCard from "@/components/project/ProjCard";
 
-type Project = {
+
+export type Project = {
     id: string;
     title: string;
     description: string;
     githubLink: string;
     technologies: string[];
     images: string[];
-    likes: number;
+    likeCount: number;
 };
 
 export default function Page() {
@@ -37,12 +38,7 @@ export default function Page() {
         fetchProjects();
     }, []);
 
-    const handleLike = async (projectId: string) => {
-        await likeProject(projectId);
-        setProjects((prev) =>
-            prev.map((proj) => (proj.id === projectId ? { ...proj, likes: proj.likes + 1 } : proj))
-        );
-    };
+   
 
     if (loading) {
         return (
@@ -72,62 +68,7 @@ export default function Page() {
             ) : (
                 <Stack spacing={3}>
                     {projects.map((project) => (
-                        <Card
-                            key={project.id}
-                            sx={{ backgroundColor: "#131d4c", color: "white", borderRadius: 2 }}
-                        >
-                            {project.images.length > 0 && (
-                                <CardMedia
-                                    component="img"
-                                    height="200"
-                                    image={project.images[0]}
-                                    alt="Project image"
-                                    sx={{ objectFit: "cover" }}
-                                />
-                            )}
-                            <CardContent>
-                                <Typography variant="h6">{project.title}</Typography>
-                                <Typography variant="body2" sx={{ mt: 1 }}>
-                                    {project.description}
-                                </Typography>
-
-                                <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
-                                    {project.technologies.map((tech, index) => (
-                                        <Chip
-                                            key={index}
-                                            label={tech}
-                                            sx={{ bgcolor: "primary.main", color: "white" }}
-                                        />
-                                    ))}
-                                </Stack>
-
-                                <Typography sx={{ mt: 2, color: "lightblue", cursor: "pointer" }}>
-                                    <a
-                                        href={project.githubLink}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        GitHub Link
-                                    </a>
-                                </Typography>
-
-                                <Stack
-                                    direction="row"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    sx={{ mt: 3 }}
-                                >
-                                    <Button
-                                        variant="contained"
-                                        color="secondary"
-                                        startIcon={<ThumbUpOffAltIcon />}
-                                        onClick={() => handleLike(project.id)}
-                                    >
-                                        Like ({project.likes})
-                                    </Button>
-                                </Stack>
-                            </CardContent>
-                        </Card>
+                    <ProjCard     key={project.id} project={project}/>
                     ))}
                 </Stack>
             )}
