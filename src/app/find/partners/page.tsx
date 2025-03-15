@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Card, CardContent, Typography, Avatar, Grid2 as Grid, Stack, Button } from "@mui/material";
+import { Card, CardContent, Typography, Avatar, Grid2 as Grid, Stack, Button, Chip, Box } from "@mui/material";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import { getUserSwipe, swipeUser } from "./actions";
@@ -43,6 +43,13 @@ export default function SwipePartners() {
     }
   };
 
+  const genderMapping: { [key: string]: string } = {
+    MALE: "Male",
+    FEMALE: "Female",
+    OTHER: "Other",
+    DONOTWANTTOSAY:""
+  };
+
   if (!user) return <Typography variant="h6" color="white">Loading...</Typography>;
 
   return (
@@ -80,18 +87,27 @@ export default function SwipePartners() {
                   <Typography variant="body1">{user.age}</Typography>
                 </Grid>
                 <Grid>
-                  <Typography variant="body1">{user.gender}</Typography>
+                  <Typography variant="body1">{genderMapping[user.gender]}</Typography>
                 </Grid>
               </Grid>
 
               <Stack spacing={1} sx={{ marginTop: 2 }}>
-                <Typography variant="body1">Languages: {user.languages?.join(", ")}</Typography>
-                <Typography variant="body1">Technologies: {user.technologies?.join(", ")}</Typography>
+                <Typography variant="body1">Languages:</Typography>
+                <Box>
+                    {user.languages.map((value, key) => <Chip key={key} label={value} />)}
+                </Box>
+                <Typography variant="body1">Technologies:</Typography>
+                <Box>
+                    {user.technologies.map((value, key) => <Chip key={key} label={value} />)}
+                </Box>
                 <Typography variant="body1">Work Timing: {user.codingTimePreference}</Typography>
+                <Box>
+                    {user.languages.map((value, key) => <Chip key={key} label={value} />)}
+                </Box>
               </Stack>
 
               <Typography className="text-blue-200 cursor-pointer hover:underline" sx={{ mt: 2 }}>
-                <a href={user.githubLink} target="_blank" rel="noopener noreferrer">Check Projects</a>
+                <a href={user.githubLink} target="_blank" rel="noopener noreferrer">Github</a>
               </Typography>
             </CardContent>
           </Card>
