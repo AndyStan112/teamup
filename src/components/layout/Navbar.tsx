@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { Menu as MenuIcon } from "@mui/icons-material";
+import { Menu as MenuIcon, Message as MessageIcon } from "@mui/icons-material";
 import {
     AppBar,
     Avatar,
@@ -11,6 +11,7 @@ import {
     IconButton,
     Menu,
     MenuItem,
+    Stack,
     Toolbar,
     Tooltip,
     Typography,
@@ -79,7 +80,7 @@ export default function Navbar(): React.ReactElement {
 
                     <Box
                         sx={{
-                            flexGrow: 1,
+                            flex: 1,
                             display: { xs: "flex", md: "none" },
                         }}
                     >
@@ -130,9 +131,7 @@ export default function Navbar(): React.ReactElement {
                         component={Link}
                         href="/"
                         sx={{
-                            mr: 2,
                             display: { xs: "flex", md: "none" },
-                            flexGrow: 1,
                             fontFamily: "monospace",
                             fontWeight: 700,
                             letterSpacing: ".1rem",
@@ -144,7 +143,7 @@ export default function Navbar(): React.ReactElement {
                     </Typography>
                     <Box
                         sx={{
-                            flexGrow: 1,
+                            flex: 1,
                             display: { xs: "none", md: "flex" },
                         }}
                     >
@@ -165,7 +164,12 @@ export default function Navbar(): React.ReactElement {
                         ))}
                     </Box>
 
-                    <Box sx={{ flexGrow: 0 }}>
+                    <Stack direction="row" gap={1} justifyContent="right" flex={1}>
+                        <Tooltip title="Messages">
+                            <IconButton>
+                                <MessageIcon />
+                            </IconButton>
+                        </Tooltip>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                 <Avatar alt="User Avatar" />
@@ -198,7 +202,7 @@ export default function Navbar(): React.ReactElement {
                                 </MenuItem>
                             ))}
                         </Menu>
-                    </Box>
+                    </Stack>
                 </Toolbar>
             </Container>
         </AppBar>
