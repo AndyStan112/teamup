@@ -57,14 +57,14 @@ export async function getUserProjects(userId: string) {
 
 export async function likeProject(projectId: string) {
     const { userId } = await auth();
-    const likes = await prisma.likedProject.count({
+    const likeCount = await prisma.likedProject.count({
         where: {
             userId: userId!,
             projectId,
         },
     });
 
-    if (likes > 0) {
+    if (likeCount > 0) {
         return;
     }
 
