@@ -1,10 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Card, CardContent, Typography, Avatar, Grid2 as Grid, Stack, Button, Chip, Box } from "@mui/material";
+import { Card, CardContent, Typography, Avatar, Stack, Button, Chip, Box } from "@mui/material";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import { getUserSwipe, swipeUser } from "./actions";
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 export default function SwipePartners() {
   const [user, setUser] = useState<any>(null);
@@ -47,7 +48,7 @@ export default function SwipePartners() {
     MALE: "Male",
     FEMALE: "Female",
     OTHER: "Other",
-    DONOTWANTTOSAY:""
+    DONOTWANTTOSAY: "",
   };
 
   if (!user) return <Typography variant="h6" color="white">Loading...</Typography>;
@@ -60,7 +61,7 @@ export default function SwipePartners() {
 
       {!swiped && (
         <motion.div
-          className="relative w-[80vw] md:w-[50vw] lg:w-[30vw] max-w-[320px] min-w-[280px] h-[65vh]"
+          className="relative w-[80vw] md:w-[50vw] lg:w-[30vw] max-w-[320px] min-w-[280px] h-[60vh]"
           drag="x"
           dragConstraints={{ left: -100, right: 100 }}
           dragElastic={0.8}
@@ -69,52 +70,84 @@ export default function SwipePartners() {
           transition={{ duration: 0.4, ease: "easeOut" }}
           exit={{ x: direction, opacity: 0 }}
         >
-          <Card sx={{ borderRadius: 2, backgroundColor: "#131d4c", color: "white", width: "100%", height: "100%", marginTop: 1 }}>
-            <CardContent sx={{ padding: "16px", textAlign: "center" }}>
-              <Grid container alignItems="center" justifyContent="center" spacing={2}>
-                <Grid>
-                  <Avatar src={user.profileImage} alt="Profile picture" sx={{ width: 64, height: 64 }} />
-                </Grid>
-              </Grid>
-            </CardContent>
+          <Card sx={{ 
+            borderRadius: 2, 
+            backgroundColor: "#131d4c", 
+            color: "white", 
+            width: "100%", 
+            height: "100%", 
+            marginTop: 4, 
+            position: "relative", 
+            overflow: "visible" }}>
+            
+            <Stack alignItems="center">
+              <Avatar 
+                src={user.profileImage} 
+                alt="Profile picture" 
+                sx={{ 
+                  width: 90, 
+                  height: 90, 
+                  position: "absolute", 
+                  top: "-45px",
+                  backgroundColor: "#131d4c",
+                  border: "3px solid #131d4c"
+                }} 
+              />
+            </Stack>
 
-            <CardContent>
-              <Grid container justifyContent="center" spacing={3}>
-                <Grid>
+            <CardContent sx={{ padding: "16px", marginTop: 4 }}>
+              <Stack spacing={2}>
+                <Stack direction="row" justifyContent="center" spacing={3}>
                   <Typography variant="body1">{user.name}</Typography>
-                </Grid>
-                <Grid>
                   <Typography variant="body1">{user.age}</Typography>
-                </Grid>
-                <Grid>
                   <Typography variant="body1">{genderMapping[user.gender]}</Typography>
-                </Grid>
-              </Grid>
+                </Stack>
 
-              <Stack spacing={1} sx={{ marginTop: 2 }}>
-                <Typography variant="body1">Languages:</Typography>
-                <Box>
-                    {user.languages.map((value, key) => <Chip key={key} label={value} />)}
-                </Box>
-                <Typography variant="body1">Technologies:</Typography>
-                <Box>
-                    {user.technologies.map((value, key) => <Chip key={key} label={value} />)}
-                </Box>
-                <Typography variant="body1">Work Timing: {user.codingTimePreference}</Typography>
-                <Box>
-                    {user.languages.map((value, key) => <Chip key={key} label={value} />)}
-                </Box>
+                <Stack spacing={0.5}>
+                  <Typography variant="body1">Languages:</Typography>  {/* Adds vertical space */}
+                  <Box display="flex" gap={0.8} flexWrap="wrap">
+                    {user.languages.map((value: string, key: number) => <Chip key={key} label={value} />)}
+                  </Box>
+
+                  <Typography variant="body1">Technologies:</Typography> {/* Adds vertical space */}
+                  <Box display="flex" gap={0.8} flexWrap="wrap">
+                    {user.technologies.map((value: string, key: number) => <Chip key={key} label={value} />)}
+                  </Box>
+
+                  <Typography variant="body1">Work Timing:</Typography> {/* Adds vertical space */}
+                  <Box display="flex" gap={0.8} flexWrap="wrap">
+                    {user.languages.map((value: string, key: number) => <Chip key={key} label={value} />)}
+                  </Box>
+                </Stack>
+
+
+                <Button 
+                variant="outlined"
+                sx={{ 
+                  flex: 1,
+                  color: "white", 
+                  borderColor: "white", 
+                  "&:hover": { 
+                    backgroundColor: "white",
+                    color: "black", 
+                  }
+                }} 
+                startIcon={<GitHubIcon />} 
+                component="a" 
+                href={user.githubLink} 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                Github Profile
+              </Button>
+
               </Stack>
-
-              <Typography className="text-blue-200 cursor-pointer hover:underline" sx={{ mt: 2 }}>
-                <a href={user.githubLink} target="_blank" rel="noopener noreferrer">Github</a>
-              </Typography>
             </CardContent>
           </Card>
         </motion.div>
       )}
 
-      <Stack direction="row" gap={3} sx={{ marginTop: 2 }}>
+      <Stack direction="row" gap={3} sx={{ marginTop: 5 }}>
         <Button variant="outlined" sx={{ flex: 1 }} startIcon={<ThumbDownOffAltIcon />} onClick={() => handleSwipe("DISLIKE")}>
           Dislike
         </Button>
