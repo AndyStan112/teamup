@@ -42,6 +42,7 @@ model Project {
   originalCreatorId String
   members           ProjectMember[]
   likes             Int @default(0)
+  dateCreated      DateTime @default(now())
 }
 
 model ProjectMember {
