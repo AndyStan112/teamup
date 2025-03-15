@@ -8,6 +8,7 @@ import {
     Box,
     Button,
     Container,
+    Divider,
     IconButton,
     Menu,
     MenuItem,
@@ -16,6 +17,7 @@ import {
     Tooltip,
     Typography,
 } from "@mui/material";
+import { SignedIn, SignedOut, useClerk } from "@clerk/nextjs";
 
 const title = "TeamUp";
 
@@ -28,10 +30,11 @@ const pages = [
 const settings = [
     { label: "My Profile", href: "/profile" },
     { label: "My Projects", href: "/projects" },
-    { label: "Logout", href: "/logout" },
 ];
 
 export default function Navbar(): React.ReactElement {
+    const { signOut, redirectToSignIn } = useClerk();
+
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -164,45 +167,61 @@ export default function Navbar(): React.ReactElement {
                         ))}
                     </Box>
 
-                    <Stack direction="row" gap={1} justifyContent="right" flex={1}>
-                        <Tooltip title="Messages">
-                            <IconButton>
-                                <MessageIcon />
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Open settings">
-                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="User Avatar" />
-                            </IconButton>
-                        </Tooltip>
-                        <Menu
-                            sx={{ mt: "45px" }}
-                            id="menu-appbar"
-                            anchorEl={anchorElUser}
-                            anchorOrigin={{
-                                vertical: "top",
-                                horizontal: "right",
+                    <SignedIn>
+                        <Stack direction="row" gap={1} justifyContent="right" flex={1}>
+                            <Tooltip title="Messages">
+                                <IconButton>
+                                    <MessageIcon />
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Open settings">
+                                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                                    <Avatar alt="User Avatar" />
+                                </IconButton>
+                            </Tooltip>
+                            <Menu
+                                sx={{ mt: "45px" }}
+                                id="menu-appbar"
+                                anchorEl={anchorElUser}
+                                anchorOrigin={{
+                                    vertical: "top",
+                                    horizontal: "right",
+                                }}
+                                keepMounted
+                                transformOrigin={{
+                                    vertical: "top",
+                                    horizontal: "right",
+                                }}
+                                open={Boolean(anchorElUser)}
+                                onClose={handleCloseUserMenu}
+                            >
+                                {settings.map((setting) => (
+                                    <MenuItem
+                                        key={setting.label}
+                                        onClick={handleCloseUserMenu}
+                                        href={setting.href}
+                                        component={Link}
+                                    >
+                                        {setting.label}
+                                    </MenuItem>
+                                ))}
+                                <Divider />
+                                <MenuItem onClick={() => signOut()}>Logout</MenuItem>
+                            </Menu>
+                        </Stack>
+                    </SignedIn>
+                    <SignedOut>
+                        <Button
+                            onClick={() => redirectToSignIn()}
+                            sx={{
+                                my: 2,
+                                color: "white",
+                                display: "block",
                             }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: "top",
-                                horizontal: "right",
-                            }}
-                            open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
                         >
-                            {settings.map((setting) => (
-                                <MenuItem
-                                    key={setting.label}
-                                    onClick={handleCloseUserMenu}
-                                    href={setting.href}
-                                    component={Link}
-                                >
-                                    {setting.label}
-                                </MenuItem>
-                            ))}
-                        </Menu>
-                    </Stack>
+                            Sign In
+                        </Button>
+                    </SignedOut>
                 </Toolbar>
             </Container>
         </AppBar>
