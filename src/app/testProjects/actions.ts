@@ -56,12 +56,24 @@ export async function getUserProjects(userId: string) {
 }
 
 export async function likeProject(projectId: string) {
+    const { userId } = await auth();
+    const likes = await prisma.likedProject.count({
+        where: {
+            userId: userId!,
+            projectId,
+        },
+    });
+
+    if (likes > 0) {
+        return;
+    }
+
     const updatedProject = await prisma.project.update({
         where: {
             id: projectId,
         },
         data: {
-            likes: {
+            likeCount: {
                 increment: 1,
             },
         },
@@ -76,7 +88,7 @@ export async function getMostLikedProjects() {
 
     const projects = await prisma.project.findMany({
         orderBy: {
-            likes: "desc",
+            likeCount: "desc",
         },
         where: {
             dateCreated: {
@@ -88,10 +100,7 @@ export async function getMostLikedProjects() {
     return projects;
 }
 
-export async function editProject(
-    originalProjectTitle: string,
-    formData: FormData
-) {
+export async function editProject(originalProjectTitle: string, formData: FormData) {
     const { userId } = await auth();
 
     const images = formData.getAll("images") as File[];
