@@ -29,6 +29,11 @@ model User {
   createdProjects      Project[]
   joinedProjects       ProjectMember[]
   Messages             Messages[]
+
+  swipedUsers   Swipe[] @relation(name: "SwipeSwiper")
+  swipedByUsers Swipe[] @relation(name: "SwipeSwiped")
+
+  Chat Chat[]
 }
 
 model Project {
@@ -41,8 +46,8 @@ model Project {
   originalCreator   User            @relation(fields: [originalCreatorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   originalCreatorId String
   members           ProjectMember[]
-  likes             Int @default(0)
-  dateCreated      DateTime @default(now())
+  likes             Int             @default(0)
+  dateCreated       DateTime        @default(now())
 }
 
 model ProjectMember {
@@ -56,7 +61,25 @@ model ProjectMember {
 
 model Chat {
   id       String     @id @default(uuid())
+  users User[]
   messages Messages[]
+}
+
+model Swipe {
+  id String @id @default(uuid())
+
+  swiper   User   @relation(name: "SwipeSwiper", fields: [swiperId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  swiperId String
+
+  swiped   User   @relation(name: "SwipeSwiped", fields: [swipedId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  swipedId String
+
+  direction Direction
+}
+
+enum Direction {
+  LEFT
+  RIGHT
 }
 
 model Messages {
