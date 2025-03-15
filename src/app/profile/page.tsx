@@ -179,7 +179,6 @@ export default function ProfilePage(): React.ReactElement {
                     value={formValues.name}
                     onChange={handleChange}
                     required
-                    defaultValue={formValues.name}
                     slotProps={{ input: { readOnly: !edit } }}
                 />
                 <input type="file" name="profileImage" disabled={!edit} />
@@ -191,7 +190,6 @@ export default function ProfilePage(): React.ReactElement {
                     value={formValues.age}
                     onChange={handleChange}
                     required
-                    defaultValue={formValues.age}
                     slotProps={{ input: { readOnly: !edit } }}
                 />
 
@@ -204,7 +202,6 @@ export default function ProfilePage(): React.ReactElement {
                         required
                         value={formValues.gender}
                         onChange={handleGenderChange}
-                        defaultValue={formValues.gender}
                         slotProps={{ input: { readOnly: !edit } }}
                     >
                         <MenuItem disabled value="">
@@ -291,7 +288,6 @@ export default function ProfilePage(): React.ReactElement {
                     value={formValues.description}
                     onChange={handleChange}
                     required
-                    defaultValue={formValues.description}
                     slotProps={{ input: { readOnly: !edit } }}
                 />
                 <MultiChipSelect
