@@ -102,6 +102,8 @@ model SwipeUser {
   swipedId String
 
   direction Direction
+
+  @@unique([swiperId, swipedId])
 }
 
 model SwipeProject {
