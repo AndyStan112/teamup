@@ -27,7 +27,7 @@ export default function SwipeParteners() {
     <div className="flex items-center justify-center h-screen bg-[#0d1117] overflow-hidden">
       {!swiped && (
         <motion.div
-          className="absolute mt-[-80px] w-[80%] md:w-[30%] h-[70%] bg-[#131d4c] rounded-lg shadow-lg border-2 border-indigo-900 flex flex-col items-center justify-center text-white text-lg p-4"
+          className="absolute mt-[-120px] w-[80%] md:w-[30%] h-[70%] bg-[#131d4c] rounded-lg shadow-lg border-2 border-indigo-900 flex flex-col items-center justify-center text-white text-lg p-4"
           drag="x"
           dragConstraints={{ left: -100, right: 100 }}
           dragElastic={0.8}
