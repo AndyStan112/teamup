@@ -25,7 +25,7 @@ export async function createProject(formData: FormData) {
         data: {
             ...formDataObject,
             originalCreatorId: userId!,
-            technologies: formDataObject.technologies.split(","),
+            technologies: formDataObject.technologies.toString().split(","),
             images: imageUrls,
         } as Project,
     });
@@ -125,7 +125,7 @@ export async function editProject(
         data: {
             ...formDataObject,
             images: imageUrls,
-            technologies: formDataObject.technologies.split(","),
+            technologies: formDataObject.technologies.toString().split(","),
         } as Project,
     });
     return project;
