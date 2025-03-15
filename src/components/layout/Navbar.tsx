@@ -24,7 +24,7 @@ const title = "TeamUp";
 const pages = [
     { label: "Find Partners", href: "/find/partners" },
     { label: "Find Projects", href: "/find/projects" },
-    { label: "AI Chatbot", href: "/ai-chatbot" },
+    { label: "Generate ideas", href: "/generateIdeas" },
 ];
 
 const settings = [
