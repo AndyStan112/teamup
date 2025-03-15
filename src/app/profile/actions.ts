@@ -1,7 +1,8 @@
 "use server";
 import { prisma } from "@/utils";
 import { put } from "@vercel/blob";
-import { auth, User } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
+import { User } from "@prisma/client";
 
 export async function addOrUpdateUser(formData: FormData) {
     const { userId } = await auth();
@@ -17,9 +18,7 @@ export async function addOrUpdateUser(formData: FormData) {
             if (response?.url) {
                 url = response.url;
             } else {
-                console.error(
-                    "Error: No URL returned from the upload response."
-                );
+                console.error("Error: No URL returned from the upload response.");
             }
         } catch (error) {
             console.error("Error uploading image:", error);
@@ -27,6 +26,8 @@ export async function addOrUpdateUser(formData: FormData) {
     }
 
     const formDataObject = Object.fromEntries(formData.entries());
+
+    console.log(formDataObject);
 
     const user = await prisma.user.upsert({
         where: {
@@ -36,15 +37,15 @@ export async function addOrUpdateUser(formData: FormData) {
             ...formDataObject,
             profileImage: url || "",
             age: Number(formDataObject.age),
-            languages: formDataObject.languages.split(","),
-            technologies: formDataObject.technologies.split(","),
+            languages: formDataObject.languages.toString().split(","),
+            technologies: formDataObject.technologies.toString().split(","),
         } as User,
         create: {
             ...formDataObject,
             profileImage: url || "",
             age: Number(formDataObject.age),
-            languages: formDataObject.languages.split(","),
-            technologies: formDataObject.technologies.split(","),
+            languages: formDataObject.languages.toString().split(","),
+            technologies: formDataObject.technologies.toString().split(","),
             id: userId!,
         } as User,
     });
