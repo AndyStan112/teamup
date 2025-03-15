@@ -6,10 +6,19 @@ import {
     getUserProjects,
     likeProject,
     getMostLikedProjects,
+    editProject,
 } from "./actions"; // Import Server Action
 
+interface FormState {
+    title: string;
+    description: string;
+    githubLink: string;
+    technologies: string;
+    images: File[];
+}
+
 export default function Page() {
-    const [form, setForm] = useState({
+    const [form, setForm] = useState<FormState>({
         title: "",
         description: "",
         githubLink: "",
@@ -17,16 +26,16 @@ export default function Page() {
         images: [], // Store selected images
     });
 
-    const handleChange = (e) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    const handleFileChange = (e) => {
-        const selectedFiles = Array.from(e.target.files); // Convert FileList to Array
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFiles = e.target.files ? Array.from(e.target.files) : []; // Convert FileList to Array
         setForm({ ...form, images: selectedFiles });
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData();
 
@@ -96,19 +105,13 @@ export default function Page() {
             </button>
             <button
                 onClick={async () => {
-                    const projects = await getUserProjects(
-                        "user_2uK71lfC7JgpFRUtk9Uob2kd8e2"
-                    );
+                    const projects = await getUserProjects("user_2uK71lfC7JgpFRUtk9Uob2kd8e2");
                     console.log(projects);
                 }}
             >
                 Test user projects
             </button>
-            <button
-                onClick={() =>
-                    likeProject("362b093a-8659-4f57-a9cf-efeb0a5a8cc0")
-                }
-            >
+            <button onClick={() => likeProject("362b093a-8659-4f57-a9cf-efeb0a5a8cc0")}>
                 test like project
             </button>
             <button
@@ -118,6 +121,26 @@ export default function Page() {
                 }}
             >
                 get most liked
+            </button>
+            <button
+                onClick={async () => {
+                    const formData = new FormData();
+
+                    formData.append("title", form.title);
+                    formData.append("description", form.description);
+                    formData.append("githubLink", form.githubLink);
+                    formData.append("technologies", form.technologies);
+
+                    // Append each file separately
+                    form.images.forEach((file) => {
+                        formData.append("images", file);
+                    });
+
+                    const project = await editProject("Cool test", formData);
+                    console.log(project);
+                }}
+            >
+                update project
             </button>
         </div>
     );

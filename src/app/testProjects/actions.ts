@@ -25,7 +25,7 @@ export async function createProject(formData: FormData) {
         data: {
             ...formDataObject,
             originalCreatorId: userId!,
-            technologies: formDataObject.technologies.split(","),
+            technologies: formDataObject.technologies.toString().split(","),
             images: imageUrls,
         } as Project,
     });
@@ -86,4 +86,47 @@ export async function getMostLikedProjects() {
         },
     });
     return projects;
+}
+
+export async function editProject(
+    originalProjectTitle: string,
+    formData: FormData
+) {
+    const { userId } = await auth();
+
+    const images = formData.getAll("images") as File[];
+
+    const imageUploadPromises = images.map(async (image) => {
+        const blob = await put(image.name, image, {
+            access: "public",
+        });
+        return blob.url;
+    });
+
+    const imageUrls = await Promise.all(imageUploadPromises);
+
+    const formDataObject = Object.fromEntries(formData.entries());
+
+    const existingProject = await prisma.project.findFirst({
+        where: {
+            originalCreatorId: userId!,
+            title: originalProjectTitle,
+        },
+    });
+
+    if (!existingProject) {
+        throw new Error("Project not found");
+    }
+
+    const project = await prisma.project.update({
+        where: {
+            id: existingProject!.id,
+        },
+        data: {
+            ...formDataObject,
+            images: imageUrls,
+            technologies: formDataObject.technologies.toString().split(","),
+        } as Project,
+    });
+    return project;
 }
