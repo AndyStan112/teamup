@@ -1,85 +1,126 @@
 "use client";
-import "./SwipeCard.css";
 import { Box, Paper } from "@mui/material";
 import { useEffect, useState } from "react";
+import SwipeCardSkeleton from "./SwipeCardSkeleton";
 
 interface SwipeCardProps {
     children: React.ReactNode;
-    height?: number | string;
     swiped?: "LEFT" | "RIGHT" | null;
     onSwiped?: (direction: "LEFT" | "RIGHT") => void;
 }
 
-const threshold = 200;
+const thresholdX = 150;
 
-const SwipeCard: React.FC<SwipeCardProps> = ({ children, height = "60vh", swiped, onSwiped }) => {
-    const [start, setStart] = useState(0);
-    const [offset, setOffset] = useState(0);
+const SwipeCard: React.FC<SwipeCardProps> = ({ children, swiped, onSwiped }) => {
+    const [startX, setStartX] = useState(0);
+    const [startY, setStartY] = useState(0);
+    const [offsetX, setOffsetX] = useState(0);
+    const [offsetY, setOffsetY] = useState(0);
     const [dismissed, setDismissed] = useState(false);
+    const [underCard, setUnderCard] = useState(false);
 
-    const handleDragStart = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const handleDragStart = (
+        event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>
+    ) => {
         event.preventDefault();
-        if (event.button !== 0) return;
-        setStart(event.clientX);
+        const clientX =
+            event.type === "mousedown"
+                ? (event as React.MouseEvent).clientX
+                : (event as React.TouchEvent).touches[0].clientX;
+        const clientY =
+            event.type === "mousedown"
+                ? (event as React.MouseEvent).clientY
+                : (event as React.TouchEvent).touches[0].clientY;
+        setStartX(clientX);
+        setStartY(clientY);
     };
 
-    const handleDragMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        event.stopPropagation();
-        if (start === 0) return;
-        setOffset(event.clientX - start);
-    };
+    const handleDragMove = (
+        event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>
+    ) => {
+        if (startX === 0 && startY === 0) return;
+        const clientX =
+            event.type === "mousemove"
+                ? (event as React.MouseEvent).clientX
+                : (event as React.TouchEvent).touches[0].clientX;
+        const clientY =
+            event.type === "mousemove"
+                ? (event as React.MouseEvent).clientY
+                : (event as React.TouchEvent).touches[0].clientY;
 
-    const handleDragEnd = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        event.stopPropagation();
-        if (Math.abs(offset) >= threshold) {
-            if (onSwiped) onSwiped(offset > 0 ? "RIGHT" : "LEFT");
-            setDismissed(true);
+        const deltaX = clientX - startX;
+        const deltaY = clientY - startY;
+
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            event.stopPropagation();
+            setOffsetX(deltaX);
+            setOffsetY(deltaY);
+        } else {
+            setStartX(0);
+            setStartY(0);
         }
-        setStart(0);
-        setOffset(0);
     };
 
-    const translateXoffset = swiped ? (swiped === "LEFT" ? "-50vw" : "50vw") : `${offset}px`;
+    const handleDragEnd = (
+        event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>
+    ) => {
+        event.stopPropagation();
+        if (Math.abs(offsetX) > Math.abs(offsetY) && Math.abs(offsetX) >= thresholdX) {
+            if (onSwiped) onSwiped(offsetX > 0 ? "RIGHT" : "LEFT");
+            // setDismissed(true);
+            // setUnderCard(true);
+        }
+        setStartX(0);
+        setStartY(0);
+        setOffsetX(0);
+        setOffsetY(0);
+    };
+
+    const translateXoffset = swiped ? (swiped === "LEFT" ? "-50vw" : "50vw") : `${offsetX}px`;
 
     useEffect(() => {
-        if (!swiped) setDismissed(false);
+        setTimeout(() => setUnderCard(!swiped), 300);
+        setTimeout(() => setDismissed(!swiped), swiped ? 300 : 0);
     }, [swiped]);
 
     return (
-        <Box position="relative" sx={{ userSelect: "none" }}>
+        <Box position="relative" flex={1} sx={{ userSelect: "none" }}>
             <Paper
                 style={{
-                    transform: dismissed ? "" : "scale(0.85)",
-                    opacity: dismissed ? 1 : 0.85,
+                    transform: !underCard ? "" : "scale(0.85)",
+                    opacity: !underCard ? 1 : 0.85,
                 }}
                 sx={{
-                    height,
                     width: "100%",
+                    height: "100%",
                     position: "absolute",
-                    p: 2,
-                    transition: "transform 0.4s",
-                    transitionDelay: "0.3s",
+                    transition: "transform 0.4s, opacity 0.4s",
                 }}
-            ></Paper>
+            >
+                <SwipeCardSkeleton />
+            </Paper>
             <Paper
                 component="div"
                 style={{ transform: `translateX(${translateXoffset})` }}
                 sx={{
-                    height,
                     width: "100%",
+                    height: "100%",
                     position: "absolute",
-                    p: 2,
-                    transition: offset !== 0 || !dismissed ? "" : "transform 0.4s, opacity 0.4s",
+                    transition: offsetX !== 0 || !dismissed ? "" : "transform 0.4s, opacity 0.4s",
                     opacity: swiped ? 0 : 1,
-                    // overflowY: "auto",
+                    display: "flex",
+                    flexDirection: "column",
                 }}
                 onMouseDown={handleDragStart}
                 onMouseMove={handleDragMove}
                 onMouseUp={handleDragEnd}
+                onTouchStart={handleDragStart}
+                onTouchMove={handleDragMove}
+                onTouchEnd={handleDragEnd}
             >
                 {children}
             </Paper>
-            <Box height={height} />
+            <Box height="100%" />
         </Box>
     );
 };
