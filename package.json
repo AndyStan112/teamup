@@ -7,7 +7,8 @@
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
-        "migrate": "npx dotenv -e .env -c development -- npx prisma  migrate dev"
+        "migrate": "npx dotenv -e .env -c development -- npx prisma  migrate dev",
+        "reset": "npx dotenv -e .env -c development -- npx prisma  migrate reset"
     },
     "dependencies": {
         "@clerk/nextjs": "^6.12.5",
