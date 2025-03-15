@@ -46,7 +46,7 @@ const UserForm = () => {
     };
 
     return (
-        <div className="max-w-xl mx-auto p-6  shadow-md rounded-lg">
+        <div className="max-w-xl mx-auto p-6 shadow-md rounded-lg">
             <h2 className="text-2xl font-bold mb-4">User Form</h2>
             <form onSubmit={handleSubmit}>
                 <input
@@ -130,20 +130,12 @@ const UserForm = () => {
 
                 <div className="mb-2">
                     <p className="font-bold mb-1">Coding Time Preference</p>
-                    {[
-                        "MORNING",
-                        "AFTERNOON",
-                        "EVENING",
-                        "NIGHT",
-                        "ANYTIME",
-                    ].map((time) => (
+                    {["MORNING", "AFTERNOON", "EVENING", "NIGHT", "ANYTIME"].map((time) => (
                         <label key={time} className="block">
                             <input
                                 type="checkbox"
                                 value={time}
-                                checked={formData.codingTimePreference.includes(
-                                    time
-                                )}
+                                checked={formData.codingTimePreference.includes(time)}
                                 onChange={() => handleCheckboxChange(time)}
                                 className="mr-2"
                             />
@@ -152,10 +144,7 @@ const UserForm = () => {
                     ))}
                 </div>
 
-                <button
-                    type="submit"
-                    className="w-full bg-blue-500 text-white p-2 rounded"
-                >
+                <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">
                     Submit
                 </button>
             </form>
