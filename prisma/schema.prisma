@@ -30,20 +30,35 @@ model User {
   joinedProjects       ProjectMember[]
   Messages             Messages[]
 
-  swipedUsers   Swipe[] @relation(name: "SwipeSwiper")
-  swipedByUsers Swipe[] @relation(name: "SwipeSwiped")
+  swipedUsers   SwipeUser[] @relation(name: "SwipeSwiper")
+  swipedByUsers SwipeUser[] @relation(name: "SwipeSwiped")
+
+  swipedProjects SwipeProject[] @relation(name: "SwipeSwiper")
 
   friends  Friend[] @relation("UserFriends")
   friendOf Friend[] @relation("UserFriendsOf")
-  Chat Chat[]
+  Chat     Chat[]
+
+  preferences UserPreference?
+}
+
+model UserPreference {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
+
+  preferredGender      Gender?
+  codingTimePreference CodingTimePreference[]
+  languages            String[]
+  technologies         String[]
 }
 
 model Friend {
-  id        String   @id @default(cuid())
-  userId    String
-  friendId  String
-  user      User     @relation("UserFriendsOf", fields: [userId], references: [id])
-  friend    User     @relation("UserFriends", fields: [friendId], references: [id])
+  id       String @id @default(uuid())
+  userId   String
+  friendId String
+  user     User   @relation("UserFriendsOf", fields: [userId], references: [id])
+  friend   User   @relation("UserFriends", fields: [friendId], references: [id])
 }
 
 model Project {
@@ -58,6 +73,8 @@ model Project {
   members           ProjectMember[]
   likes             Int             @default(0)
   dateCreated       DateTime        @default(now())
+
+  SwipeProject SwipeProject[] @relation(name: "SwipeSwiped")
 }
 
 model ProjectMember {
@@ -71,17 +88,29 @@ model ProjectMember {
 
 model Chat {
   id       String     @id @default(uuid())
-  users User[]
+  users    User[]
   messages Messages[]
 }
 
-model Swipe {
+model SwipeUser {
   id String @id @default(uuid())
 
   swiper   User   @relation(name: "SwipeSwiper", fields: [swiperId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   swiperId String
 
   swiped   User   @relation(name: "SwipeSwiped", fields: [swipedId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  swipedId String
+
+  direction Direction
+}
+
+model SwipeProject {
+  id String @id @default(uuid())
+
+  swiper   User   @relation(name: "SwipeSwiper", fields: [swiperId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  swiperId String
+
+  swiped   Project @relation(name: "SwipeSwiped", fields: [swipedId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   swipedId String
 
   direction Direction
