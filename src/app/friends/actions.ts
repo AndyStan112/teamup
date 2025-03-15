@@ -8,9 +8,9 @@ export async function getFriends() {
     where: {
       userId: userId!,
     },
-    include: {
-      friend: true,
+    select: {
+      friend: {select:{profileImage:true,name:true}},
     },
   });
-  return friends.map((f) => f.friend);
+  return friends.map((friend)=>{return friend.friend});
 }
