@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { useChannel } from "ably/react";
+import { useAbly, useChannel } from "ably/react";
 import axios from "axios";
 
 interface Message {
@@ -27,6 +27,8 @@ export default function ChatBox({ chatId }: ChatBoxProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageText, setMessageText] = useState<string>("");
   const messageEndRef = useRef<HTMLDivElement | null>(null);
+  const ably = useAbly();
+
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -42,6 +44,8 @@ export default function ChatBox({ chatId }: ChatBoxProps) {
   }, []);
 
   useChannel(`chat-${chatId}`, (message) => {
+    console.log("message ")  
+    console.log(message)
     setMessages((prevMessages) => [...prevMessages, message.data]);
   });
 
@@ -65,15 +69,19 @@ export default function ChatBox({ chatId }: ChatBoxProps) {
 
   const sendChatMessage = async () => {
     if (!user || messageText.trim().length === 0) return;
-
+  
     const newMessage = {
       message: messageText,
       senderId: user.id,
       chatId,
     };
-
+  
     try {
       await axios.post(`/api/chat/${chatId}/messages`, newMessage);
+
+        const channel = ably.channels.get(`chat-${chatId}   `);
+        channel.publish("message", newMessage);
+  
       setMessageText("");
     } catch (error) {
       console.error("Error sending message:", error);
