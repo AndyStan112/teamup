@@ -6,6 +6,7 @@ import {
     getUserProjects,
     likeProject,
     getMostLikedProjects,
+    editProject,
 } from "./actions"; // Import Server Action
 
 export default function Page() {
@@ -118,6 +119,26 @@ export default function Page() {
                 }}
             >
                 get most liked
+            </button>
+            <button
+                onClick={async () => {
+                    const formData = new FormData();
+
+                    formData.append("title", form.title);
+                    formData.append("description", form.description);
+                    formData.append("githubLink", form.githubLink);
+                    formData.append("technologies", form.technologies);
+
+                    // Append each file separately
+                    form.images.forEach((file) => {
+                        formData.append("images", file);
+                    });
+
+                    const project = await editProject("Cool test", formData);
+                    console.log(project);
+                }}
+            >
+                update project
             </button>
         </div>
     );
