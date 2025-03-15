@@ -257,7 +257,7 @@ export default function ProfilePage(): React.ReactElement {
                     label="Spoken Languages"
                     name="languages"
                     options={languages}
-                    disabled={!edit}
+                    readOnly={!edit}
                     required
                     defaultValue={formValues.languages}
                 />
@@ -265,7 +265,7 @@ export default function ProfilePage(): React.ReactElement {
                     label="Technologies"
                     name="technologies"
                     options={technologies}
-                    disabled={!edit}
+                    readOnly={!edit}
                     required
                     defaultValue={formValues.technologies}
                 />
@@ -283,7 +283,7 @@ export default function ProfilePage(): React.ReactElement {
                     label="Coding Time Preference"
                     name="codingTimePreference"
                     options={["MORNING", "AFTERNOON", "EVENING", "NIGHT", "ANYTIME"]}
-                    disabled={!edit}
+                    readOnly={!edit}
                     required
                     defaultValue={formValues.codingTimePreference}
                 />
