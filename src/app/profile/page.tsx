@@ -1,4 +1,11 @@
-import { Button, Card, Divider, Stack, Typography } from "@mui/material";
+import {
+    Button,
+    Card,
+    Divider,
+    Stack,
+    TextField,
+    Typography,
+} from "@mui/material";
 
 export default function ProfilePage(): React.ReactElement {
     return (
@@ -13,7 +20,16 @@ export default function ProfilePage(): React.ReactElement {
                     My Profile
                 </Typography>
                 <Divider />
-
+                <TextField label="Name" variant="outlined" fullWidth />
+                <TextField
+                    label="Age"
+                    variant="outlined"
+                    fullWidth
+                    type="number"
+                />
+                <TextField label="Gender" variant="outlined" fullWidth />
+                <TextField label="GitHub Link" variant="outlined" fullWidth />
+                <TextField label="Country" variant="outlined" fullWidth />
                 <Divider />
                 <Stack direction="row" gap={1}>
                     <Button variant="contained" sx={{ flex: 1 }}>
