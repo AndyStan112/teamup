@@ -12,5 +12,5 @@ export async function getFriends() {
       friend: true,
     },
   });
-  return friends;
+  return friends.map((f) => f.friend);
 }

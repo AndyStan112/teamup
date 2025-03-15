@@ -52,6 +52,27 @@ export async function getUserSwipeDetails(userId: string) {
 }
 
 export async function swipeUser(direction: Direction, swipedId: string) {
+    const { userId } = await auth();
+    const isFriend = await prisma.swipeUser.count({
+        where: {
+            swiperId: swipedId,
+            swipedId: userId!,
+        },
+    });
+    if (isFriend) {
+        await prisma.friend.create({
+            data: {
+                userId: userId!,
+                friendId: swipedId,
+            },
+        });
+        await prisma.friend.create({
+            data: {
+                userId: swipedId,
+                friendId: userId!,
+            },
+        });
+    }
     await prisma.swipeUser.create({
         data: {
             swiperId: (await auth()).userId!,
