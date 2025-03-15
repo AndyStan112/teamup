@@ -1,7 +1,7 @@
 "use server";
 import { prisma } from "@/utils";
 import { auth } from "@clerk/nextjs/server";
-
+import { Direction } from "@prisma/client";
 
 export async function getSwipe() {
 
@@ -53,3 +53,13 @@ export async function getSwipeDetails(userId: string) {
     return user;
 }
 
+export async function swipe(direction: Direction, swipedId: string) {
+    await prisma.swipe.create({
+        data: {
+            swiperId: (await auth()).userId!,
+            swipedId,
+            direction,
+        },
+    });
+    return await getSwipe();
+}
