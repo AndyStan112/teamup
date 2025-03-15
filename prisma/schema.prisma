@@ -33,7 +33,17 @@ model User {
   swipedUsers   Swipe[] @relation(name: "SwipeSwiper")
   swipedByUsers Swipe[] @relation(name: "SwipeSwiped")
 
+  friends  Friend[] @relation("UserFriends")
+  friendOf Friend[] @relation("UserFriendsOf")
   Chat Chat[]
+}
+
+model Friend {
+  id        String   @id @default(cuid())
+  userId    String
+  friendId  String
+  user      User     @relation("UserFriendsOf", fields: [userId], references: [id])
+  friend    User     @relation("UserFriends", fields: [friendId], references: [id])
 }
 
 model Project {
