@@ -31,7 +31,7 @@ const theme = createTheme({
         MuiButton: {
             styleOverrides: {
                 root: {
-                    borderRadius: "18px",
+                    borderRadius: "100px",
                 },
                 contained: {
                     boxShadow: "none",
