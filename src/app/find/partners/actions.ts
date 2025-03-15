@@ -15,11 +15,12 @@ export async function getUserSwipe() {
     });
 
     const swipedIdsSet = swipedUserIds.map((swipe) => swipe.swipedId);
-    const swipedIds = {...swipedIdsSet,userId}
+    const swipedIds = [...swipedIdsSet,userId]
     const userCount = await prisma.user.count();
-    const skip = Math.floor(Math.random() * (userCount - swipedIds.length));
+    console.log((userCount - swipedIds.length))
+    const skip = Math.floor(Math.random() * (userCount - swipedIds.length +1 ));
     const user = await prisma.user.findFirst({
-        where: { id: { notIn: swipedIdsSet } },
+        where: { id: { notIn: swipedIds } },
         skip,
         select: {
             id: true,
