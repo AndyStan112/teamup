@@ -19,9 +19,9 @@ import {
 const title = "TeamUp";
 
 const pages = [
-    { label: "Find Partners", href: "/find-partners" },
-    { label: "Find Projects", href: "/find-projects" },
-    { label: "AI Chatbot", href: "/ai-chatbot" },
+    { label: "Find Partners", href: "/find/partners" },
+    { label: "Find Projects", href: "/find/projects" },
+    { label: "AI Chatbot", href: "/chatbot" },
 ];
 
 const settings = [
@@ -31,12 +31,8 @@ const settings = [
 ];
 
 export default function Navbar(): React.ReactElement {
-    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-        null
-    );
-    const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-        null
-    );
+    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+    const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -66,14 +62,14 @@ export default function Navbar(): React.ReactElement {
                     <Typography
                         variant="h6"
                         noWrap
-                        component="a"
-                        href=""
+                        component={Link}
+                        href="/"
                         sx={{
                             mr: 2,
                             display: { xs: "none", md: "flex" },
                             fontFamily: "monospace",
                             fontWeight: 700,
-                            letterSpacing: ".3rem",
+                            letterSpacing: ".1rem",
                             color: "inherit",
                             textDecoration: "none",
                         }}
@@ -131,15 +127,15 @@ export default function Navbar(): React.ReactElement {
                     <Typography
                         variant="h5"
                         noWrap
-                        component="a"
-                        href="#app-bar-with-responsive-menu"
+                        component={Link}
+                        href="/"
                         sx={{
                             mr: 2,
                             display: { xs: "flex", md: "none" },
                             flexGrow: 1,
                             fontFamily: "monospace",
                             fontWeight: 700,
-                            letterSpacing: ".3rem",
+                            letterSpacing: ".1rem",
                             color: "inherit",
                             textDecoration: "none",
                         }}
@@ -171,10 +167,7 @@ export default function Navbar(): React.ReactElement {
 
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
-                            <IconButton
-                                onClick={handleOpenUserMenu}
-                                sx={{ p: 0 }}
-                            >
+                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                 <Avatar alt="User Avatar" />
                             </IconButton>
                         </Tooltip>
