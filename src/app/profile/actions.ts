@@ -39,6 +39,7 @@ export async function addOrUpdateUser(formData: FormData) {
             age: Number(formDataObject.age),
             languages: formDataObject.languages.toString().split(","),
             technologies: formDataObject.technologies.toString().split(","),
+            codingTimePreference: formDataObject.codingTimePreference.toString().split(","),
         } as User,
         create: {
             ...formDataObject,
@@ -46,6 +47,7 @@ export async function addOrUpdateUser(formData: FormData) {
             age: Number(formDataObject.age),
             languages: formDataObject.languages.toString().split(","),
             technologies: formDataObject.technologies.toString().split(","),
+            codingTimePreference: formDataObject.codingTimePreference.toString().split(","),
             id: userId!,
         } as User,
     });
