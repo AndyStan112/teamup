@@ -1,191 +1,324 @@
 "use client";
 import {
-  Button,
-  Card,
-  Divider,
-  Stack,
-  TextField,
-  Typography,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
+    Button,
+    Card,
+    Divider,
+    Stack,
+    TextField,
+    Typography,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
+    Skeleton,
+    InputAdornment,
 } from "@mui/material";
-import { useState } from "react";
-import { addOrUpdateUser } from "./actions";
+import React, { useState, useEffect } from "react";
+import { addOrUpdateUser, getCurrentUser } from "./actions";
+import MultiChipSelect from "@/components/inputs/MultiChipSelect";
+import { languages, technologies } from "@/constants/interests";
+import GitHubIcon from "@mui/icons-material/GitHub";
 
-export default function ProfilePage(): React.ReactElement {
-  const [formData, setFormData] = useState({
+interface ProfileFormValues {
+    name: string;
+    profileImage?: File;
+    age: number;
+    gender: "" | "MALE" | "FEMALE" | "OTHER" | "DONOTWANTTOSAY";
+    githubLink: string;
+    country: string;
+    city: string;
+    languages: string[];
+    technologies: string[];
+    description: string;
+    codingTimePreference: string[];
+}
+
+// Default empty state
+const defaultState: ProfileFormValues = {
     name: "",
-    profileImage: null,
-    age: "",
-    gender: "MALE",
+    age: 0,
+    gender: "",
     githubLink: "",
     country: "",
     city: "",
-    languages: "",
-    technologies: "",
+    languages: [],
+    technologies: [],
     description: "",
     codingTimePreference: [],
-  });
+};
 
-  const [edit, setEdit] = useState(false);
+export default function ProfilePage(): React.ReactElement {
+    const [edit, setEdit] = useState(false);
+    const [formValues, setFormValues] = useState<ProfileFormValues>(defaultState);
+    const [formKey, setFormKey] = useState(0); // Key to force re-render
+    const [loading, setLoading] = useState(true);
 
-  const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "file" ? files[0] : value,
-    }));
-  };
+    // Fetch user data from the server on mount
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const userData = await getCurrentUser();
+                if (userData) {
+                    setFormValues({
+                        name: userData.name || "",
+                        profileImage: userData.profileImage
+                            ? new File([], userData.profileImage)
+                            : undefined,
+                        age: userData.age || 0,
+                        gender: userData.gender || "",
+                        githubLink: userData.githubLink || "",
+                        country: userData.country || "",
+                        city: userData.city || "",
+                        languages: userData.languages || [],
+                        technologies: userData.technologies || [],
+                        description: userData.description || "",
+                        codingTimePreference: userData.codingTimePreference || [],
+                    });
+                } else {
+                    setFormValues(defaultState);
+                }
+            } catch (error) {
+                console.error("Failed to load user data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-  const handleCheckboxChange = (value) => {
-    setFormData((prev) => {
-      const updatedPreferences = prev.codingTimePreference.includes(value)
-        ? prev.codingTimePreference.filter((item) => item !== value)
-        : [...prev.codingTimePreference, value];
-      return { ...prev, codingTimePreference: updatedPreferences };
-    });
-  };
+        fetchUserData();
+    }, []);
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    if (!edit) return;
-    const formDataObject = new FormData(event.target as HTMLFormElement);
-    await addOrUpdateUser(formDataObject);
-  };
+    const handleSubmit = async (event: React.FormEvent) => {
+        event.preventDefault();
+        if (!edit) return;
 
-  return (
-    <Stack component="form" onSubmit={handleSubmit} alignItems="center" justifyContent="center">
-      <Stack component={Card} width={{ xs: "100%", sm: 550 }} p={3} gap={2}>
-        <Typography variant="h5" align="center">
-          My Profile
-        </Typography>
-        <Divider />
+        const formDataObject = new FormData(event.target as HTMLFormElement);
+        await addOrUpdateUser(formDataObject);
+        const updatedValues: ProfileFormValues = {
+            name: formDataObject.get("name") as string,
+            profileImage: formDataObject.get("profileImage") as File,
+            age: Number(formDataObject.get("age")),
+            gender: formDataObject.get("gender") as
+                | ""
+                | "MALE"
+                | "FEMALE"
+                | "OTHER"
+                | "DONOTWANTTOSAY",
+            githubLink: formDataObject.get("githubLink") as string,
+            country: formDataObject.get("country") as string,
+            city: formDataObject.get("city") as string,
+            languages: formDataObject.getAll("languages") as string[],
+            technologies: formDataObject.getAll("technologies") as string[],
+            description: formDataObject.get("description") as string,
+            codingTimePreference: formDataObject.getAll("codingTimePreference") as string[],
+        };
+        setFormValues(updatedValues);
+        setEdit(false);
+    };
 
-        <TextField
-          label="Name"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          fullWidth
-          InputProps={{ readOnly: !edit }}
-        />
-        <input type="file" name="profileImage" onChange={handleChange} disabled={!edit} />
-        <TextField
-          label="Age"
-          name="age"
-          value={formData.age}
-          onChange={handleChange}
-          type="number"
-          fullWidth
-          InputProps={{ readOnly: !edit }}
-        />
+    const handleReset = () => {
+        // setFormValues(defaultState); // Reset values
+        setFormKey((prev) => prev + 1); // Change key to force re-render
+        setEdit(false);
+    };
 
-        <FormControl fullWidth>
-          <InputLabel>Gender</InputLabel>
-          <Select name="gender" value={formData.gender} onChange={handleChange} disabled={!edit}>
-            <MenuItem value="MALE">Male</MenuItem>
-            <MenuItem value="FEMALE">Female</MenuItem>
-            <MenuItem value="OTHER">Other</MenuItem>
-            <MenuItem value="DONOTWANTTOSAY">Prefer not to say</MenuItem>
-          </Select>
-        </FormControl>
+    if (loading) {
+        return (
+            <Stack alignItems="center" justifyContent="center">
+                <Stack component={Card} width={{ xs: "100%", sm: 550 }} p={3} gap={2}>
+                    <Typography variant="h5" align="center">
+                        My Profile
+                    </Typography>
+                    <Divider />
+                    <Skeleton variant="text" width="60%" />
+                    <Skeleton variant="rectangular" height={40} />
+                    <Skeleton variant="text" width="60%" />
+                    <Skeleton variant="rectangular" height={40} />
+                    <Skeleton variant="text" width="60%" />
+                    <Skeleton variant="rectangular" height={40} />
+                    <Skeleton variant="text" width="60%" />
+                    <Skeleton variant="rectangular" height={40} />
+                    <Skeleton variant="text" width="60%" />
+                    <Skeleton variant="rectangular" height={40} />
+                    <Skeleton variant="text" width="60%" />
+                    <Skeleton variant="rectangular" height={40} />
+                    <Skeleton variant="text" width="60%" />
+                    <Skeleton variant="rectangular" height={40} />
+                    <Skeleton variant="text" width="60%" />
+                    <Skeleton variant="rectangular" height={40} />
+                    <Divider />
+                    <Stack direction="row" gap={1}>
+                        <Skeleton variant="rectangular" height={40} width="100%" />
+                        <Skeleton variant="rectangular" height={40} width="100%" />
+                    </Stack>
+                </Stack>
+            </Stack>
+        );
+    }
 
-        <TextField
-          label="GitHub Link"
-          name="githubLink"
-          value={formData.githubLink}
-          onChange={handleChange}
-          fullWidth
-          InputProps={{ readOnly: !edit }}
-        />
-        <TextField
-          label="Country"
-          name="country"
-          value={formData.country}
-          onChange={handleChange}
-          fullWidth
-          InputProps={{ readOnly: !edit }}
-        />
-        <TextField
-          label="City"
-          name="city"
-          value={formData.city}
-          onChange={handleChange}
-          fullWidth
-          InputProps={{ readOnly: !edit }}
-        />
-        <TextField
-          label="Languages"
-          name="languages"
-          value={formData.languages}
-          onChange={handleChange}
-          fullWidth
-          InputProps={{ readOnly: !edit }}
-        />
-        <TextField
-          label="Technologies"
-          name="technologies"
-          value={formData.technologies}
-          onChange={handleChange}
-          fullWidth
-          InputProps={{ readOnly: !edit }}
-        />
-        <TextField
-          label="Description"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          multiline
-          rows={3}
-          fullWidth
-          InputProps={{ readOnly: !edit }}
-        />
+    return (
+        <Stack
+            component="form"
+            onSubmit={handleSubmit}
+            key={formKey} // Force re-render on reset
+            alignItems="center"
+            justifyContent="center"
+        >
+            <Stack component={Card} width={{ xs: "100%", sm: 550 }} p={3} gap={2}>
+                <Typography variant="h5" align="center">
+                    My Profile
+                </Typography>
+                <Divider />
 
-        <FormGroup>
-          <Typography> Coding Time Preference </Typography>
-          {["MORNING", "AFTERNOON", "EVENING", "NIGHT", "ANYTIME"].map((time) => (
-            <FormControlLabel
-              key={time}
-              control={
-                <Checkbox
-                  checked={formData.codingTimePreference.includes(time)}
-                  onChange={() => handleCheckboxChange(time)}
-                  disabled={!edit}
+                <TextField
+                    label="Name"
+                    name="name"
+                    required
+                    defaultValue={formValues.name}
+                    slotProps={{ input: { readOnly: !edit } }}
                 />
-              }
-              label={time}
-            />
-          ))}
-        </FormGroup>
+                <input type="file" name="profileImage" disabled={!edit} />
+                <TextField
+                    label="Age"
+                    name="age"
+                    type="number"
+                    fullWidth
+                    required
+                    defaultValue={formValues.age}
+                    slotProps={{ input: { readOnly: !edit } }}
+                />
 
-        <Divider />
-        <Stack direction="row" gap={1}>
-          {edit ? (
-            <>
-              <Button variant="contained" type="submit" sx={{ flex: 1 }}>
-                Save
-              </Button>
-              <Button
-                variant="outlined"
-                type="button"
-                sx={{ flex: 1 }}
-                onClick={() => setEdit(false)}
-              >
-                Cancel
-              </Button>
-            </>
-          ) : (
-            <Button variant="outlined" type="button" sx={{ flex: 1 }} onClick={() => setEdit(true)}>
-              Edit
-            </Button>
-          )}
+                <FormControl fullWidth required>
+                    <InputLabel id="profile-gender-label">Gender</InputLabel>
+                    <Select
+                        name="gender"
+                        labelId="profile-gender-label"
+                        label="Gender"
+                        required
+                        defaultValue={formValues.gender}
+                        slotProps={{ input: { readOnly: !edit } }}
+                    >
+                        <MenuItem disabled value="">
+                            Select a value
+                        </MenuItem>
+                        <MenuItem value="MALE">Male</MenuItem>
+                        <MenuItem value="FEMALE">Female</MenuItem>
+                        <MenuItem value="OTHER">Other</MenuItem>
+                        <MenuItem value="DONOTWANTTOSAY">Prefer not to say</MenuItem>
+                    </Select>
+                </FormControl>
+
+                <TextField
+                    label="GitHub Link"
+                    type="url"
+                    name="githubLink"
+                    fullWidth
+                    required
+                    defaultValue={formValues.githubLink}
+                    slotProps={{
+                        input: {
+                            readOnly: !edit,
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <GitHubIcon />
+                                </InputAdornment>
+                            ),
+                            endAdornment: !edit && (
+                                <InputAdornment position="end">
+                                    <Button
+                                        variant="text"
+                                        onClick={() => window.open(formValues.githubLink, "_blank")}
+                                        disabled={!formValues.githubLink}
+                                    >
+                                        Open
+                                    </Button>
+                                </InputAdornment>
+                            ),
+                        },
+                    }}
+                />
+                <TextField
+                    label="Country"
+                    name="country"
+                    fullWidth
+                    required
+                    defaultValue={formValues.country}
+                    slotProps={{ input: { readOnly: !edit } }}
+                />
+                <TextField
+                    label="City"
+                    name="city"
+                    fullWidth
+                    required
+                    defaultValue={formValues.city}
+                    slotProps={{ input: { readOnly: !edit } }}
+                />
+
+                <MultiChipSelect
+                    label="Spoken Languages"
+                    name="languages"
+                    options={languages}
+                    readOnly={!edit}
+                    required
+                    defaultValue={formValues.languages}
+                />
+                <MultiChipSelect
+                    label="Technologies"
+                    name="technologies"
+                    options={technologies}
+                    readOnly={!edit}
+                    required
+                    defaultValue={formValues.technologies}
+                />
+                <TextField
+                    label="Description"
+                    name="description"
+                    multiline
+                    rows={3}
+                    fullWidth
+                    required
+                    defaultValue={formValues.description}
+                    slotProps={{ input: { readOnly: !edit } }}
+                />
+                <MultiChipSelect
+                    label="Coding Time Preference"
+                    name="codingTimePreference"
+                    options={["MORNING", "AFTERNOON", "EVENING", "NIGHT", "ANYTIME"]}
+                    readOnly={!edit}
+                    required
+                    defaultValue={formValues.codingTimePreference}
+                />
+
+                <Divider />
+                <Stack direction="row" gap={1}>
+                    {edit ? (
+                        <>
+                            <Button variant="contained" type="submit" sx={{ flex: 1 }}>
+                                Save
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                type="button"
+                                sx={{ flex: 1 }}
+                                onClick={handleReset}
+                            >
+                                Cancel
+                            </Button>
+                        </>
+                    ) : (
+                        <Button
+                            variant="outlined"
+                            type="button"
+                            sx={{ flex: 1 }}
+                            onClick={(event) => {
+                                event.preventDefault();
+                                setEdit(true);
+                            }}
+                        >
+                            Edit
+                        </Button>
+                    )}
+                </Stack>
+            </Stack>
         </Stack>
-      </Stack>
-    </Stack>
-  );
+    );
 }

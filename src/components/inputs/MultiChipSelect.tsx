@@ -19,6 +19,7 @@ interface MultiChipSelectProps {
     disabled?: boolean;
     defaultValue?: string[];
     required?: boolean;
+    readOnly?: boolean;
 }
 
 const MultiChipSelect: React.FC<MultiChipSelectProps> = ({
@@ -30,10 +31,13 @@ const MultiChipSelect: React.FC<MultiChipSelectProps> = ({
     disabled = false,
     defaultValue = [],
     required,
+    readOnly = false,
 }) => {
     const [internalValue, setInternalValue] = useState<string[]>(defaultValue);
 
     const handleChange = (event: SelectChangeEvent<string[]>) => {
+        if (readOnly) return;
+
         const selectedValues =
             typeof event.target.value === "string"
                 ? event.target.value.split(",")
@@ -70,6 +74,7 @@ const MultiChipSelect: React.FC<MultiChipSelectProps> = ({
                     </Box>
                 )}
                 disabled={disabled}
+                slotProps={{ input: { readOnly } }}
                 required={required}
             >
                 {options.map((option) => (
