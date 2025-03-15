@@ -45,7 +45,7 @@ export default function ActionAreaCard() {
           />
 
           <CardContent>
-            <Typography variant="body2" sx={{ color: 'white' }}>
+            <Typography variant="body2">
               Lizards are a widespread group of squamate reptiles, with over 6,000
               species, ranging across all continents except Antarctica.
             </Typography>
