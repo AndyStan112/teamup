@@ -15,9 +15,9 @@ export async function getUserSwipe() {
     });
 
     const swipedIdsSet = swipedUserIds.map((swipe) => swipe.swipedId);
-
+    const swipedIds = {...swipedIdsSet,userId}
     const userCount = await prisma.user.count();
-    const skip = Math.floor(Math.random() * (userCount - swipedIdsSet.length));
+    const skip = Math.floor(Math.random() * (userCount - swipedIds.length));
     const user = await prisma.user.findFirst({
         where: { id: { notIn: swipedIdsSet } },
         skip,
@@ -52,6 +52,27 @@ export async function getUserSwipeDetails(userId: string) {
 }
 
 export async function swipeUser(direction: Direction, swipedId: string) {
+    const { userId } = await auth();
+    const isFriend = await prisma.swipeUser.count({
+        where: {
+            swiperId: swipedId,
+            swipedId: userId!,
+        },
+    });
+    if (isFriend) {
+        await prisma.friend.create({
+            data: {
+                userId: userId!,
+                friendId: swipedId,
+            },
+        });
+        await prisma.friend.create({
+            data: {
+                userId: swipedId,
+                friendId: userId!,
+            },
+        });
+    }
     await prisma.swipeUser.create({
         data: {
             swiperId: (await auth()).userId!,
