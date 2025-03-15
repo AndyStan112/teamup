@@ -74,7 +74,7 @@ export default function Page() {
                             value={form.description}
                             onChange={handleChange}
                             fullWidth
-                            slotProps={{ inputLabel: { style: { color: "white" } } }} 
+                            InputLabelProps={{ style: { color: "white" } }}
                             sx={{ input: { color: "white" } }}
                         />
                         <TextField
@@ -84,7 +84,7 @@ export default function Page() {
                             value={form.githubLink}
                             onChange={handleChange}
                             fullWidth
-                            slotProps={{ inputLabel: { style:{ color: "white" } }}}
+                            InputLabelProps={{ style: { color: "white" } }}
                             sx={{ input: { color: "white" } }}
                         />
                         <TextField
@@ -94,7 +94,7 @@ export default function Page() {
                             value={form.technologies}
                             onChange={handleChange}
                             fullWidth
-                            slotProps={{ inputLabel: { style: { color: "white" } }}}
+                            InputLabelProps={{ style: { color: "white" } }}
                             sx={{ input: { color: "white" } }}
                         />
                         <Button variant="outlined" component="label">
@@ -102,17 +102,66 @@ export default function Page() {
                             <input type="file" name="images" multiple accept="image/*" hidden onChange={handleFileChange} />
                         </Button>
 
-
-                       
                         <Button type="submit" variant="contained" color="primary" disabled={loading}>
                             {loading ? <CircularProgress size={24} color="inherit" /> : "Submit Project"}
                         </Button>
-
                     </Stack>
                 </form>
             </Paper>
 
-        
+            <Stack spacing={2} sx={{ mt: 3 }}>
+                <Button
+                    variant="outlined"
+                    onClick={async () => {
+                        const projects = await getCurrentUserProjects();
+                        console.log(projects);
+                    }}
+                >
+                    Get Current User Projects
+                </Button>
+                <Button
+                    variant="outlined"
+                    onClick={async () => {
+                        const projects = await getUserProjects("user_2uK71lfC7JgpFRUtk9Uob2kd8e2");
+                        console.log(projects);
+                    }}
+                >
+                    Test User Projects
+                </Button>
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => likeProject("362b093a-8659-4f57-a9cf-efeb0a5a8cc0")}
+                >
+                    Like Project
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={async () => {
+                        const projects = await getMostLikedProjects();
+                        console.log(projects);
+                    }}
+                >
+                    Get Most Liked Projects
+                </Button>
+                <Button
+                    variant="contained"
+                    color="warning"
+                    onClick={async () => {
+                        const formData = new FormData();
+                        formData.append("title", form.title);
+                        formData.append("description", form.description);
+                        formData.append("githubLink", form.githubLink);
+                        formData.append("technologies", form.technologies);
+                        form.images.forEach((file) => formData.append("images", file));
+
+                        const project = await editProject("Cool test", formData);
+                        console.log(project);
+                    }}
+                >
+                    Update Project
+                </Button>
+            </Stack>
         </Container>
     );
 }
