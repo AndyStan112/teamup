@@ -67,7 +67,8 @@ export async function likeProject(projectId: string) {
     if (likes > 0) {
         return;
     }
-
+    console.log("liking project");
+    console.log(projectId);
     const updatedProject = await prisma.project.update({
         where: {
             id: projectId,
