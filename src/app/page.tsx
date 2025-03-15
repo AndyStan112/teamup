@@ -17,18 +17,21 @@ export default function ActionAreaCard() {
         Projects of the month
       </Typography>
 
-      <Card sx={{ maxWidth: 600, borderRadius: 1.5 }}>
-        <CardContent sx={{ padding: "8px 16px", minHeight: 50 }}>
+      <Card sx={{ maxWidth: 600, borderRadius: 1.5, backgroundColor: "#131d4c" }}>
+        <CardContent sx={{ padding: "8px 16px", minHeight: 60 }}>
           <Grid container alignItems="center" spacing={1}>
             <Grid>
               <Avatar
                 src="/images/profile-avatar-1.png"
                 alt="Profile Avatar"
-                sx={{ width: 32, height: 32, cursor: "pointer" }}
+                sx={{ width: 40, height: 40, cursor: "pointer" }}
                 onClick={handleAvatarClick}
               />
             </Grid>
             <Grid>
+              <Typography variant="body2" component="div" color="white" marginTop={0.8} marginBottom={-1}>
+                Robot
+              </Typography>
               <Typography variant="h6" component="div" color="white">
                 Lizard
               </Typography>
@@ -55,3 +58,5 @@ export default function ActionAreaCard() {
     </Stack>
   );
 }
+
+
