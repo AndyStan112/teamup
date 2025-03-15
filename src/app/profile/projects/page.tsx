@@ -1,7 +1,17 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getCurrentUserProjects, likeProject } from "./actions";
-import { Card, CardContent, Typography, Container, CircularProgress, Button, Stack, Chip, CardMedia } from "@mui/material";
+import {
+    Card,
+    CardContent,
+    Typography,
+    Container,
+    CircularProgress,
+    Button,
+    Stack,
+    Chip,
+    CardMedia,
+} from "@mui/material";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 
 type Project = {
@@ -30,15 +40,20 @@ export default function Page() {
     const handleLike = async (projectId: string) => {
         await likeProject(projectId);
         setProjects((prev) =>
-            prev.map((proj) =>
-                proj.id === projectId ? { ...proj, likes: proj.likes + 1 } : proj
-            )
+            prev.map((proj) => (proj.id === projectId ? { ...proj, likes: proj.likes + 1 } : proj))
         );
     };
 
     if (loading) {
         return (
-            <Container sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+            <Container
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100vh",
+                }}
+            >
                 <CircularProgress color="primary" />
             </Container>
         );
@@ -57,7 +72,10 @@ export default function Page() {
             ) : (
                 <Stack spacing={3}>
                     {projects.map((project) => (
-                        <Card key={project.id} sx={{ backgroundColor: "#131d4c", color: "white", borderRadius: 2 }}>
+                        <Card
+                            key={project.id}
+                            sx={{ backgroundColor: "#131d4c", color: "white", borderRadius: 2 }}
+                        >
                             {project.images.length > 0 && (
                                 <CardMedia
                                     component="img"
@@ -75,17 +93,30 @@ export default function Page() {
 
                                 <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
                                     {project.technologies.map((tech, index) => (
-                                        <Chip key={index} label={tech} sx={{ bgcolor: "primary.main", color: "white" }} />
+                                        <Chip
+                                            key={index}
+                                            label={tech}
+                                            sx={{ bgcolor: "primary.main", color: "white" }}
+                                        />
                                     ))}
                                 </Stack>
 
                                 <Typography sx={{ mt: 2, color: "lightblue", cursor: "pointer" }}>
-                                    <a href={project.githubLink} target="_blank" rel="noopener noreferrer">
+                                    <a
+                                        href={project.githubLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
                                         GitHub Link
                                     </a>
                                 </Typography>
 
-                                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 3 }}>
+                                <Stack
+                                    direction="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    sx={{ mt: 3 }}
+                                >
                                     <Button
                                         variant="contained"
                                         color="secondary"
