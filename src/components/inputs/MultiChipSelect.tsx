@@ -14,7 +14,7 @@ interface MultiChipSelectProps {
     name: string;
     value?: string[];
     label: string;
-    onSelect?: (selected: string[]) => void;
+    onSelect?: (name: string, values: string[]) => void;
     options: string[];
     disabled?: boolean;
     defaultValue?: string[];
@@ -44,7 +44,7 @@ const MultiChipSelect: React.FC<MultiChipSelectProps> = ({
                 : (event.target.value as string[]);
 
         if (onSelect) {
-            onSelect(selectedValues);
+            onSelect(name, selectedValues);
         }
 
         if (value === undefined) {

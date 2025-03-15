@@ -4,109 +4,78 @@ import { motion } from "framer-motion";
 import { Card, CardContent, Typography, Avatar, Stack, Button, Chip, Box } from "@mui/material";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
-import { getUserSwipe, swipeUser } from "./actions";
+import { getMostLikedProjects, likeProject } from "./actions";
 
-export default function SwipePartners() {
-  const [user, setUser] = useState<any>(null);
-  const [swiped, setSwiped] = useState(false);
-  const [direction, setDirection] = useState(0);
+export default function SwipeProjects() {
+  const [projects, setProjects] = useState<any[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const fetchedUser = await getUserSwipe();
-      setUser(fetchedUser);
-    };
-    fetchUser();
+    async function fetchProjects() {
+      const data = await getMostLikedProjects();
+      setProjects(data);
+    }
+    fetchProjects();
   }, []);
 
-  const handleSwipe = async (dir: "LIKE" | "DISLIKE") => {
-    if (!user) return;
+  const handleSwipe = async (action: "LIKE" | "DISLIKE") => {
+    if (action === "LIKE") {
+      await likeProject(projects[currentIndex].id);
+    }
 
-    await swipeUser(dir === "LIKE" ? "RIGHT" : "LEFT", user.id);
-    setSwiped(true);
-    setTimeout(async () => {
-      const newUser = await getUserSwipe();
-      setUser(newUser);
-      setSwiped(false);
-    }, 400);
-  };
-
-  const handleDragEnd = async (event: any, info: any) => {
-    if (info.offset.x > 150) {
-      setDirection(500);
-      await handleSwipe("LIKE");
-    } else if (info.offset.x < -150) {
-      setDirection(-500);
-      await handleSwipe("DISLIKE");
+    if (currentIndex < projects.length - 1) {
+      setCurrentIndex(currentIndex + 1);
     } else {
-      setDirection(0);
+      setProjects([]);
     }
   };
 
-  const genderMapping: { [key: string]: string } = {
-    MALE: "Male",
-    FEMALE: "Female",
-    OTHER: "Other",
-    DONOTWANTTOSAY: "",
-  };
+  if (!projects.length) return <Typography variant="h6" color="white">Loading...</Typography>;
 
-  if (!user) return <Typography variant="h6" color="white">Loading...</Typography>;
+  const project = projects[currentIndex];
 
   return (
     <div className="flex flex-col items-center justify-center bg-[#0d1117] overflow-hidden">
       <Typography variant="h5" sx={{ color: "white", marginBottom: 2 }}>
-        Find partners
+        Find projects
       </Typography>
+      <motion.div
+        key={project.id}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Card sx={{ borderRadius: 2, backgroundColor: "#131d4c", color: "white", width: "100%", height: "100%", marginTop: 1 }}>
+          <CardContent sx={{ padding: "16px", textAlign: "center" }}>
+            <Stack alignItems="center">
+              <Avatar src={project.image || ""} alt="Project image" sx={{ width: 64, height: 64 }} />
+            </Stack>
+          </CardContent>
 
-      {!swiped && (
-        <motion.div
-          className="relative w-[80vw] md:w-[50vw] lg:w-[30vw] max-w-[320px] min-w-[280px] h-[65vh]"
-          drag="x"
-          dragConstraints={{ left: -100, right: 100 }}
-          dragElastic={0.8}
-          onDragEnd={handleDragEnd}
-          animate={{ x: direction, opacity: swiped ? 0 : 1 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-          exit={{ x: direction, opacity: 0 }}
-        >
-          <Card sx={{ borderRadius: 2, backgroundColor: "#131d4c", color: "white", width: "100%", height: "100%", marginTop: 1 }}>
-            <CardContent sx={{ padding: "16px", textAlign: "center" }}>
-              <Stack alignItems="center">
-                <Avatar src={user.profileImage} alt="Profile picture" sx={{ width: 64, height: 64 }} />
-              </Stack>
-            </CardContent>
+          <CardContent>
+            <Stack spacing={2} alignItems="center">
+              <Typography variant="h6">{project.title}</Typography>
+              <Typography variant="body1">{project.githubLink}</Typography>
 
-            <CardContent>
-              <Stack spacing={2} alignItems="center">
-                <Stack direction="row" spacing={3}>
-                  <Typography variant="body1">{user.name}</Typography>
-                  <Typography variant="body1">{user.age}</Typography>
-                  <Typography variant="body1">{genderMapping[user.gender]}</Typography>
-                </Stack>
+              <Box display="flex" gap={1} flexWrap="wrap">
+                {project.languages.map((value: string, key: number) => <Chip key={key} label={value} />)}
+              </Box>
 
-                <Stack spacing={1}>
-                  <Typography variant="body1">Languages:</Typography>
-                  <Box display="flex" gap={1} flexWrap="wrap">
-                    {user.languages.map((value: string, key: number) => <Chip key={key} label={value} />)}
-                  </Box>
-                  <Typography variant="body1">Technologies:</Typography>
-                  <Box display="flex" gap={1} flexWrap="wrap">
-                    {user.technologies.map((value: string, key: number) => <Chip key={key} label={value} />)}
-                  </Box>
-                  <Typography variant="body1">Work Timing:</Typography>
-                  <Box display="flex" gap={1} flexWrap="wrap">
-                    {user.languages.map((value: string, key: number) => <Chip key={key} label={value} />)}
-                  </Box>
-                </Stack>
+              <Typography variant="body1">Technologies:</Typography>
+              <Box display="flex" gap={1} flexWrap="wrap">
+                {project.technologies.map((value: string, key: number) => <Chip key={key} label={value} />)}
+              </Box>
 
-                <Typography className="text-blue-200 cursor-pointer hover:underline" sx={{ mt: 2 }}>
-                  <a href={user.githubLink} target="_blank" rel="noopener noreferrer">Github</a>
-                </Typography>
-              </Stack>
-            </CardContent>
-          </Card>
-        </motion.div>
-      )}
+              <Typography variant="body1">Description:</Typography>
+              <Typography variant="body2">{project.description}</Typography>
+
+              <Typography className="text-blue-200 cursor-pointer hover:underline" sx={{ mt: 2 }}>
+                <a href={project.githubLink} target="_blank" rel="noopener noreferrer">Github</a>
+              </Typography>
+            </Stack>
+          </CardContent>
+        </Card>
+      </motion.div>
 
       <Stack direction="row" gap={3} sx={{ marginTop: 2 }}>
         <Button variant="outlined" sx={{ flex: 1 }} startIcon={<ThumbDownOffAltIcon />} onClick={() => handleSwipe("DISLIKE")}>

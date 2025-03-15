@@ -24,7 +24,7 @@ const title = "TeamUp";
 const pages = [
     { label: "Find Partners", href: "/find/partners" },
     { label: "Find Projects", href: "/find/projects" },
-    { label: "AI Chatbot", href: "/ai-chatbot" },
+    { label: "Generate ideas", href: "/generateIdeas" },
 ];
 
 const settings = [
@@ -33,7 +33,7 @@ const settings = [
 ];
 
 export default function Navbar(): React.ReactElement {
-    const { signOut, redirectToSignIn } = useClerk();
+    const { signOut, redirectToSignIn, user } = useClerk();
 
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -170,13 +170,13 @@ export default function Navbar(): React.ReactElement {
                     <SignedIn>
                         <Stack direction="row" gap={1} justifyContent="right" flex={1}>
                             <Tooltip title="Messages">
-                                <IconButton>
+                                <IconButton component={Link} href="/messages">
                                     <MessageIcon />
                                 </IconButton>
                             </Tooltip>
                             <Tooltip title="Open settings">
                                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                    <Avatar alt="User Avatar" />
+                                    <Avatar alt="User Avatar" src={user?.imageUrl} />
                                 </IconButton>
                             </Tooltip>
                             <Menu

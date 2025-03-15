@@ -12,6 +12,7 @@ import {
     InputLabel,
     Skeleton,
     InputAdornment,
+    SelectChangeEvent,
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { addOrUpdateUser, getCurrentUser } from "./actions";
@@ -23,7 +24,7 @@ interface ProfileFormValues {
     name: string;
     profileImage?: File;
     age: number;
-    gender: "" | "MALE" | "FEMALE" | "OTHER" | "DONOTWANTTOSAY";
+    gender: string;
     githubLink: string;
     country: string;
     city: string;
@@ -33,7 +34,6 @@ interface ProfileFormValues {
     codingTimePreference: string[];
 }
 
-// Default empty state
 const defaultState: ProfileFormValues = {
     name: "",
     age: 0,
@@ -49,17 +49,16 @@ const defaultState: ProfileFormValues = {
 
 export default function ProfilePage(): React.ReactElement {
     const [edit, setEdit] = useState(false);
-    const [formValues, setFormValues] = useState<ProfileFormValues>(defaultState);
-    const [formKey, setFormKey] = useState(0); // Key to force re-render
+    const [formValues, setFormValues] = useState<ProfileFormValues>({ ...defaultState });
+    const [formPrevValues, setFormPrevValues] = useState<ProfileFormValues>({ ...defaultState });
     const [loading, setLoading] = useState(true);
 
-    // Fetch user data from the server on mount
     useEffect(() => {
         const fetchUserData = async () => {
             try {
                 const userData = await getCurrentUser();
                 if (userData) {
-                    setFormValues({
+                    const values = {
                         name: userData.name || "",
                         profileImage: userData.profileImage
                             ? new File([], userData.profileImage)
@@ -73,9 +72,12 @@ export default function ProfilePage(): React.ReactElement {
                         technologies: userData.technologies || [],
                         description: userData.description || "",
                         codingTimePreference: userData.codingTimePreference || [],
-                    });
+                    };
+                    setFormValues(values);
+                    setFormPrevValues({ ...values });
                 } else {
-                    setFormValues(defaultState);
+                    setFormValues({ ...defaultState });
+                    setEdit(true);
                 }
             } catch (error) {
                 console.error("Failed to load user data:", error);
@@ -87,37 +89,45 @@ export default function ProfilePage(): React.ReactElement {
         fetchUserData();
     }, []);
 
+    const handleChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
+        const { name, value } = event.target;
+        setFormValues((prev) => ({ ...prev, [name as string]: value }));
+    };
+
+    const handleGenderChange = (event: SelectChangeEvent) => {
+        setFormValues((prev) => ({
+            ...prev,
+            gender: event.target.value,
+        }));
+    };
+
+    const handleMultiSelectChange = (name: string, value: string[]) => {
+        setFormValues((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleEdit = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        setFormPrevValues({ ...formValues });
+        setEdit(true);
+    };
+
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         if (!edit) return;
-
-        const formDataObject = new FormData(event.target as HTMLFormElement);
-        await addOrUpdateUser(formDataObject);
-        const updatedValues: ProfileFormValues = {
-            name: formDataObject.get("name") as string,
-            profileImage: formDataObject.get("profileImage") as File,
-            age: Number(formDataObject.get("age")),
-            gender: formDataObject.get("gender") as
-                | ""
-                | "MALE"
-                | "FEMALE"
-                | "OTHER"
-                | "DONOTWANTTOSAY",
-            githubLink: formDataObject.get("githubLink") as string,
-            country: formDataObject.get("country") as string,
-            city: formDataObject.get("city") as string,
-            languages: formDataObject.getAll("languages") as string[],
-            technologies: formDataObject.getAll("technologies") as string[],
-            description: formDataObject.get("description") as string,
-            codingTimePreference: formDataObject.getAll("codingTimePreference") as string[],
-        };
-        setFormValues(updatedValues);
+        const formData = new FormData();
+        Object.entries(formValues).forEach(([key, value]) => {
+            if (Array.isArray(value)) {
+                formData.append(key, value.join(","));
+            } else {
+                formData.append(key, value as string | Blob);
+            }
+        });
+        await addOrUpdateUser(formData);
         setEdit(false);
     };
 
     const handleReset = () => {
-        // setFormValues(defaultState); // Reset values
-        setFormKey((prev) => prev + 1); // Change key to force re-render
+        setFormValues(formPrevValues);
         setEdit(false);
     };
 
@@ -156,13 +166,7 @@ export default function ProfilePage(): React.ReactElement {
     }
 
     return (
-        <Stack
-            component="form"
-            onSubmit={handleSubmit}
-            key={formKey} // Force re-render on reset
-            alignItems="center"
-            justifyContent="center"
-        >
+        <Stack component="form" onSubmit={handleSubmit} alignItems="center" justifyContent="center">
             <Stack component={Card} width={{ xs: "100%", sm: 550 }} p={3} gap={2}>
                 <Typography variant="h5" align="center">
                     My Profile
@@ -172,8 +176,9 @@ export default function ProfilePage(): React.ReactElement {
                 <TextField
                     label="Name"
                     name="name"
+                    value={formValues.name}
+                    onChange={handleChange}
                     required
-                    defaultValue={formValues.name}
                     slotProps={{ input: { readOnly: !edit } }}
                 />
                 <input type="file" name="profileImage" disabled={!edit} />
@@ -182,8 +187,9 @@ export default function ProfilePage(): React.ReactElement {
                     name="age"
                     type="number"
                     fullWidth
+                    value={formValues.age}
+                    onChange={handleChange}
                     required
-                    defaultValue={formValues.age}
                     slotProps={{ input: { readOnly: !edit } }}
                 />
 
@@ -194,7 +200,8 @@ export default function ProfilePage(): React.ReactElement {
                         labelId="profile-gender-label"
                         label="Gender"
                         required
-                        defaultValue={formValues.gender}
+                        value={formValues.gender}
+                        onChange={handleGenderChange}
                         slotProps={{ input: { readOnly: !edit } }}
                     >
                         <MenuItem disabled value="">
@@ -213,7 +220,8 @@ export default function ProfilePage(): React.ReactElement {
                     name="githubLink"
                     fullWidth
                     required
-                    defaultValue={formValues.githubLink}
+                    value={formValues.githubLink}
+                    onChange={handleChange}
                     slotProps={{
                         input: {
                             readOnly: !edit,
@@ -241,7 +249,8 @@ export default function ProfilePage(): React.ReactElement {
                     name="country"
                     fullWidth
                     required
-                    defaultValue={formValues.country}
+                    value={formValues.country}
+                    onChange={handleChange}
                     slotProps={{ input: { readOnly: !edit } }}
                 />
                 <TextField
@@ -249,7 +258,8 @@ export default function ProfilePage(): React.ReactElement {
                     name="city"
                     fullWidth
                     required
-                    defaultValue={formValues.city}
+                    value={formValues.city}
+                    onChange={handleChange}
                     slotProps={{ input: { readOnly: !edit } }}
                 />
 
@@ -258,16 +268,16 @@ export default function ProfilePage(): React.ReactElement {
                     name="languages"
                     options={languages}
                     readOnly={!edit}
-                    required
-                    defaultValue={formValues.languages}
+                    value={formValues.languages}
+                    onSelect={handleMultiSelectChange}
                 />
                 <MultiChipSelect
                     label="Technologies"
                     name="technologies"
                     options={technologies}
                     readOnly={!edit}
-                    required
-                    defaultValue={formValues.technologies}
+                    value={formValues.technologies}
+                    onSelect={handleMultiSelectChange}
                 />
                 <TextField
                     label="Description"
@@ -275,8 +285,9 @@ export default function ProfilePage(): React.ReactElement {
                     multiline
                     rows={3}
                     fullWidth
+                    value={formValues.description}
+                    onChange={handleChange}
                     required
-                    defaultValue={formValues.description}
                     slotProps={{ input: { readOnly: !edit } }}
                 />
                 <MultiChipSelect
@@ -285,7 +296,8 @@ export default function ProfilePage(): React.ReactElement {
                     options={["MORNING", "AFTERNOON", "EVENING", "NIGHT", "ANYTIME"]}
                     readOnly={!edit}
                     required
-                    defaultValue={formValues.codingTimePreference}
+                    value={formValues.codingTimePreference}
+                    onSelect={handleMultiSelectChange}
                 />
 
                 <Divider />
@@ -309,10 +321,7 @@ export default function ProfilePage(): React.ReactElement {
                             variant="outlined"
                             type="button"
                             sx={{ flex: 1 }}
-                            onClick={(event) => {
-                                event.preventDefault();
-                                setEdit(true);
-                            }}
+                            onClick={handleEdit}
                         >
                             Edit
                         </Button>
