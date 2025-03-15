@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation"; 
 import { TextField, Button, Stack, Typography, Container, Paper, CircularProgress } from "@mui/material";
-import { createProject, getCurrentUserProjects, getUserProjects, likeProject, getMostLikedProjects, editProject } from "./actions";
+import { createProject } from "./actions";
 
 type FormState = {
     title: string;
@@ -10,7 +11,6 @@ type FormState = {
     technologies: string;
     images: File[];
 };
-
 
 export default function Page() {
     const [form, setForm] = useState<FormState>({
@@ -21,6 +21,7 @@ export default function Page() {
         images: [],
     });
     const [loading, setLoading] = useState(false);
+    const router = useRouter(); 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -44,15 +45,17 @@ export default function Page() {
 
         await createProject(formData);
         setLoading(false);
+
+        router.push("/profile/projects");
+
     };
 
     return (
         <Container maxWidth="sm">
-
             <Paper sx={{ p: 3, color: "white", borderRadius: 2 }}>
-            <Typography variant="h4" sx={{ textAlign: "center", mt: 1, mb: 2 }}>
-                Project Management
-            </Typography>
+                <Typography variant="h4" sx={{ textAlign: "center", mt: 1, mb: 2 }}>
+                    Project Management
+                </Typography>
                 <form onSubmit={handleSubmit} encType="multipart/form-data">
                     <Stack spacing={2}>
                         <TextField
@@ -62,7 +65,7 @@ export default function Page() {
                             value={form.title}
                             onChange={handleChange}
                             fullWidth
-                            InputLabelProps={{ style: { color: "white" } }}
+                            slotProps={{ inputLabel: { style: { color: "white" } } }}
                             sx={{ input: { color: "white" } }}
                         />
                         <TextField
@@ -74,7 +77,7 @@ export default function Page() {
                             value={form.description}
                             onChange={handleChange}
                             fullWidth
-                            InputLabelProps={{ style: { color: "white" } }}
+                            slotProps={{ inputLabel: { style: { color: "white" } } }} 
                             sx={{ input: { color: "white" } }}
                         />
                         <TextField
@@ -84,7 +87,7 @@ export default function Page() {
                             value={form.githubLink}
                             onChange={handleChange}
                             fullWidth
-                            InputLabelProps={{ style: { color: "white" } }}
+                            slotProps={{ inputLabel: { style:{ color: "white" } }}}
                             sx={{ input: { color: "white" } }}
                         />
                         <TextField
@@ -94,7 +97,7 @@ export default function Page() {
                             value={form.technologies}
                             onChange={handleChange}
                             fullWidth
-                            InputLabelProps={{ style: { color: "white" } }}
+                            slotProps={{ inputLabel: { style: { color: "white" } }}}
                             sx={{ input: { color: "white" } }}
                         />
                         <Button variant="outlined" component="label">
@@ -108,60 +111,6 @@ export default function Page() {
                     </Stack>
                 </form>
             </Paper>
-
-            <Stack spacing={2} sx={{ mt: 3 }}>
-                <Button
-                    variant="outlined"
-                    onClick={async () => {
-                        const projects = await getCurrentUserProjects();
-                        console.log(projects);
-                    }}
-                >
-                    Get Current User Projects
-                </Button>
-                <Button
-                    variant="outlined"
-                    onClick={async () => {
-                        const projects = await getUserProjects("user_2uK71lfC7JgpFRUtk9Uob2kd8e2");
-                        console.log(projects);
-                    }}
-                >
-                    Test User Projects
-                </Button>
-                <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => likeProject("362b093a-8659-4f57-a9cf-efeb0a5a8cc0")}
-                >
-                    Like Project
-                </Button>
-                <Button
-                    variant="contained"
-                    onClick={async () => {
-                        const projects = await getMostLikedProjects();
-                        console.log(projects);
-                    }}
-                >
-                    Get Most Liked Projects
-                </Button>
-                <Button
-                    variant="contained"
-                    color="warning"
-                    onClick={async () => {
-                        const formData = new FormData();
-                        formData.append("title", form.title);
-                        formData.append("description", form.description);
-                        formData.append("githubLink", form.githubLink);
-                        formData.append("technologies", form.technologies);
-                        form.images.forEach((file) => formData.append("images", file));
-
-                        const project = await editProject("Cool test", formData);
-                        console.log(project);
-                    }}
-                >
-                    Update Project
-                </Button>
-            </Stack>
         </Container>
     );
 }
