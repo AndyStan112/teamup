@@ -17,7 +17,7 @@ import {
     Tooltip,
     Typography,
 } from "@mui/material";
-import { SignedIn, useClerk } from "@clerk/nextjs";
+import { SignedIn, SignedOut, useClerk } from "@clerk/nextjs";
 
 const title = "TeamUp";
 
@@ -33,7 +33,7 @@ const settings = [
 ];
 
 export default function Navbar(): React.ReactElement {
-    const { signOut } = useClerk();
+    const { signOut, redirectToSignIn } = useClerk();
 
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -210,6 +210,18 @@ export default function Navbar(): React.ReactElement {
                             </Menu>
                         </Stack>
                     </SignedIn>
+                    <SignedOut>
+                        <Button
+                            onClick={() => redirectToSignIn()}
+                            sx={{
+                                my: 2,
+                                color: "white",
+                                display: "block",
+                            }}
+                        >
+                            Sign In
+                        </Button>
+                    </SignedOut>
                 </Toolbar>
             </Container>
         </AppBar>
