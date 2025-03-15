@@ -32,6 +32,8 @@ model User {
 
   swipedUsers   Swipe[] @relation(name: "SwipeSwiper")
   swipedByUsers Swipe[] @relation(name: "SwipeSwiped")
+
+  Chat Chat[]
 }
 
 model Project {
@@ -59,6 +61,7 @@ model ProjectMember {
 
 model Chat {
   id       String     @id @default(uuid())
+  users User[]
   messages Messages[]
 }
 
