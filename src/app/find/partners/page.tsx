@@ -29,8 +29,11 @@ export default function SwipePartners() {
 
     const handleSwiped = (direction: "LEFT" | "RIGHT") => {
         setSwiped(direction);
-        setTimeout(() => setSwiped(null), 1000);
     };
+
+    useEffect(() => {
+        if (swiped) setTimeout(() => setSwiped(null), 1000);
+    }, [swiped]);
 
     if (!user) {
         return (
@@ -41,12 +44,15 @@ export default function SwipePartners() {
     }
 
     return (
-        <Stack alignItems="center">
+        <Stack alignItems="center" flex={1} sx={{ overflowX: "hidden" }}>
             <Stack
                 width={{ xs: "100%", sm: "50%" }}
                 minWidth={{ sm: 450 }}
                 maxWidth={{ xs: 450, sm: "unset" }}
                 gap={3}
+                px={2}
+                py={3}
+                flex={1}
             >
                 <Box height={80}>
                     <Typography variant="h5" textAlign="center">
@@ -55,20 +61,19 @@ export default function SwipePartners() {
                 </Box>
 
                 <SwipeCard swiped={swiped} onSwiped={handleSwiped}>
-                    <Stack gap={1}>
-                        <Stack alignItems="center" height={50}>
-                            <Avatar
-                                src={user.profileImage}
-                                alt="Profile picture"
-                                sx={{
-                                    width: 120,
-                                    height: 120,
-                                    position: "absolute",
-                                    top: "-60px",
-                                }}
-                            />
-                        </Stack>
-
+                    <Stack alignItems="center">
+                        <Avatar
+                            src={user.profileImage}
+                            alt="Profile picture"
+                            sx={{
+                                width: 120,
+                                height: 120,
+                                position: "absolute",
+                                top: "-60px",
+                            }}
+                        />
+                    </Stack>
+                    <Stack gap={1} flex={1} p={2} pt="70px" sx={{ overflowY: "auto" }}>
                         <Typography variant="h5" textAlign="center">
                             {user.name}
                         </Typography>
@@ -90,14 +95,17 @@ export default function SwipePartners() {
                         </Box>
                         <Typography variant="body1">Work Timing:</Typography>
                         <Box display="flex" gap={0.8} flexWrap="wrap">
-                            {user.languages.map((value: string, key: number) => (
+                            {user.codingTimePreference.map((value: string, key: number) => (
                                 <Chip key={key} label={value} />
                             ))}
                         </Box>
 
+                        <Typography flex={1}>{user.description}</Typography>
+
                         <Button
                             variant="outlined"
                             fullWidth
+                            color="inherit"
                             startIcon={<GitHubIcon />}
                             component="a"
                             href={user.githubLink}
@@ -115,6 +123,7 @@ export default function SwipePartners() {
                         size="large"
                         sx={{ minWidth: 150 }}
                         startIcon={<ThumbDownOffAltIcon />}
+                        onClick={() => setSwiped("LEFT")}
                     >
                         Dislike
                     </Button>
@@ -123,6 +132,7 @@ export default function SwipePartners() {
                         size="large"
                         sx={{ minWidth: 150 }}
                         endIcon={<ThumbUpOffAltIcon />}
+                        onClick={() => setSwiped("RIGHT")}
                     >
                         Like
                     </Button>
