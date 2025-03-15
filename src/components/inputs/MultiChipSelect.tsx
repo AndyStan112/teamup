@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     FormControl,
     InputLabel,
@@ -12,11 +12,12 @@ import {
 
 interface MultiChipSelectProps {
     name: string;
-    value: string[];
+    value?: string[];
     label: string;
-    onSelect: (selected: string[]) => void;
+    onSelect?: (selected: string[]) => void;
     options: string[];
     disabled?: boolean;
+    defaultValue?: string[];
 }
 
 const MultiChipSelect: React.FC<MultiChipSelectProps> = ({
@@ -26,14 +27,26 @@ const MultiChipSelect: React.FC<MultiChipSelectProps> = ({
     onSelect,
     options,
     disabled = false,
+    defaultValue = [],
 }) => {
+    const [internalValue, setInternalValue] = useState<string[]>(defaultValue);
+
     const handleChange = (event: SelectChangeEvent<string[]>) => {
         const selectedValues =
             typeof event.target.value === "string"
                 ? event.target.value.split(",")
                 : (event.target.value as string[]);
-        onSelect(selectedValues);
+
+        if (onSelect) {
+            onSelect(selectedValues);
+        }
+
+        if (value === undefined) {
+            setInternalValue(selectedValues);
+        }
     };
+
+    const selectedValues = value !== undefined ? value : internalValue;
 
     return (
         <FormControl fullWidth>
@@ -42,7 +55,7 @@ const MultiChipSelect: React.FC<MultiChipSelectProps> = ({
                 labelId={`${name}-label`}
                 id={name}
                 multiple
-                value={value}
+                value={selectedValues}
                 onChange={handleChange}
                 input={<OutlinedInput id={`select-multiple-chip-${name}`} label={label} />}
                 renderValue={(selected) => (
