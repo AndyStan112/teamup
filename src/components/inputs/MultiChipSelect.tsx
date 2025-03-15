@@ -78,6 +78,7 @@ const MultiChipSelect: React.FC<MultiChipSelectProps> = ({
                     </MenuItem>
                 ))}
             </Select>
+            <input type="hidden" name={name} value={selectedValues.join(",")} />
         </FormControl>
     );
 };
