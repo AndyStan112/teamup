@@ -47,7 +47,7 @@ export default function Page() {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    height: "100vh",
+                    height: "100vh"
                 }}
             >
                 <CircularProgress color="primary" />
@@ -56,7 +56,8 @@ export default function Page() {
     }
 
     return (
-        <Container maxWidth="md" sx={{ mt: 5 }}>
+        <Container maxWidth="md" sx={{ mt: 5,
+            maxWidth: {xs: "500px", lg: "500px"} }}>
             <Typography variant="h4" sx={{ textAlign: "center", mb: 3 }}>
                 My Projects
             </Typography>
