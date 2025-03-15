@@ -25,7 +25,16 @@ const technologies = [
     "SQL",
     "R",
     "MATLAB",
-    "Visual FoxPro",
+    "React.js",
+    "Next.js",
+    "Svelte",
+    "Vue.js",
+    "Flutter",
+    "Node.js",
+    "Django",
+    "Flask",
+    "MongoDB",
+    "GraphQL",
 ];
 
 export { technologies, languages };
