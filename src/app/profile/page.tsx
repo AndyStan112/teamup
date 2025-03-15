@@ -89,9 +89,16 @@ export default function ProfilePage(): React.ReactElement {
         fetchUserData();
     }, []);
 
-    const handleChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
-        const { name, value } = event.target;
-        setFormValues((prev) => ({ ...prev, [name as string]: value }));
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value, type, files } = event.target;
+        console.log(event.target);
+        if (type === "file" && files && files.length > 0) {
+            // For file input, set the file object
+            setFormValues((prev) => ({ ...prev, [name]: files[0] }));
+        } else {
+            // For other inputs, update the state normally
+            setFormValues((prev) => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleGenderChange = (event: SelectChangeEvent) => {
@@ -181,7 +188,7 @@ export default function ProfilePage(): React.ReactElement {
                     required
                     slotProps={{ input: { readOnly: !edit } }}
                 />
-                <input type="file" name="profileImage" disabled={!edit} />
+                <input type="file" name="profileImage" disabled={!edit} onChange={handleChange} />
                 <TextField
                     label="Age"
                     name="age"

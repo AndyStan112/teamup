@@ -3,13 +3,14 @@ import { prisma } from "@/utils";
 import { put } from "@vercel/blob";
 import { auth } from "@clerk/nextjs/server";
 import { User } from "@prisma/client";
+import { clerkClient } from "@clerk/nextjs/server";
 
 export async function addOrUpdateUser(formData: FormData) {
     const { userId } = await auth();
 
     const imageFile = formData.get("profileImage") as File;
     let url = "";
-
+    console.log(imageFile.name);
     if (imageFile) {
         try {
             const response = await put(imageFile.name, imageFile, {
@@ -17,6 +18,8 @@ export async function addOrUpdateUser(formData: FormData) {
             });
             if (response?.url) {
                 url = response.url;
+                const clerk = await clerkClient();
+                clerk.users.updateUserProfileImage(userId!, { file: imageFile });
             } else {
                 console.error("Error: No URL returned from the upload response.");
             }
