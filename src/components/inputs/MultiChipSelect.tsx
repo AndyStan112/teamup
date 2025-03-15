@@ -18,6 +18,7 @@ interface MultiChipSelectProps {
     options: string[];
     disabled?: boolean;
     defaultValue?: string[];
+    required?: boolean;
 }
 
 const MultiChipSelect: React.FC<MultiChipSelectProps> = ({
@@ -28,6 +29,7 @@ const MultiChipSelect: React.FC<MultiChipSelectProps> = ({
     options,
     disabled = false,
     defaultValue = [],
+    required,
 }) => {
     const [internalValue, setInternalValue] = useState<string[]>(defaultValue);
 
@@ -50,7 +52,9 @@ const MultiChipSelect: React.FC<MultiChipSelectProps> = ({
 
     return (
         <FormControl fullWidth>
-            <InputLabel id={`${name}-label`}>{label}</InputLabel>
+            <InputLabel id={`${name}-label`} required={required}>
+                {label}
+            </InputLabel>
             <Select
                 labelId={`${name}-label`}
                 id={name}
@@ -66,6 +70,7 @@ const MultiChipSelect: React.FC<MultiChipSelectProps> = ({
                     </Box>
                 )}
                 disabled={disabled}
+                required={required}
             >
                 {options.map((option) => (
                     <MenuItem key={option} value={option}>
