@@ -75,7 +75,8 @@ export default function ChatBox({ chatId }: ChatBoxProps) {
       senderId: user.id,
       chatId,
     };
-  
+    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAASDFGHdgsangftdfyguhijhiugfydtfyguhbjnmkljnbhiugvyf")
+    console.log(newMessage)
     try {
       await axios.post(`/api/chat/${chatId}/messages`, newMessage);
 

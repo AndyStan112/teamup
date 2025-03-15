@@ -30,7 +30,9 @@ export async function POST(req: Request, context: { params: { chatId?: string } 
 
   try {
     const { message, senderId } = await req.json();
-
+    console.log(message)
+    console.log(senderId)
+    console.log(chatId)
     const newMessage = await prisma.messages.create({
       data: { message, senderId, chatId },
     });
