@@ -15,6 +15,7 @@ const genderMapping: { [key: string]: string } = {
 };
 
 export default function SwipePartners() {
+    const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<any>(null);
     const [swiped, setSwiped] = useState<"LEFT" | "RIGHT" | null>(null);
 
@@ -23,25 +24,32 @@ export default function SwipePartners() {
             const fetchedUser = await getUserSwipe();
             console.log(fetchedUser);
             setUser(fetchedUser);
+            setLoading(false);
         };
         fetchUser();
     }, []);
 
-    const handleSwiped = (direction: "LEFT" | "RIGHT") => {
+    const handleSwiped = async (direction: "LEFT" | "RIGHT") => {
         setSwiped(direction);
+        setLoading(true);
+        const newUser = await swipeUser(direction, user.id);
+        console.log(newUser);
+        setUser(newUser);
+        setTimeout(() => {
+            if (user) {
+                setSwiped(null);
+                setLoading(false);
+            }
+        }, 200);
     };
 
-    useEffect(() => {
-        if (swiped) setTimeout(() => setSwiped(null), 1000);
-    }, [swiped]);
-
-    if (!user) {
-        return (
-            <Typography variant="h6" color="white">
-                Loading...
-            </Typography>
-        );
-    }
+    // if (!user) {
+    //     return (
+    //         <Typography variant="h6" color="white">
+    //             Loading...
+    //         </Typography>
+    //     );
+    // }
 
     return (
         <Stack alignItems="center" flex={1} sx={{ overflowX: "hidden" }}>
@@ -60,61 +68,65 @@ export default function SwipePartners() {
                     </Typography>
                 </Box>
 
-                <SwipeCard swiped={swiped} onSwiped={handleSwiped}>
-                    <Stack alignItems="center">
-                        <Avatar
-                            src={user.profileImage}
-                            alt="Profile picture"
-                            sx={{
-                                width: 120,
-                                height: 120,
-                                position: "absolute",
-                                top: "-60px",
-                            }}
-                        />
-                    </Stack>
-                    <Stack gap={1} flex={1} p={2} pt="70px" sx={{ overflowY: "auto" }}>
-                        <Typography variant="h5" textAlign="center">
-                            {user.name}
-                        </Typography>
-                        <Typography variant="body2" textAlign="center">
-                            {user.age + ", " + genderMapping[user.gender]}
-                        </Typography>
+                <SwipeCard swiped={swiped} onSwiped={handleSwiped} loading={loading}>
+                    {user && (
+                        <>
+                            <Stack alignItems="center">
+                                <Avatar
+                                    src={user.profileImage}
+                                    alt="Profile picture"
+                                    sx={{
+                                        width: 120,
+                                        height: 120,
+                                        position: "absolute",
+                                        top: "-60px",
+                                    }}
+                                />
+                            </Stack>
+                            <Stack gap={1} flex={1} p={2} pt="70px" sx={{ overflowY: "auto" }}>
+                                <Typography variant="h5" textAlign="center">
+                                    {user.name}
+                                </Typography>
+                                <Typography variant="body2" textAlign="center">
+                                    {[user.age, genderMapping[user.gender]].join(", ")}
+                                </Typography>
 
-                        <Typography variant="body1">Languages:</Typography>
-                        <Box display="flex" gap={0.8} flexWrap="wrap">
-                            {user.languages.map((value: string, key: number) => (
-                                <Chip key={key} label={value} />
-                            ))}
-                        </Box>
-                        <Typography variant="body1">Technologies:</Typography>
-                        <Box display="flex" gap={0.8} flexWrap="wrap">
-                            {user.technologies.map((value: string, key: number) => (
-                                <Chip key={key} label={value} />
-                            ))}
-                        </Box>
-                        <Typography variant="body1">Work Timing:</Typography>
-                        <Box display="flex" gap={0.8} flexWrap="wrap">
-                            {user.codingTimePreference.map((value: string, key: number) => (
-                                <Chip key={key} label={value} />
-                            ))}
-                        </Box>
+                                <Typography variant="body1">Languages:</Typography>
+                                <Box display="flex" gap={0.8} flexWrap="wrap">
+                                    {user.languages.map((value: string, key: number) => (
+                                        <Chip key={key} label={value} />
+                                    ))}
+                                </Box>
+                                <Typography variant="body1">Technologies:</Typography>
+                                <Box display="flex" gap={0.8} flexWrap="wrap">
+                                    {user.technologies.map((value: string, key: number) => (
+                                        <Chip key={key} label={value} />
+                                    ))}
+                                </Box>
+                                <Typography variant="body1">Work Timing:</Typography>
+                                <Box display="flex" gap={0.8} flexWrap="wrap">
+                                    {user.codingTimePreference.map((value: string, key: number) => (
+                                        <Chip key={key} label={value} />
+                                    ))}
+                                </Box>
 
-                        <Typography flex={1}>{user.description}</Typography>
+                                <Typography flex={1}>{user.description}</Typography>
 
-                        <Button
-                            variant="outlined"
-                            fullWidth
-                            color="inherit"
-                            startIcon={<GitHubIcon />}
-                            component="a"
-                            href={user.githubLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Github Profile
-                        </Button>
-                    </Stack>
+                                <Button
+                                    variant="outlined"
+                                    fullWidth
+                                    color="inherit"
+                                    startIcon={<GitHubIcon />}
+                                    component="a"
+                                    href={user.githubLink}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    Github Profile
+                                </Button>
+                            </Stack>
+                        </>
+                    )}
                 </SwipeCard>
 
                 <Stack direction="row" justifyContent="space-evenly">
@@ -122,8 +134,9 @@ export default function SwipePartners() {
                         variant="outlined"
                         size="large"
                         sx={{ minWidth: 150 }}
+                        disabled={Boolean(swiped)}
                         startIcon={<ThumbDownOffAltIcon />}
-                        onClick={() => setSwiped("LEFT")}
+                        onClick={() => handleSwiped("LEFT")}
                     >
                         Dislike
                     </Button>
@@ -131,8 +144,9 @@ export default function SwipePartners() {
                         variant="contained"
                         size="large"
                         sx={{ minWidth: 150 }}
+                        disabled={Boolean(swiped)}
                         endIcon={<ThumbUpOffAltIcon />}
-                        onClick={() => setSwiped("RIGHT")}
+                        onClick={() => handleSwiped("RIGHT")}
                     >
                         Like
                     </Button>
