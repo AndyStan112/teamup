@@ -3,12 +3,16 @@ import React from "react";
 import { Box, Button, Card, CardContent, CardMedia, Chip, Stack, Typography } from "@mui/material";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import { Project } from "@/app/profile/projects/page";
-import { likeProject, addMember } from "@/app/profile/projects/actions";
-import GitHubIcon from "@mui/icons-material/GitHub";
-import { useRouter } from "next/router";
+import { likeProject } from "@/app/profile/projects/actions";
 import Link from "next/link";
 
-export default function ProjCard({ project }: { project: Project }): React.ReactElement {
+export default function ProjCard({
+    project,
+    onClick,
+}: {
+    project: Project;
+    onClick?: () => void;
+}): React.ReactElement {
     const [isButtonDisabled, setIsButtonDisabled] = React.useState<boolean>(false);
 
     const handleLike = async (projectId: string) => {
@@ -23,7 +27,8 @@ export default function ProjCard({ project }: { project: Project }): React.React
                     component="img"
                     image={project.images[0]}
                     alt="Project image"
-                    sx={{ objectFit: "cover", maxHeight:"45vh" }}
+                    sx={{ objectFit: "cover", maxHeight: "45vh" }}
+                    onClick={onClick}
                 />
             )}
             <CardContent sx={{ p: 1.8, pb: "16px !important" }}>
@@ -51,7 +56,7 @@ export default function ProjCard({ project }: { project: Project }): React.React
                         </Button>
 
                         <Button
-                            disabled={isButtonDisabled}
+                            disabled={true}
                             variant="outlined"
                             color="primary"
                             LinkComponent={Link}
