@@ -1,6 +1,7 @@
 import React from "react";
 import { Typography, Paper, Stack } from "@mui/material";
 import { Message } from "./types";
+import MuiMarkdown from "mui-markdown";
 
 interface ChatMessageProps {
     message: Message;
@@ -26,7 +27,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, userId, groupChat = 
                 maxWidth="60%"
                 width="fit-content"
             >
-                <Typography variant="body1">{message.message}</Typography>
+                <Typography component="div" variant="body1">
+                    <MuiMarkdown>{message.message}</MuiMarkdown>
+                </Typography>
                 <Typography variant="caption" color="textSecondary" textAlign="right">
                     {new Date(message.timestamp).toLocaleTimeString([], {
                         hour: "2-digit",
