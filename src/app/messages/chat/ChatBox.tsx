@@ -14,12 +14,14 @@ import {
     TextField,
     Toolbar,
     Tooltip,
+    Typography,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Message } from "./types";
 import ChatMessage from "./ChatMessage";
 import Link from "next/link";
+import { getChatDetails } from "../actions";
 
 interface User {
     id: string;
@@ -35,6 +37,7 @@ export default function ChatBox({ chatId }: ChatBoxProps) {
     const [user, setUser] = useState<User | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
     const [messageText, setMessageText] = useState<string>("");
+    const [details, setDetails] = useState<any>("");
     const messageEndRef = useRef<HTMLDivElement | null>(null);
     const ably = useAbly();
 
@@ -73,6 +76,21 @@ export default function ChatBox({ chatId }: ChatBoxProps) {
     useEffect(() => {
         messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
+
+    useEffect(()=>{
+        const fetchDetails = async () => {
+            try {
+                const response =await getChatDetails(chatId);
+                console.log(response)
+                setDetails(response);
+            } catch (error) {
+                console.error("Error fetching messages:", error);
+            }
+        };
+        fetchDetails();
+        
+
+    },[chatId])
 
     const sendChatMessage = async () => {
         if (!user || messageText.trim().length === 0) return;
@@ -118,7 +136,8 @@ export default function ChatBox({ chatId }: ChatBoxProps) {
                         <ArrowBackIcon />
                     </IconButton>
                 </Tooltip>
-                <Avatar />
+                <Avatar src={details.imageUrl} sx={{ width: 36, height: 36 }} />
+                <Typography>{details.name}</Typography>
             </Toolbar>
             <Divider />
             <Container

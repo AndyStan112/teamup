@@ -94,3 +94,40 @@ export async function getChats() {
         };
     });
 }
+
+export async function getChatDetails(chatId: string) {
+    const { userId } = await auth();
+    if (!userId) throw new Error("User not authenticated.");
+
+    const chat = await prisma.chat.findUnique({
+        where: { id: chatId },
+        include: {
+            project: {
+                select: {
+                    title: true,
+                    images: true,
+                },
+            },
+            users: {
+                select: {
+                    id: true,
+                    name: true,
+                    profileImage: true,
+                },
+            },
+        },
+    });
+
+    if (!chat) throw new Error("Chat not found.");
+
+    const isProjectChat = chat.project !== null;
+    const otherUser = chat.users.find((u) => u.id !== userId);
+
+    return {
+        id: chat.id,
+        name: isProjectChat ? chat.project!.title : otherUser?.name || "Unknown Chat",
+        imageUrl: isProjectChat
+            ? chat.project!.images?.[0] || "/default_project.png"
+            : otherUser?.profileImage || "/default_avatar.png",
+    };
+}
