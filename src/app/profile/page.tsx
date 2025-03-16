@@ -318,6 +318,13 @@ export default function ProfilePage(): React.ReactElement {
                         onSelect={handleMultiSelectChange}
                     />
 
+                    <input
+                        type="file"
+                        name="profileImage"
+                        disabled={!edit}
+                        onChange={handleChange}
+                    />
+
                     <Divider />
                     <Stack direction="row" gap={1}>
                         {edit ? (
@@ -346,14 +353,6 @@ export default function ProfilePage(): React.ReactElement {
                         )}
                     </Stack>
                 </Stack>
-                <Box visibility="collapse">
-                    <input
-                        type="file"
-                        name="profileImage"
-                        disabled={!edit}
-                        onChange={handleChange}
-                    />
-                </Box>
             </Stack>
         </Container>
     );
