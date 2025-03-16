@@ -51,8 +51,6 @@ export default function ChatBox({ chatId }: ChatBoxProps) {
     }, []);
 
     useChannel(`chat-${chatId}`, (message) => {
-        console.log("message ");
-        console.log(message);
         setMessages((prevMessages) => [...prevMessages, message.data]);
     });
 
@@ -60,7 +58,6 @@ export default function ChatBox({ chatId }: ChatBoxProps) {
         const fetchMessages = async () => {
             try {
                 const response = await axios.get(`/api/chat/${chatId}/messages`);
-                console.log(response.data);
                 setMessages(response.data);
             } catch (error) {
                 console.error("Error fetching messages:", error);
