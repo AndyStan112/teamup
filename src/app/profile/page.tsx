@@ -14,6 +14,7 @@ import {
     InputAdornment,
     SelectChangeEvent,
     Container,
+    Box,
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { addOrUpdateUser, getCurrentUser } from "./actions";
@@ -55,7 +56,7 @@ export default function ProfilePage(): React.ReactElement {
     const [formValues, setFormValues] = useState<ProfileFormValues>({ ...defaultState });
     const [formPrevValues, setFormPrevValues] = useState<ProfileFormValues>({ ...defaultState });
     const [loading, setLoading] = useState(true);
-    const {user }= useClerk()
+    const { user } = useClerk();
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -64,7 +65,9 @@ export default function ProfilePage(): React.ReactElement {
                     const values = {
                         name: userData.name || "",
                         profileImage: userData.profileImage
-                            ? ( await urlToFile( user?.imageUrl ? user?.imageUrl : userData.profileImage))
+                            ? await urlToFile(
+                                  user?.imageUrl ? user?.imageUrl : userData.profileImage,
+                              )
                             : undefined,
                         age: userData.age || 0,
                         gender: userData.gender || "",
@@ -195,12 +198,6 @@ export default function ProfilePage(): React.ReactElement {
                         required
                         slotProps={{ input: { readOnly: !edit } }}
                     />
-                    <input
-                        type="file"
-                        name="profileImage"
-                        disabled={!edit}
-                        onChange={handleChange}
-                    />
                     <TextField
                         label="Age"
                         name="age"
@@ -319,6 +316,13 @@ export default function ProfilePage(): React.ReactElement {
                         required
                         value={formValues.codingTimePreference}
                         onSelect={handleMultiSelectChange}
+                    />
+
+                    <input
+                        type="file"
+                        name="profileImage"
+                        disabled={!edit}
+                        onChange={handleChange}
                     />
 
                     <Divider />

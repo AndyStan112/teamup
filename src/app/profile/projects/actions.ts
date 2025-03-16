@@ -41,6 +41,9 @@ export async function getCurrentUserProjects() {
         where: {
             originalCreatorId: userId!,
         },
+        include: {
+            originalCreator: true,
+        },
     });
 
     return projects;
@@ -83,7 +86,7 @@ export async function getJoinedCurrentUserProjects() {
     return projects.map((project) => project.project);
 }
 
-export async function likeProject(projectId: string) {
+export async function checkIfUserLiked(projectId: string) {
     const { userId } = await auth();
     const likeCount = await prisma.likedProject.count({
         where: {
@@ -92,9 +95,21 @@ export async function likeProject(projectId: string) {
         },
     });
 
-    if (likeCount > 0) {
-        return;
-    }
+    return likeCount > 0;
+}
+
+export async function likeProject(projectId: string) {
+    const { userId } = await auth();
+    // const likeCount = await prisma.likedProject.count({
+    //     where: {
+    //         userId: userId!,
+    //         projectId,
+    //     },
+    // });
+
+    // if (likeCount > 0) {
+    //     return;
+    // }
 
     await prisma.likedProject.create({
         data: {
@@ -182,12 +197,10 @@ export async function addMember(projectId: string, userId: string) {
                 projectId: projectId,
             },
         }),
-        prisma.pendingProjectMember.delete({
+        prisma.pendingProjectMember.deleteMany({
             where: {
-                projectId_userId: {
-                    projectId,
-                    userId,
-                },
+                projectId,
+                userId,
             },
         }),
     ]);
@@ -232,12 +245,10 @@ export async function addMember(projectId: string, userId: string) {
 }
 
 export async function rejectMemberRequest(projectId: string, userId: string) {
-    await prisma.pendingProjectMember.delete({
+    await prisma.pendingProjectMember.deleteMany({
         where: {
-            projectId_userId: {
-                projectId,
-                userId,
-            },
+            projectId,
+            userId,
         },
     });
 }

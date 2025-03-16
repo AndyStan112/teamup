@@ -7,6 +7,7 @@ import { getUserSwipe, swipeUser } from "./actions";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
 import SwipeCard from "@/components/swipe/SwipeCard";
+import MuiMarkdown from "mui-markdown";
 
 const genderMapping: { [key: string]: string } = {
     MALE: "Male",
@@ -107,7 +108,9 @@ export default function SwipePartners() {
                                     ))}
                                 </Box>
 
-                                <Typography flex={1}>{user.description}</Typography>
+                                <Typography component="div" flex={1}>
+                                    <MuiMarkdown>{user.description}</MuiMarkdown>
+                                </Typography>
 
                                 <Button
                                     variant="outlined"

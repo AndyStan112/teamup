@@ -63,7 +63,12 @@ export default function SwipeProjects() {
                     </Typography>
                 </Box>
 
-                <SwipeCard swiped={swiped} onSwiped={handleSwiped} loading={loading}>
+                <SwipeCard
+                    swiped={swiped}
+                    onSwiped={handleSwiped}
+                    loading={loading}
+                    projectMode={true}
+                >
                     {project ? (
                         <Stack gap={1} flex={1} sx={{ overflowY: "auto" }}>
                             {project.images.length > 0 && (

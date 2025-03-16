@@ -3,58 +3,94 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getFriends } from "./actions";
-import { Avatar, Button } from "@mui/material";
+import {
+    Avatar,
+    Button,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    Typography,
+    Divider,
+    Container,
+    Stack,
+} from "@mui/material";
 import { createChat, Friend } from "../messages/actions";
 
-export default function Page() {
+export default function FriendsList() {
     const [friends, setFriends] = useState<Friend[]>([]);
     const router = useRouter();
 
     useEffect(() => {
         async function fetchFriends() {
             const friendsList = await getFriends();
-            console.log(friends);
             setFriends(friendsList);
         }
         fetchFriends();
     }, []);
 
     return (
-        <div className="p-4">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <Container maxWidth="sm" sx={{ mt: 5 }}>
+            <Typography variant="h4" fontWeight="bold" textAlign="center" mb={3}>
+                My Friends
+            </Typography>
+
+            <List
+                sx={{
+                    width: "100%",
+                    maxWidth: 500,
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                    boxShadow: 3,
+                }}
+            >
                 {friends.map((friend, index) => (
-                    <div key={index} className="flex items-center p-4 border rounded-lg shadow">
-                        <Avatar
-                            src={friend.profileImage || "/"}
-                            alt={friend.name}
-                            className="rounded-full mr-4"
-                        />
-                        <div className="flex-1">
-                            <p className="font-semibold">{friend.name}</p>
-                        </div>
-                        <div className="flex gap-2">
-                            <Button
-                                color="info"
-                                onClick={() => {
-                                    router.push(`/users/${friend.id}`);
-                                }}
-                            >
-                                See Profile
-                            </Button>
-                            <Button
-                                onClick={async () => {
-                                    console.log("clicked")
-                                    const chatId = await createChat(friend.id);
-                                    console.log(chatId)
-                                    router.push(`/messages?activeId=${chatId}`);
-                                }}
-                            >
-                                Chat
-                            </Button>
-                        </div>
+                    <div key={index}>
+                        <ListItem alignItems="flex-start">
+                            <ListItemAvatar>
+                                <Avatar src={friend.profileImage || "/"} alt={friend.name} />
+                            </ListItemAvatar>
+
+                            <ListItemText
+                                primary={friend.name}
+                                secondary={
+                                    <Typography
+                                        component="span"
+                                        variant="body2"
+                                        sx={{ color: "text.secondary", display: "inline" }}
+                                    >
+                                        {friend.bio || "No bio available."}
+                                    </Typography>
+                                }
+                            />
+
+                            <Stack spacing={1} direction="row">
+                                <Button
+                                    variant="outlined"
+                                    size="small"
+                                    color="info"
+                                    onClick={() => router.push(`/users/${friend.id}`)}
+                                >
+                                    See Profile
+                                </Button>
+
+                                <Button
+                                    variant="contained"
+                                    size="small"
+                                    onClick={async () => {
+                                        const chatId = await createChat({ userId: friend.id });
+                                        router.push(`/messages/${chatId}`);
+                                    }}
+                                >
+                                    Chat
+                                </Button>
+                            </Stack>
+                        </ListItem>
+
+                        {index !== friends.length - 1 && <Divider variant="inset" component="li" />}
                     </div>
                 ))}
-            </div>
-        </div>
+            </List>
+        </Container>
     );
 }

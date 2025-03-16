@@ -1,30 +1,59 @@
 "use client";
 import React from "react";
-import { Box, Button, Card, CardContent, CardMedia, Chip, Stack, Typography } from "@mui/material";
+import {
+    Box,
+    Button,
+    Card,
+    CardActionArea,
+    CardContent,
+    CardMedia,
+    Chip,
+    Stack,
+    Typography,
+} from "@mui/material";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import { Project } from "@/app/profile/projects/page";
-import { likeProject, addMember } from "@/app/profile/projects/actions";
-import GitHubIcon from "@mui/icons-material/GitHub";
-import { useRouter } from "next/router";
+import { likeProject, checkIfUserLiked } from "@/app/profile/projects/actions";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 export default function ProjCard({ project }: { project: Project }): React.ReactElement {
+    const router = useRouter();
     const [isButtonDisabled, setIsButtonDisabled] = React.useState<boolean>(false);
+
+    const { user } = useUser();
+
+    React.useEffect(() => {
+        const checkIfLiked = async () => {
+            const isLiked = await checkIfUserLiked(project.id);
+            setIsButtonDisabled(isLiked);
+        };
+
+        checkIfLiked();
+    }, [project.id]);
 
     const handleLike = async (projectId: string) => {
         await likeProject(projectId);
         setIsButtonDisabled(true);
     };
 
+    const gotoProject = () => {
+        if (project.id) router.push(`/projects/${project.id}`);
+    };
+
+    const myOwnProject = user?.id === project.originalCreatorId;
+
     return (
-        <Card sx={{ backgroundColor: "#131d4c", color: "white", borderRadius: 2 }}>
+        <Card sx={{ backgroundColor: "#131d4c", color: "white", borderRadius: 2, flex: 1 }}>
             {project.images.length > 0 && (
-                <CardMedia
-                    component="img"
-                    image={project.images[0]}
-                    alt="Project image"
-                    sx={{ objectFit: "cover", maxHeight:"45vh" }}
-                />
+                <CardActionArea onClick={gotoProject}>
+                    <CardMedia
+                        component="img"
+                        image={project.images[0]}
+                        alt="Project image"
+                        sx={{ objectFit: "cover", maxHeight: "45vh" }}
+                    />
+                </CardActionArea>
             )}
             <CardContent sx={{ p: 1.8, pb: "16px !important" }}>
                 <Stack gap={1}>
@@ -50,15 +79,17 @@ export default function ProjCard({ project }: { project: Project }): React.React
                             Like ({isButtonDisabled ? project.likeCount + 1 : project.likeCount})
                         </Button>
 
-                        <Button
-                            disabled={isButtonDisabled}
-                            variant="outlined"
-                            color="primary"
-                            LinkComponent={Link}
-                            href={`/profile/projects/members/${project.id}`}
-                        >
-                            Add Member
-                        </Button>
+                        {myOwnProject && (
+                            <Button
+                                disabled={!myOwnProject}
+                                variant="outlined"
+                                color="primary"
+                                LinkComponent={Link}
+                                href={`/profile/projects/members/${project.id}`}
+                            >
+                                Add Member
+                            </Button>
+                        )}
                     </Stack>
                 </Stack>
             </CardContent>

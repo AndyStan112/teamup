@@ -8,11 +8,18 @@ interface SwipeCardProps {
     swiped?: "LEFT" | "RIGHT" | null;
     onSwiped?: (direction: "LEFT" | "RIGHT") => void;
     loading?: boolean;
+    projectMode?: boolean;
 }
 
 const thresholdX = 150;
 
-const SwipeCard: React.FC<SwipeCardProps> = ({ children, swiped, onSwiped, loading = true }) => {
+const SwipeCard: React.FC<SwipeCardProps> = ({
+    children,
+    swiped,
+    onSwiped,
+    loading = true,
+    projectMode = false,
+}) => {
     const [startX, setStartX] = useState(0);
     const [startY, setStartY] = useState(0);
     const [offsetX, setOffsetX] = useState(0);
@@ -21,7 +28,7 @@ const SwipeCard: React.FC<SwipeCardProps> = ({ children, swiped, onSwiped, loadi
     const [underCard, setUnderCard] = useState(false);
 
     const handleDragStart = (
-        event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>
+        event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>,
     ) => {
         event.preventDefault();
         const clientX =
@@ -37,7 +44,7 @@ const SwipeCard: React.FC<SwipeCardProps> = ({ children, swiped, onSwiped, loadi
     };
 
     const handleDragMove = (
-        event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>
+        event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>,
     ) => {
         if (startX === 0 && startY === 0) return;
         const clientX =
@@ -63,7 +70,7 @@ const SwipeCard: React.FC<SwipeCardProps> = ({ children, swiped, onSwiped, loadi
     };
 
     const handleDragEnd = (
-        event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>
+        event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>,
     ) => {
         event.stopPropagation();
         if (Math.abs(offsetX) > Math.abs(offsetY) && Math.abs(offsetX) >= thresholdX) {
@@ -99,7 +106,7 @@ const SwipeCard: React.FC<SwipeCardProps> = ({ children, swiped, onSwiped, loadi
                     transition: "transform 0.4s, opacity 0.4s",
                 }}
             >
-                <SwipeCardSkeleton />
+                <SwipeCardSkeleton projectMode={projectMode} />
             </Paper>
             <Paper
                 component="div"
