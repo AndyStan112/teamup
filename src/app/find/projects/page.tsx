@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { getProjectSwipe, swipeProject } from "./actions";
+import { getProjectSwipe, likeProject, swipeProject } from "./actions";
 import { Typography, Avatar, Stack, Button, Chip, Box, CardMedia } from "@mui/material";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
@@ -26,6 +26,10 @@ export default function SwipeProjects() {
 
     const handleSwiped = async (direction: "LEFT" | "RIGHT") => {
         if (!project) return;
+
+        if (direction === "RIGHT") {
+            await likeProject(project.id);
+        }
 
         setSwiped(direction);
         setLoading(true);
