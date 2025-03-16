@@ -4,6 +4,7 @@ import { put } from "@vercel/blob"; // Import Vercel Blob SDK
 import { auth } from "@clerk/nextjs/server";
 import { Project } from "@prisma/client";
 import { startOfMonth, endOfMonth } from "date-fns";
+import { createChat } from "@/app/messages/actions";
 
 export async function createProject(formData: FormData) {
     const { userId } = await auth();
@@ -53,6 +54,33 @@ export async function getUserProjects(userId: string) {
     });
 
     return projects;
+}
+
+export async function getJoinedUserProjects(userId: string) {
+    const projects = await prisma.projectMember.findMany({
+        where: {
+            memberId: userId!,
+        },
+        include: {
+            project: true,
+        },
+    });
+
+    return projects.map((project) => project.project);
+}
+
+export async function getJoinedCurrentUserProjects() {
+    const { userId } = await auth();
+    const projects = await prisma.projectMember.findMany({
+        where: {
+            memberId: userId!,
+        },
+        include: {
+            project: true,
+        },
+    });
+
+    return projects.map((project) => project.project);
 }
 
 export async function likeProject(projectId: string) {
@@ -147,17 +175,25 @@ export async function editProject(originalProjectTitle: string, formData: FormDa
 }
 
 export async function addMember(projectId: string, userId: string) {
-    await prisma.projectMember.create({
-        data: {
-            memberId: userId,
-            projectId: projectId,
-        },
-    });
+    await prisma.$transaction([
+        prisma.projectMember.create({
+            data: {
+                memberId: userId,
+                projectId: projectId,
+            },
+        }),
+        prisma.pendingProjectMember.delete({
+            where: {
+                projectId_userId: {
+                    projectId,
+                    userId,
+                },
+            },
+        }),
+    ]);
 
     const project = await prisma.project.update({
-        where: {
-            id: projectId,
-        },
+        where: { id: projectId },
         data: {
             members: {
                 connect: {
@@ -169,5 +205,93 @@ export async function addMember(projectId: string, userId: string) {
             },
         },
     });
+
+    const existingChat = await prisma.chat.findFirst({
+        where: { projectId },
+        select: { id: true, users: { select: { id: true } } },
+    });
+
+    if (existingChat) {
+        const existingMemberIds = existingChat.users.map((user) => user.id);
+
+        if (!existingMemberIds.includes(userId)) {
+            await prisma.chat.update({
+                where: { id: existingChat.id },
+                data: {
+                    users: {
+                        connect: { id: userId },
+                    },
+                },
+            });
+        } else {
+            await createChat({ projectId });
+        }
+    }
+
     return project;
+}
+
+export async function rejectMemberRequest(projectId: string, userId: string) {
+    await prisma.pendingProjectMember.delete({
+        where: {
+            projectId_userId: {
+                projectId,
+                userId,
+            },
+        },
+    });
+}
+
+export async function getPendingProjectRequests(projectId: string) {
+    const { userId } = await auth();
+    if (!userId) {
+        throw new Error("User not authenticated.");
+    }
+
+    const [pendingRequests, currentMembers, userFriends] = await prisma.$transaction([
+        prisma.pendingProjectMember.findMany({
+            where: { projectId },
+            select: {
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        profileImage: true,
+                    },
+                },
+            },
+        }),
+
+        prisma.projectMember.findMany({
+            where: { projectId },
+            select: { memberId: true },
+        }),
+
+        prisma.friend.findMany({
+            where: { userId },
+            select: {
+                friend: {
+                    select: {
+                        id: true,
+                        name: true,
+                        profileImage: true,
+                    },
+                },
+            },
+        }),
+    ]);
+    console.log(pendingRequests);
+    console.log(currentMembers);
+    console.log(userFriends);
+    const pendingUserIds = new Set(pendingRequests.map((req) => req.user.id));
+    const memberUserIds = new Set(currentMembers.map((m) => m.memberId));
+
+    const filteredFriends = userFriends
+        .map((friend) => friend.friend)
+        .filter((friend) => !pendingUserIds.has(friend.id) && !memberUserIds.has(friend.id));
+
+    return {
+        pendingRequests: pendingRequests.map((req) => req.user),
+        friends: filteredFriends,
+    };
 }

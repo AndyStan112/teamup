@@ -1,7 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getPendingProjectRequests, addMember, rejectMemberRequest } from "../actions";
-import { Avatar, Button, List, ListItem, ListItemAvatar, ListItemText, Stack, Typography } from "@mui/material";
+import {
+    Avatar,
+    Button,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    Stack,
+    Typography,
+} from "@mui/material";
 
 type User = {
     id: string;
@@ -45,13 +54,27 @@ export default function ProjectMemberManagement({ projectId }: { projectId: stri
             <Typography variant="h6">Pending Requests</Typography>
             <List>
                 {pendingRequests.length > 0 ? (
-                    pendingRequests.map((user) => (
-                        <ListItem key={user.id} secondaryAction={
-                            <Stack direction="row" spacing={2}>
-                                <Button variant="contained" onClick={() => handleAccept(user.id)}>Accept</Button>
-                                <Button variant="outlined" color="error" onClick={() => handleReject(user.id)}>Reject</Button>
-                            </Stack>
-                        }>
+                    pendingRequests.map((user, index) => (
+                        <ListItem
+                            key={user.id + index}
+                            secondaryAction={
+                                <Stack direction="row" spacing={2}>
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => handleAccept(user.id)}
+                                    >
+                                        Accept
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        color="error"
+                                        onClick={() => handleReject(user.id)}
+                                    >
+                                        Reject
+                                    </Button>
+                                </Stack>
+                            }
+                        >
                             <ListItemAvatar>
                                 <Avatar src={user.profileImage || "/default_avatar.png"} />
                             </ListItemAvatar>
@@ -66,10 +89,18 @@ export default function ProjectMemberManagement({ projectId }: { projectId: stri
             <Typography variant="h6">Friends</Typography>
             <List>
                 {friends.length > 0 ? (
-                    friends.map((user) => (
-                        <ListItem key={user.id} secondaryAction={
-                            <Button variant="contained" onClick={() => handleAddFriend(user.id)}>Add to Project</Button>
-                        }>
+                    friends.map((user, index) => (
+                        <ListItem
+                            key={user.id + index}
+                            secondaryAction={
+                                <Button
+                                    variant="contained"
+                                    onClick={() => handleAddFriend(user.id)}
+                                >
+                                    Add to Project
+                                </Button>
+                            }
+                        >
                             <ListItemAvatar>
                                 <Avatar src={user.profileImage || "/default_avatar.png"} />
                             </ListItemAvatar>

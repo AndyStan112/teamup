@@ -80,7 +80,7 @@ export async function getChats() {
     });
 
     if (!user) return [];
-
+    console.log(user.chats);
     return user.chats.map((chat) => {
         const isProjectChat = chat.project !== null;
         const otherUser = chat.users.find((u) => u.id !== userId);

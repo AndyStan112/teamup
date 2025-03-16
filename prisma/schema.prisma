@@ -109,7 +109,8 @@ datasource db {
     user      User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     userId    String
 
-    @@id([projectId, userId])
+    @@id([projectId, userId]) 
+    @@unique([projectId, userId])
 }
 
   model Chat {

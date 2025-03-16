@@ -5,6 +5,8 @@ import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import { Project } from "@/app/profile/projects/page";
 import { likeProject, addMember } from "@/app/profile/projects/actions";
 import GitHubIcon from "@mui/icons-material/GitHub";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 export default function ProjCard({ project }: { project: Project }): React.ReactElement {
     const [isButtonDisabled, setIsButtonDisabled] = React.useState<boolean>(false);
@@ -65,9 +67,8 @@ export default function ProjCard({ project }: { project: Project }): React.React
                             disabled={isButtonDisabled}
                             variant="outlined"
                             color="primary"
-                            onClick={
-                                () => addMember(project.id, "user_2uK6ciqLMe62F0DLv4LPem7Ig52") // Open modal to chooose who to add
-                            }
+                            LinkComponent={Link}
+                            href={`/profile/projects/members/${project.id}`}
                         >
                             Add Member
                         </Button>
