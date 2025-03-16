@@ -54,7 +54,7 @@ export default function Page() {
                         <Typography variant="h6" fontWeight="bold" mb={1} textAlign="center">
                             Technologies:
                         </Typography>
-                        <Stack direction="row" spacing={1} flexWrap="wrap" justifyContent="center">
+                        <Stack direction="row"gap={1} flexWrap="wrap" justifyContent="center">
                             {user?.technologies?.map((tech, index) => (
                                 <Chip key={index} label={tech} />
                             ))}
