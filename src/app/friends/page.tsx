@@ -43,9 +43,9 @@ export default function Page() {
                             </Button>
                             <Button
                                 onClick={async () => {
-                                    console.log("clicked");
-                                    const chatId = await createChat([friend]);
-                                    console.log(chatId);
+                                    console.log("clicked")
+                                    const chatId = await createChat(friend.id);
+                                    console.log(chatId)
                                     router.push(`/messages?activeId=${chatId}`);
                                 }}
                             >
