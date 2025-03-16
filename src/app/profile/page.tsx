@@ -13,6 +13,7 @@ import {
     Skeleton,
     InputAdornment,
     SelectChangeEvent,
+    Container,
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { addOrUpdateUser, getCurrentUser } from "./actions";
@@ -140,8 +141,8 @@ export default function ProfilePage(): React.ReactElement {
 
     if (loading) {
         return (
-            <Stack alignItems="center" justifyContent="center">
-                <Stack component={Card} width={{ xs: "100%", sm: 550 }} p={3} gap={2}>
+            <Container maxWidth="sm">
+                <Stack component={Card} width={{ xs: "100%", sm: 550 }} p={3} my={2} gap={2}>
                     <Typography variant="h5" align="center">
                         My Profile
                     </Typography>
@@ -168,173 +169,187 @@ export default function ProfilePage(): React.ReactElement {
                         <Skeleton variant="rectangular" height={40} width="100%" />
                     </Stack>
                 </Stack>
-            </Stack>
+            </Container>
         );
     }
 
     return (
-        <Stack component="form" onSubmit={handleSubmit} alignItems="center" justifyContent="center">
-            <Stack component={Card} width={{ xs: "100%", sm: 550 }} p={3} gap={2}>
-                <Typography variant="h5" align="center">
-                    My Profile
-                </Typography>
-                <Divider />
+        <Container maxWidth="sm">
+            <Stack
+                component="form"
+                onSubmit={handleSubmit}
+                alignItems="center"
+                justifyContent="center"
+            >
+                <Stack component={Card} width={{ xs: "100%", sm: 550 }} p={3} my={2} gap={2}>
+                    <Typography variant="h5" align="center">
+                        My Profile
+                    </Typography>
+                    <Divider />
 
-                <TextField
-                    label="Name"
-                    name="name"
-                    value={formValues.name}
-                    onChange={handleChange}
-                    required
-                    slotProps={{ input: { readOnly: !edit } }}
-                />
-                <input type="file" name="profileImage" disabled={!edit} onChange={handleChange} />
-                <TextField
-                    label="Age"
-                    name="age"
-                    type="number"
-                    fullWidth
-                    value={formValues.age}
-                    onChange={handleChange}
-                    required
-                    slotProps={{ input: { readOnly: !edit } }}
-                />
-
-                <FormControl fullWidth required>
-                    <InputLabel id="profile-gender-label">Gender</InputLabel>
-                    <Select
-                        name="gender"
-                        labelId="profile-gender-label"
-                        label="Gender"
+                    <TextField
+                        label="Name"
+                        name="name"
+                        value={formValues.name}
+                        onChange={handleChange}
                         required
-                        value={formValues.gender}
-                        onChange={handleGenderChange}
                         slotProps={{ input: { readOnly: !edit } }}
-                    >
-                        <MenuItem disabled value="">
-                            Select a value
-                        </MenuItem>
-                        <MenuItem value="MALE">Male</MenuItem>
-                        <MenuItem value="FEMALE">Female</MenuItem>
-                        <MenuItem value="OTHER">Other</MenuItem>
-                        <MenuItem value="DONOTWANTTOSAY">Prefer not to say</MenuItem>
-                    </Select>
-                </FormControl>
+                    />
+                    <input
+                        type="file"
+                        name="profileImage"
+                        disabled={!edit}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        label="Age"
+                        name="age"
+                        type="number"
+                        fullWidth
+                        value={formValues.age}
+                        onChange={handleChange}
+                        required
+                        slotProps={{ input: { readOnly: !edit } }}
+                    />
 
-                <TextField
-                    label="GitHub Link"
-                    type="url"
-                    name="githubLink"
-                    fullWidth
-                    required
-                    value={formValues.githubLink}
-                    onChange={handleChange}
-                    slotProps={{
-                        input: {
-                            readOnly: !edit,
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <GitHubIcon />
-                                </InputAdornment>
-                            ),
-                            endAdornment: !edit && (
-                                <InputAdornment position="end">
-                                    <Button
-                                        variant="text"
-                                        onClick={() => window.open(formValues.githubLink, "_blank")}
-                                        disabled={!formValues.githubLink}
-                                    >
-                                        Open
-                                    </Button>
-                                </InputAdornment>
-                            ),
-                        },
-                    }}
-                />
-                <TextField
-                    label="Country"
-                    name="country"
-                    fullWidth
-                    required
-                    value={formValues.country}
-                    onChange={handleChange}
-                    slotProps={{ input: { readOnly: !edit } }}
-                />
-                <TextField
-                    label="City"
-                    name="city"
-                    fullWidth
-                    required
-                    value={formValues.city}
-                    onChange={handleChange}
-                    slotProps={{ input: { readOnly: !edit } }}
-                />
+                    <FormControl fullWidth required>
+                        <InputLabel id="profile-gender-label">Gender</InputLabel>
+                        <Select
+                            name="gender"
+                            labelId="profile-gender-label"
+                            label="Gender"
+                            required
+                            value={formValues.gender}
+                            onChange={handleGenderChange}
+                            slotProps={{ input: { readOnly: !edit } }}
+                        >
+                            <MenuItem disabled value="">
+                                Select a value
+                            </MenuItem>
+                            <MenuItem value="MALE">Male</MenuItem>
+                            <MenuItem value="FEMALE">Female</MenuItem>
+                            <MenuItem value="OTHER">Other</MenuItem>
+                            <MenuItem value="DONOTWANTTOSAY">Prefer not to say</MenuItem>
+                        </Select>
+                    </FormControl>
 
-                <MultiChipSelect
-                    label="Spoken Languages"
-                    name="languages"
-                    options={languages}
-                    readOnly={!edit}
-                    value={formValues.languages}
-                    onSelect={handleMultiSelectChange}
-                />
-                <MultiChipSelect
-                    label="Technologies"
-                    name="technologies"
-                    options={technologies}
-                    readOnly={!edit}
-                    value={formValues.technologies}
-                    onSelect={handleMultiSelectChange}
-                />
-                <TextField
-                    label="Description"
-                    name="description"
-                    multiline
-                    rows={3}
-                    fullWidth
-                    value={formValues.description}
-                    onChange={handleChange}
-                    required
-                    slotProps={{ input: { readOnly: !edit } }}
-                />
-                <MultiChipSelect
-                    label="Coding Time Preference"
-                    name="codingTimePreference"
-                    options={["MORNING", "AFTERNOON", "EVENING", "NIGHT", "ANYTIME"]}
-                    readOnly={!edit}
-                    required
-                    value={formValues.codingTimePreference}
-                    onSelect={handleMultiSelectChange}
-                />
+                    <TextField
+                        label="GitHub Link"
+                        type="url"
+                        name="githubLink"
+                        fullWidth
+                        required
+                        value={formValues.githubLink}
+                        onChange={handleChange}
+                        slotProps={{
+                            input: {
+                                readOnly: !edit,
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <GitHubIcon />
+                                    </InputAdornment>
+                                ),
+                                endAdornment: !edit && (
+                                    <InputAdornment position="end">
+                                        <Button
+                                            variant="text"
+                                            onClick={() =>
+                                                window.open(formValues.githubLink, "_blank")
+                                            }
+                                            disabled={!formValues.githubLink}
+                                        >
+                                            Open
+                                        </Button>
+                                    </InputAdornment>
+                                ),
+                            },
+                        }}
+                    />
+                    <TextField
+                        label="Country"
+                        name="country"
+                        fullWidth
+                        required
+                        value={formValues.country}
+                        onChange={handleChange}
+                        slotProps={{ input: { readOnly: !edit } }}
+                    />
+                    <TextField
+                        label="City"
+                        name="city"
+                        fullWidth
+                        required
+                        value={formValues.city}
+                        onChange={handleChange}
+                        slotProps={{ input: { readOnly: !edit } }}
+                    />
 
-                <Divider />
-                <Stack direction="row" gap={1}>
-                    {edit ? (
-                        <>
-                            <Button variant="contained" type="submit" sx={{ flex: 1 }}>
-                                Save
-                            </Button>
+                    <MultiChipSelect
+                        label="Spoken Languages"
+                        name="languages"
+                        options={languages}
+                        readOnly={!edit}
+                        value={formValues.languages}
+                        onSelect={handleMultiSelectChange}
+                    />
+                    <MultiChipSelect
+                        label="Technologies"
+                        name="technologies"
+                        options={technologies}
+                        readOnly={!edit}
+                        value={formValues.technologies}
+                        onSelect={handleMultiSelectChange}
+                    />
+                    <TextField
+                        label="Description"
+                        name="description"
+                        multiline
+                        rows={3}
+                        fullWidth
+                        value={formValues.description}
+                        onChange={handleChange}
+                        required
+                        slotProps={{ input: { readOnly: !edit } }}
+                    />
+                    <MultiChipSelect
+                        label="Coding Time Preference"
+                        name="codingTimePreference"
+                        options={["MORNING", "AFTERNOON", "EVENING", "NIGHT", "ANYTIME"]}
+                        readOnly={!edit}
+                        required
+                        value={formValues.codingTimePreference}
+                        onSelect={handleMultiSelectChange}
+                    />
+
+                    <Divider />
+                    <Stack direction="row" gap={1}>
+                        {edit ? (
+                            <>
+                                <Button variant="contained" type="submit" sx={{ flex: 1 }}>
+                                    Save
+                                </Button>
+                                <Button
+                                    variant="outlined"
+                                    type="button"
+                                    sx={{ flex: 1 }}
+                                    onClick={handleReset}
+                                >
+                                    Cancel
+                                </Button>
+                            </>
+                        ) : (
                             <Button
                                 variant="outlined"
                                 type="button"
                                 sx={{ flex: 1 }}
-                                onClick={handleReset}
+                                onClick={handleEdit}
                             >
-                                Cancel
+                                Edit
                             </Button>
-                        </>
-                    ) : (
-                        <Button
-                            variant="outlined"
-                            type="button"
-                            sx={{ flex: 1 }}
-                            onClick={handleEdit}
-                        >
-                            Edit
-                        </Button>
-                    )}
+                        )}
+                    </Stack>
                 </Stack>
             </Stack>
-        </Stack>
+        </Container>
     );
 }

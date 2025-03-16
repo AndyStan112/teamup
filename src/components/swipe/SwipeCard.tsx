@@ -7,11 +7,12 @@ interface SwipeCardProps {
     children: React.ReactNode;
     swiped?: "LEFT" | "RIGHT" | null;
     onSwiped?: (direction: "LEFT" | "RIGHT") => void;
+    loading?: boolean;
 }
 
 const thresholdX = 150;
 
-const SwipeCard: React.FC<SwipeCardProps> = ({ children, swiped, onSwiped }) => {
+const SwipeCard: React.FC<SwipeCardProps> = ({ children, swiped, onSwiped, loading = true }) => {
     const [startX, setStartX] = useState(0);
     const [startY, setStartY] = useState(0);
     const [offsetX, setOffsetX] = useState(0);
@@ -77,6 +78,7 @@ const SwipeCard: React.FC<SwipeCardProps> = ({ children, swiped, onSwiped }) => 
     };
 
     const translateXoffset = swiped ? (swiped === "LEFT" ? "-50vw" : "50vw") : `${offsetX}px`;
+    const shrinkUnderCard = underCard && !loading;
 
     useEffect(() => {
         setTimeout(() => setUnderCard(!swiped), 300);
@@ -87,8 +89,8 @@ const SwipeCard: React.FC<SwipeCardProps> = ({ children, swiped, onSwiped }) => 
         <Box position="relative" flex={1} sx={{ userSelect: "none" }}>
             <Paper
                 style={{
-                    transform: !underCard ? "" : "scale(0.85)",
-                    opacity: !underCard ? 1 : 0.85,
+                    transform: shrinkUnderCard ? "scale(0.85)" : "",
+                    opacity: shrinkUnderCard ? 0.85 : 1,
                 }}
                 sx={{
                     width: "100%",
@@ -101,12 +103,18 @@ const SwipeCard: React.FC<SwipeCardProps> = ({ children, swiped, onSwiped }) => 
             </Paper>
             <Paper
                 component="div"
-                style={{ transform: `translateX(${translateXoffset})` }}
+                style={{
+                    transform: `translateX(${translateXoffset})`,
+                    visibility: loading ? "hidden" : "visible",
+                }}
                 sx={{
                     width: "100%",
                     height: "100%",
                     position: "absolute",
-                    transition: offsetX !== 0 || !dismissed ? "" : "transform 0.4s, opacity 0.4s",
+                    transition:
+                        offsetX !== 0 || !dismissed
+                            ? ""
+                            : "transform 0.4s, opacity 0.4s, visibility 0.4s",
                     opacity: swiped ? 0 : 1,
                     display: "flex",
                     flexDirection: "column",

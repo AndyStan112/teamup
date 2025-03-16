@@ -10,7 +10,7 @@ export async function addOrUpdateUser(formData: FormData) {
 
     const imageFile = formData.get("profileImage") as File;
     let url = "";
-    console.log(imageFile.name);
+    console.log(imageFile);
     if (imageFile) {
         try {
             const response = await put(imageFile.name, imageFile, {
