@@ -108,7 +108,7 @@ export default function SwipePartners() {
                                     ))}
                                 </Box>
 
-                                <Typography flex={1}>
+                                <Typography component="div" flex={1}>
                                     <MuiMarkdown>{user.description}</MuiMarkdown>
                                 </Typography>
 
