@@ -1,62 +1,98 @@
 "use client"
 import * as React from 'react';
-import { Card, CardContent, CardMedia, Typography, Stack, Grid2 as Grid, Avatar, CardActionArea } from '@mui/material';
+import { Card, CardContent, CardMedia, Typography, Stack, Grid2 as Grid, Avatar, CardActionArea, CircularProgress, Container } from '@mui/material';
+import { useRouter } from 'next/navigation';
+import { Project } from '@prisma/client';
+import { getMostLikedProjects } from './actions';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 
-export default function ActionAreaCard() {
-  const handleAvatarClick = () => {
-    console.log("Avatar clicked");
-  };
+export default function Page() {
+    const [projects, setProjects] = React.useState<Project[]>([]);
+    const [loading, setLoading] = React.useState(true);
+    const router = useRouter(); 
 
-  const handleCardClick = () => {
-    console.log("Card clicked");
-  };
+    React.useEffect(() => {
+        async function fetchProjects() {
+            const data = await getMostLikedProjects();
+            setProjects(data);
+            setLoading(false);
+        }
+        fetchProjects();
+    }, []);
 
-  return (
-    <Stack alignItems="center" spacing={2}>
-      <Typography gutterBottom variant="h5" component="div" color="white">
-        Projects of the month
-      </Typography>
+    if (loading) {
+        return (
+            <Container
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100vh"
+                }}
+            >
+                <CircularProgress color="primary" />
+            </Container>
+        );
+    }
 
-      <Card sx={{ maxWidth: 600, borderRadius: 1.5, backgroundColor: "#131d4c" }}>
-        <CardContent sx={{ padding: "8px 16px", minHeight: 60 }}>
-          <Grid container alignItems="center" spacing={1}>
-            <Grid>
-              <Avatar
-                src="/images/profile-avatar-1.png"
-                alt="Profile Avatar"
-                sx={{ width: 40, height: 40, cursor: "pointer" }}
-                onClick={handleAvatarClick}
-              />
-            </Grid>
-            <Grid>
-              <Typography variant="body2" component="div" color="white" marginTop={0.8} marginBottom={-1}>
-                Robot
-              </Typography>
-              <Typography variant="h6" component="div" color="white">
-                Lizard
-              </Typography>
-            </Grid>
-          </Grid>
-        </CardContent>
-
-        <CardActionArea onClick={handleCardClick}>
-          <CardMedia
-            component="img"
-            height="140"
-            image="/images/project.png"
-            alt="Project Image"
-          />
-
-          <CardContent>
-            <Typography variant="body2">
-              Lizards are a widespread group of squamate reptiles, with over 6,000
-              species, ranging across all continents except Antarctica.
+    return (
+        <Stack alignItems="center" spacing={2} sx={{ mt: 5 }}> 
+            <Typography gutterBottom variant="h5" component="div" color="white">
+                Projects of the month
             </Typography>
-          </CardContent>
-        </CardActionArea>
-      </Card>
-    </Stack>
-  );
+
+            {projects.length === 0 ? (
+                <Typography variant="h6" color="gray">
+                    No projects found for this month.
+                </Typography>
+            ) : (
+                projects.map((project) => (
+                    <Card key={project.id} sx={{ maxWidth: 600, borderRadius: 1.5, backgroundColor: "#131d4c" }}>
+                        <CardContent sx={{ padding: "8px 16px", minHeight: 60 }}>
+                            <Grid container alignItems="center" spacing={1}>
+                                <Grid>
+                                    <Avatar
+                                        src="/images/profile-avatar-1.png"
+                                        alt="Profile Avatar"
+                                        sx={{ width: 40, height: 40, cursor: "pointer" }}
+                                        onClick={() => router.push(`/profile/${project.originalCreatorId}`)}
+                                    />
+                                </Grid>
+                                <Grid>
+                                    <Typography variant="body2" component="div" color="white" marginTop={0.8} marginBottom={-1}>
+                                        {project.title}
+                                    </Typography>
+                                    <Typography variant="h6" component="div" color="white">
+                                        {project.description}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+
+                        <CardActionArea onClick={() => router.push(`/projects/${project.id}`)}>
+                            <CardMedia
+                                component="img"
+                                height="140"
+                                image={project.images?.[0] || "/images/default-project.png"}
+                                alt="Project Image"
+                            />
+
+                            <CardContent>
+                                <Typography variant="body2" color="white">
+                                    {project.technologies.join(", ")}
+                                </Typography>
+
+                                <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 1 }}>
+                                    <ThumbUpIcon sx={{ color: "white", fontSize: 18 }} />
+                                    <Typography variant="body2" color="white">
+                                        {project.likeCount} {project.likeCount === 1 ? "Like" : "Likes"}
+                                    </Typography>
+                                </Stack>
+                            </CardContent>
+                        </CardActionArea>
+                    </Card>
+                ))
+            )}
+        </Stack>
+    );
 }
-
-
