@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Paper, Stack } from "@mui/material";
+import { Typography, Paper, Stack, Avatar } from "@mui/material";
 import { Message } from "./types";
 import MuiMarkdown from "mui-markdown";
 
@@ -15,9 +15,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, userId, groupChat = 
     return (
         <Stack direction="column" gap={0.5} alignItems={isMyself ? "end" : "start"}>
             {groupChat && !isMyself && (
-                <Typography variant="body2" fontSize={12} color="textSecondary">
-                    {message.senderId}
-                </Typography>
+                <Stack direction="row" alignItems="center" gap={0.5}>
+                    <Avatar src={message.sender.profileImage} sx={{ width: 24, height: 24 }} />
+                    <Typography variant="body2" fontSize={12} color="textSecondary">
+                        {message.sender.name}
+                    </Typography>
+                </Stack>
             )}
             <Paper
                 elevation={3}

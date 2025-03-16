@@ -3,5 +3,9 @@ export interface Message {
     message: string;
     senderId: string;
     chatId: string;
+    sender: {
+        name: string;
+        profileImage: string;
+    };
     timestamp: Date;
 }
