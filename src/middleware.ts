@@ -1,27 +1,11 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { prisma } from "./utils";
-import { NextResponse } from "next/server";
-import { auth as a } from "@clerk/nextjs/server";
+
 const isPublicRoute = createRouteMatcher(["/"]);
+
 export default clerkMiddleware(async (auth, request) => {
     if (!isPublicRoute(request)) {
-        const { userId } = await a();
-
-        if (!userId) {
-            await auth.protect();
-        }
-
-        const user = await prisma.user.findUnique({
-            where: { id: userId! },
-            select: { id: true },
-        });
-
-        if (!user) {
-            return NextResponse.redirect(new URL("/profile", request.url));
-        }
+        await auth.protect();
     }
-
-    return NextResponse.next();
 });
 
 export const config = {
