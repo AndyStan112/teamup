@@ -42,7 +42,9 @@ datasource db {
     preferences UserPreference?
 
     likedProjects LikedProject[]
-  }
+  
+    PendingProjectMember PendingProjectMember[]
+}
 
   model UserPreference {
     id     String @id @default(uuid())
@@ -80,7 +82,9 @@ datasource db {
 
     likes LikedProject[]
     Chat  Chat?
-  }
+  
+    PendingProjectMember PendingProjectMember[]
+}
 
   model LikedProject {
     id        String  @id @default(uuid())
@@ -98,6 +102,15 @@ datasource db {
 
     @@id([projectId, memberId])
   }
+
+  model PendingProjectMember {
+    project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    projectId String
+    user      User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    userId    String
+
+    @@id([projectId, userId])
+}
 
   model Chat {
     id        String     @id @default(uuid())
