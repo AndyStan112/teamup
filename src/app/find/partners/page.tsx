@@ -5,6 +5,7 @@ import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import { getUserSwipe, swipeUser } from "./actions";
 import GitHubIcon from "@mui/icons-material/GitHub";
+import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 import SwipeCard from "@/components/swipe/SwipeCard";
 
 const genderMapping: { [key: string]: string } = {
@@ -30,6 +31,8 @@ export default function SwipePartners() {
     }, []);
 
     const handleSwiped = async (direction: "LEFT" | "RIGHT") => {
+        if (!user) return;
+
         setSwiped(direction);
         setLoading(true);
         const newUser = await swipeUser(direction, user.id);
@@ -43,20 +46,14 @@ export default function SwipePartners() {
         }, 200);
     };
 
-    // if (!user) {
-    //     return (
-    //         <Typography variant="h6" color="white">
-    //             Loading...
-    //         </Typography>
-    //     );
-    // }
+    const buttonsDisabled = Boolean(swiped) || loading || !Boolean(user);
 
     return (
         <Stack alignItems="center" flex={1} sx={{ overflowX: "hidden" }}>
             <Stack
                 width={{ xs: "100%", sm: "50%" }}
                 minWidth={{ sm: 450 }}
-                maxWidth={{ xs: 450, sm: "unset" }}
+                maxWidth={{ xs: 450, sm: 550 }}
                 gap={3}
                 px={2}
                 py={3}
@@ -69,7 +66,7 @@ export default function SwipePartners() {
                 </Box>
 
                 <SwipeCard swiped={swiped} onSwiped={handleSwiped} loading={loading}>
-                    {user && (
+                    {user ? (
                         <>
                             <Stack alignItems="center">
                                 <Avatar
@@ -126,7 +123,15 @@ export default function SwipePartners() {
                                 </Button>
                             </Stack>
                         </>
-                    )}
+                    ) : <>
+                        <Stack flex={1} alignItems="center" justifyContent="center" gap={1}>
+                            <Typography variant="h2" fontWeight="100">
+                                <SentimentSatisfiedAltIcon fontSize="inherit" />
+                            </Typography>
+                            <Typography variant="h5">List is empty</Typography>
+                            <Typography variant="body1">You found all that was to find.</Typography>
+                        </Stack>
+                    </>}
                 </SwipeCard>
 
                 <Stack direction="row" justifyContent="space-evenly">
@@ -134,7 +139,7 @@ export default function SwipePartners() {
                         variant="outlined"
                         size="large"
                         sx={{ minWidth: 150 }}
-                        disabled={Boolean(swiped)}
+                        disabled={buttonsDisabled}
                         startIcon={<ThumbDownOffAltIcon />}
                         onClick={() => handleSwiped("LEFT")}
                     >
@@ -144,7 +149,7 @@ export default function SwipePartners() {
                         variant="contained"
                         size="large"
                         sx={{ minWidth: 150 }}
-                        disabled={Boolean(swiped)}
+                        disabled={buttonsDisabled}
                         endIcon={<ThumbUpOffAltIcon />}
                         onClick={() => handleSwiped("RIGHT")}
                     >

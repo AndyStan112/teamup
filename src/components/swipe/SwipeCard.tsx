@@ -89,7 +89,7 @@ const SwipeCard: React.FC<SwipeCardProps> = ({ children, swiped, onSwiped, loadi
         <Box position="relative" flex={1} sx={{ userSelect: "none" }}>
             <Paper
                 style={{
-                    transform: shrinkUnderCard ? "scale(0.85)" : "",
+                    transform: shrinkUnderCard ? "scale(0.85) translateY(28px)" : "",
                     opacity: shrinkUnderCard ? 0.85 : 1,
                 }}
                 sx={{
