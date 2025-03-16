@@ -1,7 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; 
-import { TextField, Button, Stack, Typography, Container, Paper, CircularProgress } from "@mui/material";
+import { 
+    TextField, Button, Stack, Typography, Container, Paper, CircularProgress, Skeleton 
+} from "@mui/material";
 import { createProject } from "./actions";
 
 type FormState = {
@@ -21,7 +23,12 @@ export default function Page() {
         images: [],
     });
     const [loading, setLoading] = useState(false);
+    const [pageLoading, setPageLoading] = useState(true);
     const router = useRouter(); 
+
+    useEffect(() => {
+        setTimeout(() => setPageLoading(false), 1000);
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -47,7 +54,6 @@ export default function Page() {
         setLoading(false);
 
         router.push("/profile/projects");
-
     };
 
     return (
@@ -56,60 +62,77 @@ export default function Page() {
                 <Typography variant="h4" sx={{ textAlign: "center", mt: 1, mb: 2 }}>
                     Add a Project
                 </Typography>
-                <form onSubmit={handleSubmit} encType="multipart/form-data">
-                    <Stack spacing={2}>
-                        <TextField
-                            name="title"
-                            label="Project Title"
-                            variant="outlined"
-                            value={form.title}
-                            onChange={handleChange}
-                            fullWidth
-                            slotProps={{ inputLabel: { style: { color: "white" } } }}
-                            sx={{ input: { color: "white" } }}
-                        />
-                        <TextField
-                            name="description"
-                            label="Description"
-                            multiline
-                            rows={3}
-                            variant="outlined"
-                            value={form.description}
-                            onChange={handleChange}
-                            fullWidth
-                            slotProps={{ inputLabel: { style: { color: "white" } } }} 
-                            sx={{ input: { color: "white" } }}
-                        />
-                        <TextField
-                            name="githubLink"
-                            label="GitHub Link"
-                            variant="outlined"
-                            value={form.githubLink}
-                            onChange={handleChange}
-                            fullWidth
-                            slotProps={{ inputLabel: { style:{ color: "white" } }}}
-                            sx={{ input: { color: "white" } }}
-                        />
-                        <TextField
-                            name="technologies"
-                            label="Technologies (comma separated)"
-                            variant="outlined"
-                            value={form.technologies}
-                            onChange={handleChange}
-                            fullWidth
-                            slotProps={{ inputLabel: { style: { color: "white" } }}}
-                            sx={{ input: { color: "white" } }}
-                        />
-                        <Button variant="outlined" component="label">
-                            Upload Images
-                            <input type="file" name="images" multiple accept="image/*" hidden onChange={handleFileChange} />
-                        </Button>
 
-                        <Button type="submit" variant="contained" color="primary" disabled={loading}>
-                            {loading ? <CircularProgress size={24} color="inherit" /> : "Submit Project"}
-                        </Button>
+                {pageLoading ? (
+
+                    <Stack spacing={2}>
+                        <Skeleton variant="text" width="80%" height={40} />
+                        <Skeleton variant="rectangular" width="100%" height={56} />
+                        <Skeleton variant="text" width="80%" height={40} />
+                        <Skeleton variant="rectangular" width="100%" height={56} />
+                        <Skeleton variant="text" width="80%" height={40} />
+                        <Skeleton variant="rectangular" width="100%" height={56} />
+                        <Skeleton variant="text" width="80%" height={40} />
+                        <Skeleton variant="rectangular" width="100%" height={56} />
+                        <Skeleton variant="rectangular" width="100%" height={40} />
+                        <Skeleton variant="rectangular" width="100%" height={50} />
                     </Stack>
-                </form>
+                ) : (
+                    <form onSubmit={handleSubmit} encType="multipart/form-data">
+                        <Stack spacing={2}>
+                            <TextField
+                                name="title"
+                                label="Project Title"
+                                variant="outlined"
+                                value={form.title}
+                                onChange={handleChange}
+                                fullWidth
+                                slotProps={{ inputLabel: { style: { color: "white" } } }}
+                                sx={{ input: { color: "white" } }}
+                            />
+                            <TextField
+                                name="description"
+                                label="Description"
+                                multiline
+                                rows={3}
+                                variant="outlined"
+                                value={form.description}
+                                onChange={handleChange}
+                                fullWidth
+                                slotProps={{ inputLabel: { style: { color: "white" } } }} 
+                                sx={{ input: { color: "white" } }}
+                            />
+                            <TextField
+                                name="githubLink"
+                                label="GitHub Link"
+                                variant="outlined"
+                                value={form.githubLink}
+                                onChange={handleChange}
+                                fullWidth
+                                slotProps={{ inputLabel: { style:{ color: "white" } }}}
+                                sx={{ input: { color: "white" } }}
+                            />
+                            <TextField
+                                name="technologies"
+                                label="Technologies (comma separated)"
+                                variant="outlined"
+                                value={form.technologies}
+                                onChange={handleChange}
+                                fullWidth
+                                slotProps={{ inputLabel: { style: { color: "white" } }}}
+                                sx={{ input: { color: "white" } }}
+                            />
+                            <Button variant="outlined" component="label">
+                                Upload Images
+                                <input type="file" name="images" multiple accept="image/*" hidden onChange={handleFileChange} />
+                            </Button>
+
+                            <Button type="submit" variant="contained" color="primary" disabled={loading}>
+                                {loading ? <CircularProgress size={24} color="inherit" /> : "Submit Project"}
+                            </Button>
+                        </Stack>
+                    </form>
+                )}
             </Paper>
         </Container>
     );
