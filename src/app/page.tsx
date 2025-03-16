@@ -158,6 +158,7 @@ export default function Page() {
                                     height="auto"
                                     image={project.images?.[0] || "/images/default-project.png"}
                                     alt="Project Image"
+                                    sx={{maxHeight:"45vh"}}
                                 />
                             </CardActionArea>
                         ) : (
