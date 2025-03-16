@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 import {
     Avatar,
     Divider,
@@ -16,8 +15,15 @@ import {
 import { getChats } from "./actions";
 import { type Chat } from "@prisma/client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function MessagesPage({ children }: { children: React.ReactNode }) {
+    const pathname = usePathname();
+    const isChatPage = /^\/messages\/.+/.test(pathname);
+
+    console.log(pathname);
+    console.log(isChatPage);
+
     const [chats, setChats] = useState<Chat[]>([]);
 
     useEffect(() => {
@@ -30,8 +36,17 @@ export default function MessagesPage({ children }: { children: React.ReactNode }
     }, []);
 
     return (
-        <Stack flex={1} direction="row" justifyContent="stretch">
-            <Stack flex={1}>
+        <Stack
+            flex={1}
+            direction="row"
+            justifyContent="stretch"
+            maxHeight={{ xs: "calc(100vh - 56px)", md: "calc(100vh - 64px)" }}
+        >
+            <Stack
+                flex={1}
+                minWidth={300}
+                visibility={{ xs: isChatPage ? "collapse" : "visible", md: "visible" }}
+            >
                 <Toolbar>
                     <Typography variant="h6">Active Chats</Typography>
                 </Toolbar>

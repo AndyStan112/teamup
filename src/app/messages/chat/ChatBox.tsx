@@ -3,10 +3,22 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useAbly, useChannel } from "ably/react";
 import axios from "axios";
-import { Avatar, Divider, Fab, Stack, TextField, Toolbar } from "@mui/material";
+import {
+    Avatar,
+    Container,
+    Divider,
+    Fab,
+    IconButton,
+    Stack,
+    TextField,
+    Toolbar,
+    Tooltip,
+} from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Message } from "./types";
 import ChatMessage from "./ChatMessage";
+import Link from "next/link";
 
 interface User {
     id: string;
@@ -56,7 +68,7 @@ export default function ChatBox({ chatId }: ChatBoxProps) {
         };
 
         fetchMessages();
-    }, []);
+    }, [chatId]);
 
     useEffect(() => {
         messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -91,32 +103,56 @@ export default function ChatBox({ chatId }: ChatBoxProps) {
 
     return (
         <Stack flex={3} sx={{ backgroundColor: "#161b22" }}>
-            <Toolbar>
+            <Toolbar sx={{ gap: 1, px: 1 }} disableGutters>
+                <Tooltip title="Go back to messages">
+                    <IconButton
+                        LinkComponent={Link}
+                        href="/messages"
+                        sx={{ visibility: { xs: "visible", md: "collapse" } }}
+                    >
+                        <ArrowBackIcon />
+                    </IconButton>
+                </Tooltip>
                 <Avatar />
             </Toolbar>
             <Divider />
-            <Stack flex={1} p={2} gap={1} sx={{ overflowY: "scroll" }}>
-                {messages.map((message, index) => (
-                    <ChatMessage key={index} message={message} userId={user.id} />
-                ))}
-                <div ref={messageEndRef}></div>
-            </Stack>
+            <Container maxWidth="md" sx={{ flex: 1, overflowY: "scroll" }} disableGutters>
+                <Stack
+                    p={2}
+                    gap={1}
+                    maxHeight="100%"
+                    height="min-content"
+                    sx={{ overflowY: "auto" }}
+                >
+                    {messages.map((message, index) => (
+                        <ChatMessage key={index} message={message} userId={user.id} />
+                    ))}
+                    <div ref={messageEndRef}></div>
+                </Stack>
+            </Container>
             <Divider />
-            <Toolbar component="form" onSubmit={handleFormSubmission} sx={{ py: 1 }}>
-                <TextField
-                    value={messageText}
-                    placeholder="Type a message..."
-                    onChange={(e) => setMessageText(e.target.value)}
-                    variant="outlined"
-                    fullWidth
-                    multiline
-                    maxRows={5}
-                    sx={{ flex: 1 }}
-                />
-                <Fab type="submit" color="primary" disabled={!messageText.trim()}>
-                    <SendIcon />
-                </Fab>
-            </Toolbar>
+            <Container maxWidth="md" disableGutters>
+                <Toolbar
+                    component="form"
+                    onSubmit={handleFormSubmission}
+                    sx={{ px: 1.5, py: 1, gap: 1 }}
+                    disableGutters
+                >
+                    <TextField
+                        value={messageText}
+                        placeholder="Type a message..."
+                        onChange={(e) => setMessageText(e.target.value)}
+                        variant="outlined"
+                        fullWidth
+                        multiline
+                        maxRows={5}
+                        sx={{ flex: 1 }}
+                    />
+                    <Fab type="submit" color="primary" disabled={!messageText.trim()}>
+                        <SendIcon />
+                    </Fab>
+                </Toolbar>
+            </Container>
         </Stack>
     );
 }
