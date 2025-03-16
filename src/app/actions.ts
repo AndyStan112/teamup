@@ -94,18 +94,24 @@ export async function getMostLikedProjects() {
     const end = endOfMonth(now);
 
     const projects = await prisma.project.findMany({
-        orderBy: {
-            likeCount: "desc",
-        },
+        orderBy: [
+            {
+                likeCount: "desc",
+            },
+            {
+                dateCreated: "desc",
+            },
+        ],
         where: {
             dateCreated: {
                 gte: start,
                 lte: end,
             },
         },
-        include:{
-            originalCreator:{select:{name:true,profileImage: true}},
-        }
+        include: {
+            originalCreator: { select: { name: true, profileImage: true } },
+        },
+        take: 5,
     });
     return projects as ProjectWithCreator[];
 }
