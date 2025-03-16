@@ -1,9 +1,24 @@
-import { getFriends } from "./actions";
-import Image from "next/image";
-import { Avatar, Button } from "@mui/material";
+"use client";
 
-export default async function Page() {
-    const friends = await getFriends();
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation"; 
+import { getFriends } from "./actions";
+import { Avatar, Button } from "@mui/material";
+import { createChat, Friend } from "../messages/actions";
+
+
+export default function Page() {
+    const [friends, setFriends] = useState<Friend[]>([]);
+    const router = useRouter();
+
+    useEffect(() => {
+        async function fetchFriends() {
+            const friendsList = await getFriends();
+            console.log(friends)
+            setFriends(friendsList);
+        }
+        fetchFriends();
+    }, []);
 
     return (
         <div className="p-4">
@@ -13,7 +28,6 @@ export default async function Page() {
                         <Avatar
                             src={friend.profileImage || "/"}
                             alt={friend.name}
-                            
                             className="rounded-full mr-4"
                         />
                         <div className="flex-1">
@@ -21,7 +35,16 @@ export default async function Page() {
                         </div>
                         <div className="flex gap-2">
                             <Button color="info">See Profile</Button>
-                            <Button>Chat</Button>
+                            <Button
+                                onClick={async () => {
+                                    console.log("clicked")
+                                    const chatId = await createChat([friend]);
+                                    console.log(chatId)
+                                    router.push(`/messages?activeId=${chatId}`);
+                                }}
+                            >
+                                Chat
+                            </Button>
                         </div>
                     </div>
                 ))}
