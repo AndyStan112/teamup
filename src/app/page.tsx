@@ -13,6 +13,8 @@ export interface ProjectWithCreator extends Project{
   }
 }
 
+
+
 export default function Page() {
     const [projects, setProjects] = React.useState<ProjectWithCreator[]>([]);
     const [loading, setLoading] = React.useState(true);
@@ -21,6 +23,7 @@ export default function Page() {
     React.useEffect(() => {
         async function fetchProjects() {
             const data = await getMostLikedProjects();
+          
             setProjects(data);
             setLoading(false);
         }
@@ -58,12 +61,14 @@ export default function Page() {
                         <CardContent sx={{ padding: "8px 16px", minHeight: 60 }}>
                             <Grid container alignItems="center" spacing={1}>
                                 <Grid>
-                                    <Avatar
-                                        src=""
-                                        alt="Profile Avatar"
-                                        sx={{ width: 40, height: 40, cursor: "pointer" }}
-                                        onClick={() => router.push(`/profile/${project.originalCreatorId}`)}
-                                    />
+                                <Avatar
+                                    src={project.originalCreator.profileImage || "/images/default-avatar.png"}
+                                    alt={project.originalCreator.name}
+                                    sx={{ width: 40, height: 40, cursor: "pointer" }}
+                                    onClick={() => router.push(`/profile/${project.originalCreatorId}`)}
+                                />
+                                
+
                                 </Grid>
                                 <Grid>
                                     <Typography variant="body2" component="div" color="white" marginTop={0.8} marginBottom={-1}>

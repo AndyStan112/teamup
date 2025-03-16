@@ -54,7 +54,7 @@ export default function Page() {
         <Container maxWidth="sm">
             <Paper sx={{ p: 3, color: "white", borderRadius: 2 }}>
                 <Typography variant="h4" sx={{ textAlign: "center", mt: 1, mb: 2 }}>
-                    Project Management
+                    Add a Project
                 </Typography>
                 <form onSubmit={handleSubmit} encType="multipart/form-data">
                     <Stack spacing={2}>
