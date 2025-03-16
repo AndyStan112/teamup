@@ -18,8 +18,9 @@ export async function addOrUpdateUser(formData: FormData) {
             });
             if (response?.url) {
                 url = response.url;
+                console.log(url);
                 const clerk = await clerkClient();
-                clerk.users.updateUserProfileImage(userId!, { file: imageFile });
+                await clerk.users.updateUserProfileImage(userId!, { file: imageFile });
             } else {
                 console.error("Error: No URL returned from the upload response.");
             }
