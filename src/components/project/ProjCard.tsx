@@ -5,19 +5,19 @@ import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import { Project } from "@/app/profile/projects/page";
 import { likeProject } from "@/app/profile/projects/actions";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-export default function ProjCard({
-    project,
-    onClick,
-}: {
-    project: Project;
-    onClick?: () => void;
-}): React.ReactElement {
+export default function ProjCard({ project }: { project: Project }): React.ReactElement {
+    const router = useRouter();
     const [isButtonDisabled, setIsButtonDisabled] = React.useState<boolean>(false);
 
     const handleLike = async (projectId: string) => {
         await likeProject(projectId);
         setIsButtonDisabled(true);
+    };
+
+    const gotoProject = () => {
+        router.push(`/profile/projects/${project.id}`);
     };
 
     return (
@@ -28,7 +28,7 @@ export default function ProjCard({
                     image={project.images[0]}
                     alt="Project image"
                     sx={{ objectFit: "cover", maxHeight: "45vh" }}
-                    onClick={onClick}
+                    onClick={gotoProject}
                 />
             )}
             <CardContent sx={{ p: 1.8, pb: "16px !important" }}>
