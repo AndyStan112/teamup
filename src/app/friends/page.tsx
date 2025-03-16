@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 import { getFriends } from "./actions";
 import { Avatar, Button } from "@mui/material";
 import { createChat, Friend } from "../messages/actions";
-
 
 export default function Page() {
     const [friends, setFriends] = useState<Friend[]>([]);
@@ -14,7 +13,7 @@ export default function Page() {
     useEffect(() => {
         async function fetchFriends() {
             const friendsList = await getFriends();
-            console.log(friends)
+            console.log(friends);
             setFriends(friendsList);
         }
         fetchFriends();
@@ -34,12 +33,19 @@ export default function Page() {
                             <p className="font-semibold">{friend.name}</p>
                         </div>
                         <div className="flex gap-2">
-                            <Button color="info">See Profile</Button>
+                            <Button
+                                color="info"
+                                onClick={() => {
+                                    router.push(`/users/${friend.id}`);
+                                }}
+                            >
+                                See Profile
+                            </Button>
                             <Button
                                 onClick={async () => {
-                                    console.log("clicked")
+                                    console.log("clicked");
                                     const chatId = await createChat([friend]);
-                                    console.log(chatId)
+                                    console.log(chatId);
                                     router.push(`/messages?activeId=${chatId}`);
                                 }}
                             >
