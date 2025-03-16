@@ -6,20 +6,7 @@ import { Project } from "@/app/profile/projects/page";
 import { likeProject, addMember } from "@/app/profile/projects/actions";
 import GitHubIcon from "@mui/icons-material/GitHub";
 
-const title = "TeamUp";
-
-const pages = [
-    { label: "Find Partners", href: "/find/partners" },
-    { label: "Find Projects", href: "/find/projects" },
-    { label: "Generate ideas", href: "/generateIdeas" },
-];
-
-const settings = [
-    { label: "My Profile", href: "/profile" },
-    { label: "My Projects", href: "/projects" },
-];
-
-export default function Navbar({ project }: { project: Project }): React.ReactElement {
+export default function ProjCard({ project }: { project: Project }): React.ReactElement {
     const [isButtonDisabled, setIsButtonDisabled] = React.useState<boolean>(false);
 
     const handleLike = async (projectId: string) => {
@@ -78,7 +65,6 @@ export default function Navbar({ project }: { project: Project }): React.ReactEl
                             disabled={isButtonDisabled}
                             variant="outlined"
                             color="primary"
-                            // startIcon={<ThumbUpOffAltIcon />}
                             onClick={
                                 () => addMember(project.id, "user_2uK6ciqLMe62F0DLv4LPem7Ig52") // Open modal to chooose who to add
                             }
