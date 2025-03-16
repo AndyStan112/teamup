@@ -53,7 +53,15 @@ export async function getChats() {
 
     const user = await prisma.user.findUnique({
         where: { id: userId! },
-        select: { chats: true },
+        select: {
+            chats: {
+                include: {
+                    messages: {
+                        include: { sender: { select: { name: true, profileImage: true } } },
+                    },
+                },
+            },
+        },
     });
     console.log(user);
     if (user) return user.chats;
