@@ -42,7 +42,7 @@ export default function ProjCard({ project }: { project: Project }): React.React
     };
 
     return (
-        <Card sx={{ backgroundColor: "#131d4c", color: "white", borderRadius: 2 }}>
+        <Card sx={{ backgroundColor: "#131d4c", color: "white", borderRadius: 2, flex: 1 }}>
             {project.images.length > 0 && (
                 <CardActionArea onClick={gotoProject}>
                     <CardMedia
