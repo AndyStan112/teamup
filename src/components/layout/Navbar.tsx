@@ -214,6 +214,7 @@ export default function Navbar(): React.ReactElement {
                                     my: 2,
                                     color: "white",
                                     display: "block",
+                                    whiteSpace: "nowrap",
                                 }}
                             >
                                 Sign In
