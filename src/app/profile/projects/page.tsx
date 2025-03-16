@@ -51,14 +51,14 @@ export default function Page() {
 
     return (
         <>
-            <Container maxWidth="md" sx={{ mt: 5, maxWidth: { xs: "500px", lg: "500px" } }}>
-                <Typography variant="h4" sx={{ textAlign: "center", mb: 3 }}>
-                    My Projects
-                </Typography>
+            <Container maxWidth="md" sx={{ py: 3, maxWidth: { xs: "500px", lg: "500px" } }}>
+                <Stack spacing={3}>
+                    <Typography variant="h4" textAlign="center">
+                        My Projects
+                    </Typography>
 
-                {loading ? (
-                    <Stack spacing={3}>
-                        {[...Array(3)].map((_, index) => (
+                    {loading ? (
+                        [...Array(3)].map((_, index) => (
                             <Card
                                 key={index}
                                 sx={{
@@ -96,29 +96,25 @@ export default function Page() {
                                     />
                                 </CardContent>
                             </Card>
-                        ))}
-                    </Stack>
-                ) : projects.length === 0 ? (
-                    <Typography variant="h6" sx={{ textAlign: "center", color: "gray" }}>
-                        No projects found.
-                    </Typography>
-                ) : (
-                    <div>
-                        <Stack spacing={3}>
+                        ))
+                    ) : projects.length === 0 ? (
+                        <Typography variant="h6" sx={{ textAlign: "center", color: "gray" }}>
+                            No projects found.
+                        </Typography>
+                    ) : (
+                        <>
                             {projects.map((project) => (
                                 <ProjCard key={project.id} project={project} />
                             ))}
-                        </Stack>
-                        <Typography variant="h4" sx={{ textAlign: "center", mb: 3 }}>
-                            My Joined Projects
-                        </Typography>
-                        <Stack spacing={3}>
+                            <Typography variant="h4" sx={{ textAlign: "center", mb: 3 }}>
+                                My Joined Projects
+                            </Typography>
                             {joinedProjects.map((project, index) => (
                                 <ProjCard key={index} project={project} />
                             ))}
-                        </Stack>
-                    </div>
-                )}
+                        </>
+                    )}
+                </Stack>
             </Container>
 
             <Fab
