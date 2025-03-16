@@ -14,6 +14,7 @@ export async function getSpecificProject(projectId: string) {
             images: true,
             technologies: true,
             originalCreator: true,
+            originalCreatorId: true,
             likeCount: true,
         },
     });

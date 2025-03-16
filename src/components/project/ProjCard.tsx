@@ -22,6 +22,7 @@ export default function ProjCard({ project }: { project: Project }): React.React
     const [isButtonDisabled, setIsButtonDisabled] = React.useState<boolean>(false);
 
     const { user } = useUser();
+
     React.useEffect(() => {
         const checkIfLiked = async () => {
             const isLiked = await checkIfUserLiked(project.id);
@@ -77,7 +78,7 @@ export default function ProjCard({ project }: { project: Project }): React.React
                         </Button>
 
                         <Button
-                            disabled={user?.fullName !== project.originalCreator?.name}
+                            disabled={user?.id !== project.originalCreatorId}
                             variant="outlined"
                             color="primary"
                             LinkComponent={Link}
