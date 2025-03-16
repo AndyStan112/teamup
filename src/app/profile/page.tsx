@@ -14,12 +14,15 @@ import {
     InputAdornment,
     SelectChangeEvent,
     Container,
+    Box,
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { addOrUpdateUser, getCurrentUser } from "./actions";
 import MultiChipSelect from "@/components/inputs/MultiChipSelect";
 import { languages, technologies } from "@/constants/interests";
 import GitHubIcon from "@mui/icons-material/GitHub";
+import { urlToFile } from "@/utils";
+import { useClerk, useUser } from "@clerk/nextjs";
 
 interface ProfileFormValues {
     name: string;
@@ -53,7 +56,7 @@ export default function ProfilePage(): React.ReactElement {
     const [formValues, setFormValues] = useState<ProfileFormValues>({ ...defaultState });
     const [formPrevValues, setFormPrevValues] = useState<ProfileFormValues>({ ...defaultState });
     const [loading, setLoading] = useState(true);
-
+    const { user } = useClerk();
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -61,6 +64,11 @@ export default function ProfilePage(): React.ReactElement {
                 if (userData) {
                     const values = {
                         name: userData.name || "",
+                        profileImage: userData.profileImage
+                            ? await urlToFile(
+                                  user?.imageUrl ? user?.imageUrl : userData.profileImage,
+                              )
+                            : undefined,
                         age: userData.age || 0,
                         gender: userData.gender || "",
                         githubLink: userData.githubLink || "",
@@ -311,15 +319,6 @@ export default function ProfilePage(): React.ReactElement {
                     />
 
                     <Divider />
-                    <Typography>Profile image:</Typography>
-                    <input
-                        type="file"
-                        name="profileImage"
-                        disabled={!edit}
-                        onChange={handleChange}
-                    />
-
-                    <Divider />
                     <Stack direction="row" gap={1}>
                         {edit ? (
                             <>
@@ -347,6 +346,14 @@ export default function ProfilePage(): React.ReactElement {
                         )}
                     </Stack>
                 </Stack>
+                <Box visibility="collapse">
+                    <input
+                        type="file"
+                        name="profileImage"
+                        disabled={!edit}
+                        onChange={handleChange}
+                    />
+                </Box>
             </Stack>
         </Container>
     );
