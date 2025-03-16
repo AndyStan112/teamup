@@ -25,6 +25,7 @@ const pages = [
     { label: "Find Partners", href: "/find/partners" },
     { label: "Find Projects", href: "/find/projects" },
     { label: "Generate ideas", href: "/generateIdeas" },
+    { label: "Projects of the month", href: "/projectsTop" },
 ];
 
 const settings = [
@@ -164,7 +165,7 @@ export default function Navbar(): React.ReactElement {
                         ))}
                     </Box>
 
-                    <Stack direction="row" gap={1} justifyContent="right" flex={1}>
+                    <Stack direction="row" gap={1} justifyContent="right" flex={{ xs: 1, md: 0 }}>
                         <SignedIn>
                             <Tooltip title="Messages">
                                 <IconButton component={Link} href="/messages">
