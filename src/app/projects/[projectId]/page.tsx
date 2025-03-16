@@ -3,6 +3,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getSpecificProject } from "../actions";
 import ProjCard from "@/components/project/ProjCard";
+import { Container } from "@mui/material";
 
 export default function Page() {
     const params = useParams();
@@ -30,8 +31,8 @@ export default function Page() {
     }
 
     return (
-        <div>
+        <Container maxWidth="md" sx={{ py: 2 }}>
             <ProjCard project={project} />
-        </div>
+        </Container>
     );
 }
