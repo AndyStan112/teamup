@@ -13,98 +13,99 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id                   String                 @id
-  name                 String
-  profileImage         String?
-  age                  Int
-  gender               Gender
-  githubLink           String
-  codingTimePreference CodingTimePreference[]
-  country              String
-  city                 String
-  languages            String[]
-  technologies         String[]
-  description          String?
-  createdProjects      Project[]
-  joinedProjects       ProjectMember[]
-  messages             Messages[]
+  model User {
+    id                   String                 @id
+    name                 String
+    profileImage         String?
+    age                  Int
+    gender               Gender
+    githubLink           String
+    codingTimePreference CodingTimePreference[]
+    country              String
+    city                 String
+    languages            String[]
+    technologies         String[]
+    description          String?
+    createdProjects      Project[]
+    joinedProjects       ProjectMember[]
+    messages             Messages[]
 
-  swipedUsers   SwipeUser[] @relation(name: "SwipeSwiper")
-  swipedByUsers SwipeUser[] @relation(name: "SwipeSwiped")
+    swipedUsers   SwipeUser[] @relation(name: "SwipeSwiper")
+    swipedByUsers SwipeUser[] @relation(name: "SwipeSwiped")
 
-  swipedProjects SwipeProject[] @relation(name: "SwipeSwiper")
+    swipedProjects SwipeProject[] @relation(name: "SwipeSwiper")
 
-  friends  Friend[] @relation("UserFriends")
-  friendOf Friend[] @relation("UserFriendsOf")
-  chats     Chat[]
+    friends  Friend[] @relation("UserFriends")
+    friendOf Friend[] @relation("UserFriendsOf")
+    chats    Chat[]
 
-  preferences UserPreference?
+    preferences UserPreference?
 
-  likedProjects LikedProject[]
-}
+    likedProjects LikedProject[]
+  }
 
-model UserPreference {
-  id     String @id @default(uuid())
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @unique
+  model UserPreference {
+    id     String @id @default(uuid())
+    user   User   @relation(fields: [userId], references: [id])
+    userId String @unique
 
-  preferredGender      Gender?
-  codingTimePreference CodingTimePreference[]
-  languages            String[]
-  technologies         String[]
-}
+    preferredGender      Gender?
+    codingTimePreference CodingTimePreference[]
+    languages            String[]
+    technologies         String[]
+  }
 
-model Friend {
-  id       String @id @default(uuid())
-  userId   String
-  friendId String
-  user     User   @relation("UserFriendsOf", fields: [userId], references: [id])
-  friend   User   @relation("UserFriends", fields: [friendId], references: [id])
-}
+  model Friend {
+    id       String @id @default(uuid())
+    userId   String
+    friendId String
+    user     User   @relation("UserFriendsOf", fields: [userId], references: [id])
+    friend   User   @relation("UserFriends", fields: [friendId], references: [id])
+  }
 
-model Project {
-  id                String          @id @default(uuid())
-  title             String
-  description       String
-  githubLink        String
-  images            String[]
-  technologies      String[]
-  originalCreator   User            @relation(fields: [originalCreatorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  originalCreatorId String
-  members           ProjectMember[]
-  likeCount             Int             @default(0)
-  
-  dateCreated       DateTime        @default(now())
-  SwipeProject SwipeProject[] @relation(name: "SwipeSwiped")
-  
-  likes LikedProject[]
-}
+  model Project {
+    id                String          @id @default(uuid())
+    title             String
+    description       String
+    githubLink        String
+    images            String[]
+    technologies      String[]
+    originalCreator   User            @relation(fields: [originalCreatorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    originalCreatorId String
+    members           ProjectMember[]
+    likeCount         Int             @default(0)
 
-model LikedProject {
-  id      String @id @default(uuid())
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  projectId String
-}
+    dateCreated  DateTime       @default(now())
+    SwipeProject SwipeProject[] @relation(name: "SwipeSwiped")
 
-model ProjectMember {
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  projectId String
-  member    User    @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  memberId  String
+    likes LikedProject[]
+    Chat  Chat?
+  }
 
-  @@id([projectId, memberId])
-}
+  model LikedProject {
+    id        String  @id @default(uuid())
+    user      User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    userId    String
+    project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    projectId String
+  }
 
-model Chat {
-  id       String     @id @default(uuid())
-  name  String  @default("")
-  imageUrl String?  @default("")
-  users    User[]
-  messages Messages[]
-}
+  model ProjectMember {
+    project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    projectId String
+    member    User    @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    memberId  String
+
+    @@id([projectId, memberId])
+  }
+
+  model Chat {
+    id        String     @id @default(uuid())
+    project   Project?   @relation(fields: [projectId], references: [id])
+    users     User[]
+    messages  Messages[]
+    projectId String? @unique
+  }
 
 model SwipeUser {
   id String @id @default(uuid())

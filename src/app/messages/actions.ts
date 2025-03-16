@@ -2,32 +2,37 @@
 import { prisma } from "@/utils";
 import { auth } from "@clerk/nextjs/server";
 
-export type Friend = {
-    id: string;
-    name: string;
-    profileImage: string | null;
-};
+export async function createChat({ userId, projectId }: { userId?: string; projectId?: string }) {
+    const { userId: currentUserId } = await auth();
 
-type Project = {
-    name: string;
-    picture: string;
-} | null;
+    if (!currentUserId) throw new Error("User not authenticated.");
 
-export async function createChat(members: Friend[], project: Project = null) {
-    const { userId } = await auth();
-    const memberIds = members.map((member) => member.id);
-    const allMembers = [...memberIds, userId!];
+    if (userId && projectId) throw new Error("Provide only userId or projectId, not both.");
+
+    let allMembers: string[] = [];
+
+    if (userId) {
+        allMembers = [currentUserId, userId];
+    } else if (projectId) {
+        const project = await prisma.project.findUnique({
+            where: { id: projectId },
+            select: { members: { select: { memberId: true } } },
+        });
+
+        if (!project) throw new Error("Project not found.");
+
+        allMembers = [currentUserId, ...project.members.map((m) => m.memberId)];
+    } else {
+        throw new Error("Either userId or projectId must be provided.");
+    }
+
     const existingChat = await prisma.chat.findFirst({
         where: {
             users: {
-                every: {
-                    id: { in: allMembers },
-                },
+                every: { id: { in: allMembers } },
             },
         },
-        select: {
-            id: true,
-        },
+        select: { id: true },
     });
 
     if (existingChat) return existingChat.id;
@@ -37,12 +42,9 @@ export async function createChat(members: Friend[], project: Project = null) {
             users: {
                 connect: allMembers.map((id) => ({ id })),
             },
-            imageUrl: project ? project.picture : members[0].profileImage,
-            name: project ? project.name : members[0].name,
+            project: projectId ? { connect: { id: projectId } } : undefined,
         },
-        select: {
-            id: true,
-        },
+        select: { id: true },
     });
 
     return newChat.id;
@@ -56,6 +58,19 @@ export async function getChats() {
         select: {
             chats: {
                 include: {
+                    project: {
+                        select: {
+                            title: true,
+                            images: true,
+                        },
+                    },
+                    users: {
+                        select: {
+                            id: true,
+                            name: true,
+                            profileImage: true,
+                        },
+                    },
                     messages: {
                         include: { sender: { select: { name: true, profileImage: true } } },
                     },
@@ -63,7 +78,19 @@ export async function getChats() {
             },
         },
     });
-    console.log(user);
-    if (user) return user.chats;
-    return [];
+
+    if (!user) return [];
+
+    return user.chats.map((chat) => {
+        const isProjectChat = chat.project !== null;
+        const otherUser = chat.users.find((u) => u.id !== userId);
+
+        return {
+            id: chat.id,
+            name: isProjectChat ? chat.project!.title : otherUser?.name || "Unknown Chat",
+            imageUrl: isProjectChat
+                ? chat.project!.images?.[0] || "/default_project.png"
+                : otherUser?.profileImage || "/default_avatar.png",
+        };
+    });
 }

@@ -17,7 +17,7 @@ export default function Chat({ chatId }: ChatProps) {
     useEffect(() => {
         const ablyClient = new Ably.Realtime({ authUrl: "/api/socket/auth" });
         setClient(ablyClient);
-
+        
         return () => {
             ablyClient.close();
         };
