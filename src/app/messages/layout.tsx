@@ -36,7 +36,12 @@ export default function MessagesPage({ children }: { children: React.ReactNode }
     }, []);
 
     return (
-        <Stack flex={1} direction="row" justifyContent="stretch">
+        <Stack
+            flex={1}
+            direction="row"
+            justifyContent="stretch"
+            maxHeight={{ xs: "calc(100vh - 56px)", md: "calc(100vh - 64px)" }}
+        >
             <Stack
                 flex={1}
                 minWidth={300}
