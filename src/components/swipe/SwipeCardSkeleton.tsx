@@ -1,12 +1,25 @@
 import React from "react";
 import { Skeleton, Box, Avatar, Chip, Stack } from "@mui/material";
 
-const SwipeCardSkeleton: React.FC = () => {
+interface SwipeCardSkeletonProps {
+    projectMode: boolean;
+}
+
+const SwipeCardSkeleton: React.FC<SwipeCardSkeletonProps> = ({ projectMode = false }) => {
     return (
-        <Box display="flex" flexDirection="column" alignItems="center" mt="-60px">
-            <Skeleton variant="circular" animation={false}>
-                <Avatar sx={{ width: 120, height: 120 }} />
-            </Skeleton>
+        <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            mt={projectMode ? 0 : "-60px"}
+        >
+            {projectMode ? (
+                <Skeleton variant="rectangular" height="100px" />
+            ) : (
+                <Skeleton variant="circular" animation={false}>
+                    <Avatar sx={{ width: 120, height: 120 }} />
+                </Skeleton>
+            )}
             <Stack p={1} gap={0.7} width="100%" alignItems="center">
                 <Skeleton variant="text" width="60%" height={35} animation={false} />
                 <Skeleton variant="text" width="30%" animation={false} />
