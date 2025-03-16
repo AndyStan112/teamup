@@ -4,6 +4,7 @@ import { put } from "@vercel/blob"; // Import Vercel Blob SDK
 import { auth } from "@clerk/nextjs/server";
 import { Project } from "@prisma/client";
 import { startOfMonth, endOfMonth } from "date-fns";
+import { ProjectWithCreator } from "./page";
 
 export async function createProject(formData: FormData) {
     const { userId } = await auth();
@@ -102,8 +103,11 @@ export async function getMostLikedProjects() {
                 lte: end,
             },
         },
+        include:{
+            originalCreator:{select:{name:true,profileImage: true}},
+        }
     });
-    return projects;
+    return projects as ProjectWithCreator[];
 }
 
 export async function editProject(originalProjectTitle: string, formData: FormData) {

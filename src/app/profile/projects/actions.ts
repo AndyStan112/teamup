@@ -145,3 +145,29 @@ export async function editProject(originalProjectTitle: string, formData: FormDa
     });
     return project;
 }
+
+export async function addMember(projectId: string, userId: string) {
+    const user = await prisma.projectMember.create({
+        data: {
+            memberId: userId,
+            projectId: projectId,
+        },
+    });
+
+    const project = await prisma.project.update({
+        where: {
+            id: projectId,
+        },
+        data: {
+            members: {
+                connect: {
+                    projectId_memberId: {
+                        projectId: projectId,
+                        memberId: userId,
+                    },
+                },
+            },
+        },
+    });
+    return project;
+}
