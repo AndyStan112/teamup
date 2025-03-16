@@ -1,8 +1,7 @@
 "use client";
 import React from "react";
-import { Box, Container, useTheme } from "@mui/material";
+import { Box, Container, Stack, Typography, useTheme } from "@mui/material";
 import RobotAnimation from "@/components/robot/RobotAnimation";
-import SpeechBubble from "@/components/speech-bubble/SpeechBubble";
 
 export default function LandingPage() {
     const theme = useTheme();
@@ -10,40 +9,35 @@ export default function LandingPage() {
     return (
         <Box
             sx={{
-                minHeight: "100vh",
+                height: {xs: "calc(100vh - 56px)", md: "calc(100vh - 64px)"},
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 backgroundImage: "linear-gradient(to right, #ca5a29, #a31755)",
                 color: "white",
-                textAlign: "center",
                 position: "relative",
+                px: 3,
             }}
         >
-            <Container 
-                sx={{ 
-                    position: "relative", 
-                    display: "flex", 
-                    justifyContent: "center", 
-                    alignItems: "center", 
-                }}
-            >
-                {/* Background Circle */}
-                <Box
-                    sx={{
-                        width: 250, 
-                        height: 250,
-                        borderRadius: "50%",
-                        backgroundColor: theme.palette.background.paper,
-                        position: "absolute",
-                        bottom: 10, 
-                        zIndex: 0,
-                        transform: "translateX(-3px)"
-                    }}
-                />
+            <Container maxWidth="md">
+                <Stack
+                    spacing={5}
+                    alignItems="center"
+                    direction={{ xs: "column-reverse", sm: "column-reverse", md: "row", lg: "row" }}
+                >
+                    <Stack gap={2}>
+                        <Typography variant="h4" fontWeight="bold" textAlign="center">
+                            Welcome to TeamUp!
+                        </Typography>
+                        <Typography variant="h6" fontWeight="normal" lineHeight={1.6}>
+                            Find partners, discover new projects, and generate ideas
+                            with like-minded developers. Join the future of collaborative
+                            innovation.
+                        </Typography>
+                    </Stack>
 
-                {/* Robot Animation Component */}
-                <RobotAnimation />
+                    <RobotAnimation />
+                </Stack>
             </Container>
         </Box>
     );
