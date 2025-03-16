@@ -60,6 +60,8 @@ export default function ChatBox({ chatId }: ChatBoxProps) {
             try {
                 const response = await axios.get(`/api/chat/${chatId}/messages`);
                 setMessages(response.data);
+                console.log("=====================================");
+                console.log(response.data)
             } catch (error) {
                 console.error("Error fetching messages:", error);
             }

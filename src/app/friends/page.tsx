@@ -79,7 +79,7 @@ export default function FriendsList() {
                                     size="small"
                                     onClick={async () => {
                                         const chatId = await createChat({ userId: friend.id });
-                                        router.push(`/messages?activeId=${chatId}`);
+                                        router.push(`/messages/${chatId}`);
                                     }}
                                 >
                                     Chat

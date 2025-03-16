@@ -9,12 +9,12 @@ interface ChatMessageProps {
     groupChat?: boolean;
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ message, userId, groupChat = false }) => {
+const ChatMessage: React.FC<ChatMessageProps> = ({ message, userId}) => {
     const isMyself = message.senderId === userId;
 
     return (
         <Stack direction="column" gap={0.5} alignItems={isMyself ? "end" : "start"}>
-            {groupChat && !isMyself && (
+            { !isMyself && (
                 <Stack direction="row" alignItems="center" gap={0.5}>
                     <Avatar src={message.sender.profileImage} sx={{ width: 24, height: 24 }} />
                     <Typography variant="body2" fontSize={12} color="textSecondary">
