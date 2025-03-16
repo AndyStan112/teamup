@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { Button } from "@mui/material";
+import { Avatar, Button } from "@mui/material";
 import { getChats } from "./actions";
 import { type Chat } from "@prisma/client";
 const Chat = dynamic(() => import("@/components/Chat"), { ssr: false });
@@ -26,7 +26,12 @@ export default function MessagesPage() {
                 <h2 className="font-semibold mb-4">Chats</h2>
                 <ul>
                     {chats.map((chat) => (
-                        <li key={chat.id} className="mb-2">
+                        <li key={chat.id} className="mb-2 flex">
+                             <Avatar
+                            src={chat.imageUrl || "/"}
+                            alt={chat.name}
+                            className="rounded-full mr-4"
+                        />
                             <Button
                                 aria-selected={activeChat === chat.id}
                                 className="w-full"
