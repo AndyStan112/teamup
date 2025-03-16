@@ -82,7 +82,7 @@ datasource db {
 
     likes LikedProject[]
     Chat  Chat?
-  
+    volunteer Boolean?
     PendingProjectMember PendingProjectMember[]
 }
 
