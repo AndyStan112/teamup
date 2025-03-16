@@ -2,6 +2,7 @@
 import React from "react";
 import {
 
+    Box,
     Button,
 
     Card,
@@ -19,6 +20,7 @@ import {
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import { Project } from "@/app/profile/projects/page";
 import { likeProject } from "@/app/profile/projects/actions";
+import GitHubIcon from "@mui/icons-material/GitHub";
 
 const title = "TeamUp";
 
@@ -33,72 +35,77 @@ const settings = [
     { label: "My Projects", href: "/projects" },
 ];
 
-export default function Navbar({project}:{project:Project}): React.ReactElement {
+export default function Navbar({ project }: { project: Project }): React.ReactElement {
 
     const [isButtonDisabled, setIsButtonDisabled] = React.useState<boolean>(false);
 
     const handleLike = async (projectId: string) => {
         await likeProject(projectId);
-       setIsButtonDisabled(true);
+        setIsButtonDisabled(true);
     };
 
     return (<Card
- 
+
         sx={{ backgroundColor: "#131d4c", color: "white", borderRadius: 2 }}
     >
         {project.images.length > 0 && (
             <CardMedia
                 component="img"
-                height="200"
+                height="100"
                 image={project.images[0]}
                 alt="Project image"
                 sx={{ objectFit: "cover" }}
             />
         )}
-        <CardContent>
-            <Typography variant="h6">{project.title}</Typography>
-            <Typography variant="body2" sx={{ mt: 1 }}>
-                {project.description}
-            </Typography>
+        <CardContent sx={{p: 1.8, pb: "16px !important"}}>
+            <Stack gap={1}>
 
-            <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
-                {project.technologies.map((tech, index) => (
-                    <Chip
-                        key={index}
-                        label={tech}
-                        sx={{ bgcolor: "primary.main", color: "white" }}
-                    />
-                ))}
-            </Stack>
+                <Box>
+                    <Typography variant="h6">{project.title}</Typography>
+                    <Typography variant="body2">
+                        {project.description}
+                    </Typography>
+                </Box>
 
-            <Typography sx={{ mt: 2, color: "lightblue", cursor: "pointer" }}>
-                <a
-                    href={project.githubLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                <Stack direction="row" spacing={1} mt="-5px">
+                    {project.technologies.slice(0, 3).map((tech, index) => (
+                        <Chip
+                            key={index}
+                            label={tech}
+                        />
+                    ))}
+                </Stack>
+
+                <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
                 >
-                    GitHub Link
-                </a>
-            </Typography>
+                    <Button
+                        disabled={isButtonDisabled}
+                        variant="outlined"
+                        color="primary"
+                        startIcon={<ThumbUpOffAltIcon />}
+                        onClick={() => handleLike(project.id)}
+                    >
+                        Like ({isButtonDisabled ? project.likeCount + 1 : project.likeCount})
+                    </Button>
 
-            <Stack
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-                sx={{ mt: 3 }}
-            >
-                <Button
-                    disabled={isButtonDisabled}
-                    variant="contained"
-                    color="secondary"
-                    startIcon={<ThumbUpOffAltIcon />}
-                    onClick={() => handleLike(project.id)}
-                >
-                    Like ({ isButtonDisabled? project.likeCount +1 : project.likeCount})
-                </Button>
+                    <Button
+                        variant="outlined"
+                        color="inherit"
+                        startIcon={<GitHubIcon />}
+                        component="a"
+                        href={project.githubLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        GitHub Profile
+                    </Button>
+                </Stack>
             </Stack>
         </CardContent>
     </Card>
 
-);
+    );
 }

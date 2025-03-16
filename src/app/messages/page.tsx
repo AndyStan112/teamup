@@ -1,18 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { Button } from "@mui/material";
+import { getChats } from "./actions";
+import { type Chat } from "@prisma/client";
 const Chat = dynamic(() => import("@/components/Chat"), { ssr: false });
 
-const chats = [
-    { id: "1", name: "Iris Veress" },
-    { id: "2", name: "John Doe" },
-    { id: "3", name: "Jane Smith" },
-];
+
 
 export default function MessagesPage() {
     const [activeChat, setActiveChat] = useState("");
+    const [chats,setChats] = useState<Chat[]>([])
+    useEffect(()=>{
+        const  fetchChats= async () => {
+            const chats =await   getChats();
+            setChats(chats);
+        }
+        fetchChats();
+    },[])
 
     return (
         <div className="flex h-screen">

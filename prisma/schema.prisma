@@ -28,7 +28,7 @@ model User {
   description          String?
   createdProjects      Project[]
   joinedProjects       ProjectMember[]
-  Messages             Messages[]
+  messages             Messages[]
 
   swipedUsers   SwipeUser[] @relation(name: "SwipeSwiper")
   swipedByUsers SwipeUser[] @relation(name: "SwipeSwiped")
@@ -37,7 +37,7 @@ model User {
 
   friends  Friend[] @relation("UserFriends")
   friendOf Friend[] @relation("UserFriendsOf")
-  Chat     Chat[]
+  chats     Chat[]
 
   preferences UserPreference?
 
@@ -100,6 +100,8 @@ model ProjectMember {
 
 model Chat {
   id       String     @id @default(uuid())
+  name  String  @default("")
+  imageUrl String?  @default("")
   users    User[]
   messages Messages[]
 }
