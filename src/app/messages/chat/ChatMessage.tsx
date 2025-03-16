@@ -24,8 +24,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, userId, groupChat = 
                 component={Stack}
                 px={1}
                 py={0.5}
-                maxWidth="60%"
+                maxWidth="90%"
                 width="fit-content"
+                overflow="hidden"
+                sx={{
+                    "& img": {
+                        maxHeight: 200,
+                    },
+                }}
             >
                 <Typography component="div" variant="body1">
                     <MuiMarkdown>{message.message}</MuiMarkdown>
