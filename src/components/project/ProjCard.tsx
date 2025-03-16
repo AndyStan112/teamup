@@ -41,6 +41,8 @@ export default function ProjCard({ project }: { project: Project }): React.React
         router.push(`/projects/${project.id}`);
     };
 
+    const myOwnProject = user?.id === project.originalCreatorId;
+
     return (
         <Card sx={{ backgroundColor: "#131d4c", color: "white", borderRadius: 2, flex: 1 }}>
             {project.images.length > 0 && (
@@ -77,15 +79,17 @@ export default function ProjCard({ project }: { project: Project }): React.React
                             Like ({isButtonDisabled ? project.likeCount + 1 : project.likeCount})
                         </Button>
 
-                        <Button
-                            disabled={user?.id !== project.originalCreatorId}
-                            variant="outlined"
-                            color="primary"
-                            LinkComponent={Link}
-                            href={`/profile/projects/members/${project.id}`}
-                        >
-                            Add Member
-                        </Button>
+                        {myOwnProject && (
+                            <Button
+                                disabled={!myOwnProject}
+                                variant="outlined"
+                                color="primary"
+                                LinkComponent={Link}
+                                href={`/profile/projects/members/${project.id}`}
+                            >
+                                Add Member
+                            </Button>
+                        )}
                     </Stack>
                 </Stack>
             </CardContent>
