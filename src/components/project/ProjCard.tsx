@@ -21,10 +21,9 @@ export default function ProjCard({ project }: { project: Project }): React.React
             {project.images.length > 0 && (
                 <CardMedia
                     component="img"
-                    height="100"
                     image={project.images[0]}
                     alt="Project image"
-                    sx={{ objectFit: "cover" }}
+                    sx={{ objectFit: "cover", maxHeight:"45vh" }}
                 />
             )}
             <CardContent sx={{ p: 1.8, pb: "16px !important" }}>
@@ -43,24 +42,12 @@ export default function ProjCard({ project }: { project: Project }): React.React
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
                         <Button
                             disabled={isButtonDisabled}
-                            variant="outlined"
+                            variant="contained"
                             color="primary"
                             startIcon={<ThumbUpOffAltIcon />}
                             onClick={() => handleLike(project.id)}
                         >
                             Like ({isButtonDisabled ? project.likeCount + 1 : project.likeCount})
-                        </Button>
-
-                        <Button
-                            variant="outlined"
-                            color="inherit"
-                            startIcon={<GitHubIcon />}
-                            component="a"
-                            href={project.githubLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            GitHub Profile
                         </Button>
 
                         <Button
