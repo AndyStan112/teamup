@@ -5,7 +5,7 @@ import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import { getUserSwipe, swipeUser } from "./actions";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
+import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
 import SwipeCard from "@/components/swipe/SwipeCard";
 
 const genderMapping: { [key: string]: string } = {
@@ -123,7 +123,7 @@ export default function SwipePartners() {
                                 </Button>
                             </Stack>
                         </>
-                    ) : <>
+                    ) : (
                         <Stack flex={1} alignItems="center" justifyContent="center" gap={1}>
                             <Typography variant="h2" fontWeight="100">
                                 <SentimentSatisfiedAltIcon fontSize="inherit" />
@@ -131,7 +131,7 @@ export default function SwipePartners() {
                             <Typography variant="h5">List is empty</Typography>
                             <Typography variant="body1">You found all that was to find.</Typography>
                         </Stack>
-                    </>}
+                    )}
                 </SwipeCard>
 
                 <Stack direction="row" justifyContent="space-evenly">
