@@ -29,7 +29,7 @@ const pages = [
 
 const settings = [
     { label: "My Profile", href: "/profile" },
-    { label: "My Projects", href: "/projects" },
+    { label: "My Projects", href: "/profile/projects" },
 ];
 
 export default function Navbar(): React.ReactElement {
