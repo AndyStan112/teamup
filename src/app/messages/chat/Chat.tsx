@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Ably from "ably";
 import { AblyProvider, ChannelProvider } from "ably/react";
 import ChatBox from "./ChatBox";
+import { CircularProgress, Stack } from "@mui/material";
 
 interface ChatProps {
     chatId: string;
@@ -17,13 +18,18 @@ export default function Chat({ chatId }: ChatProps) {
     useEffect(() => {
         const ablyClient = new Ably.Realtime({ authUrl: "/api/socket/auth" });
         setClient(ablyClient);
-        
+
         return () => {
             ablyClient.close();
         };
     }, []);
 
-    if (!isLoaded) return <p>Loading chat...</p>;
+    if (!isLoaded)
+        return (
+            <Stack flex={3} alignItems="center" justifyContent="center">
+                <CircularProgress />
+            </Stack>
+        );
     if (!user) return <p>You must be logged in to access the chat.</p>;
     if (!client) return <p>Initializing chat...</p>;
 

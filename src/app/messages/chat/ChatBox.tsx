@@ -5,6 +5,7 @@ import { useAbly, useChannel } from "ably/react";
 import axios from "axios";
 import {
     Avatar,
+    CircularProgress,
     Container,
     Divider,
     Fab,
@@ -96,7 +97,12 @@ export default function ChatBox({ chatId }: ChatBoxProps) {
         sendChatMessage();
     };
 
-    if (!user) return <p className="text-center text-gray-600 mt-5">Loading user...</p>;
+    if (!user)
+        return (
+            <Stack flex={3} alignItems="center" justifyContent="center">
+                <CircularProgress />
+            </Stack>
+        );
 
     return (
         <Stack flex={3} sx={{ backgroundColor: "#161b22" }}>
@@ -113,7 +119,11 @@ export default function ChatBox({ chatId }: ChatBoxProps) {
                 <Avatar />
             </Toolbar>
             <Divider />
-            <Container maxWidth="md" sx={{ flex: 1, overflowY: "scroll" }} disableGutters>
+            <Container
+                maxWidth="md"
+                sx={{ flex: 1, overflowY: "scroll", overflowX: "hidden" }}
+                disableGutters
+            >
                 <Stack
                     p={2}
                     gap={1}
