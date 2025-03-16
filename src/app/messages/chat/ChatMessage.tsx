@@ -16,9 +16,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, userId}) => {
         <Stack direction="column" gap={0.5} alignItems={isMyself ? "end" : "start"}>
             { !isMyself && (
                 <Stack direction="row" alignItems="center" gap={0.5}>
-                    <Avatar src={message.sender.profileImage} sx={{ width: 24, height: 24 }} />
+                    <Avatar src={message?.sender?.profileImage||""} sx={{ width: 24, height: 24 }} />
                     <Typography variant="body2" fontSize={12} color="textSecondary">
-                        {message.sender.name}
+                        {message?.sender?.name ||""}
                     </Typography>
                 </Stack>
             )}

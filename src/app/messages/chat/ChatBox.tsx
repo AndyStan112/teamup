@@ -102,9 +102,10 @@ export default function ChatBox({ chatId }: ChatBoxProps) {
         };
         try {
             await axios.post(`/api/chat/${chatId}/messages`, newMessage);
-
+            console.log(user);
+            const publishMessage = {...newMessage,timestamp:Date.now()}
             const channel = ably.channels.get(`chat-${chatId}`);
-            channel.publish("message", newMessage);
+            channel.publish("message", publishMessage);
 
             setMessageText("");
         } catch (error) {
