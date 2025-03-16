@@ -140,11 +140,9 @@ export default function Page() {
                 />
               </CardActionArea>
             ) : (
-              <Box sx={{ padding: "16px", backgroundColor: "rgba(255,255,255,0.1)", textAlign: "center" }}>
-                <Typography variant="body2" color="white">
-                  No image available
-                </Typography>
-              </Box>
+              <>
+            
+              </>
             )}
 
             <CardContent>
