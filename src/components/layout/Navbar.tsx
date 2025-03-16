@@ -30,6 +30,7 @@ const pages = [
 const settings = [
     { label: "My Profile", href: "/profile" },
     { label: "My Projects", href: "/profile/projects" },
+    { label: "My Friends", href: "/friends" },
 ];
 
 export default function Navbar(): React.ReactElement {
@@ -167,8 +168,8 @@ export default function Navbar(): React.ReactElement {
                         ))}
                     </Box>
 
-                    <SignedIn>
-                        <Stack direction="row" gap={1} justifyContent="right" flex={1}>
+                    <Stack direction="row" gap={1} justifyContent="right" flex={1}>
+                        <SignedIn>
                             <Tooltip title="Messages">
                                 <IconButton component={Link} href="/messages">
                                     <MessageIcon />
@@ -208,20 +209,20 @@ export default function Navbar(): React.ReactElement {
                                 <Divider />
                                 <MenuItem onClick={() => signOut()}>Logout</MenuItem>
                             </Menu>
-                        </Stack>
-                    </SignedIn>
-                    <SignedOut>
-                        <Button
-                            onClick={() => redirectToSignIn()}
-                            sx={{
-                                my: 2,
-                                color: "white",
-                                display: "block",
-                            }}
-                        >
-                            Sign In
-                        </Button>
-                    </SignedOut>
+                        </SignedIn>
+                        <SignedOut>
+                            <Button
+                                onClick={() => redirectToSignIn()}
+                                sx={{
+                                    my: 2,
+                                    color: "white",
+                                    display: "block",
+                                }}
+                            >
+                                Sign In
+                            </Button>
+                        </SignedOut>
+                    </Stack>
                 </Toolbar>
             </Container>
         </AppBar>
