@@ -157,11 +157,7 @@ export default function Navbar(): React.ReactElement {
                                 href={page.href}
                                 component={Link}
                                 onClick={handleCloseNavMenu}
-                                sx={{
-                                    my: 2,
-                                    color: "white",
-                                    display: "block",
-                                }}
+                                color="inherit"
                             >
                                 {page.label}
                             </Button>
