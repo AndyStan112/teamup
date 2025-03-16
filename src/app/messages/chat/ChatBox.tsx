@@ -116,8 +116,14 @@ export default function ChatBox({ chatId }: ChatBoxProps) {
                 <Avatar />
             </Toolbar>
             <Divider />
-            <Container maxWidth="md" sx={{ flex: 1, overflowY: "scroll" }}>
-                <Stack flex={1} p={2} gap={1}>
+            <Container maxWidth="md" sx={{ flex: 1, overflowY: "scroll" }} disableGutters>
+                <Stack
+                    p={2}
+                    gap={1}
+                    maxHeight="100%"
+                    height="min-content"
+                    sx={{ overflowY: "auto" }}
+                >
                     {messages.map((message, index) => (
                         <ChatMessage key={index} message={message} userId={user.id} />
                     ))}
@@ -125,8 +131,13 @@ export default function ChatBox({ chatId }: ChatBoxProps) {
                 </Stack>
             </Container>
             <Divider />
-            <Container maxWidth="md">
-                <Toolbar component="form" onSubmit={handleFormSubmission} sx={{ py: 1 }}>
+            <Container maxWidth="md" disableGutters>
+                <Toolbar
+                    component="form"
+                    onSubmit={handleFormSubmission}
+                    sx={{ px: 1.5, py: 1, gap: 1 }}
+                    disableGutters
+                >
                     <TextField
                         value={messageText}
                         placeholder="Type a message..."
