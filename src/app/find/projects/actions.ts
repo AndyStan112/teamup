@@ -1,9 +1,67 @@
 "use server";
 import { prisma } from "@/utils";
-import { put } from "@vercel/blob"; // Import Vercel Blob SDK
 import { auth } from "@clerk/nextjs/server";
-import { Project } from "@prisma/client";
+import { Direction } from "@prisma/client";
 import { startOfMonth, endOfMonth } from "date-fns";
+import { Project } from "@prisma/client";
+import { put } from "@vercel/blob";
+
+export async function getProjectSwipe() {
+    const { userId } = await auth();
+    if (!userId) {
+        throw new Error("User not authenticated");
+    }
+
+    const swipedProjectIds = await prisma.swipeProject.findMany({
+        where: { swiperId: userId },
+        select: { swipedId: true },
+    });
+
+    const swipedIdsSet = swipedProjectIds.map((swipe) => swipe.swipedId);
+
+    const projectCount = await prisma.project.count();
+    const skip = Math.floor(Math.random() * (projectCount - swipedIdsSet.length));
+    const user = await prisma.project.findFirst({
+        where: { id: { notIn: swipedIdsSet } },
+        skip,
+        select: {
+            id: true,
+            title: true,
+            images: true,
+            technologies: true,
+            githubLink: true,
+            description: true,
+        },
+    });
+    return user;
+}
+
+export async function getProjectSwipeDetails(projectId: string) {
+    const project = await prisma.project.findUnique({
+        where: {
+            id: projectId!,
+        },
+        select: {
+            title: true,
+            images: true,
+            technologies: true,
+            githubLink: true,
+            description: true,
+        },
+    });
+    return project;
+}
+
+export async function swipeProject(direction: Direction, swipedId: string) {
+    await prisma.swipeProject.create({
+        data: {
+            swiperId: (await auth()).userId!,
+            swipedId,
+            direction,
+        },
+    });
+    return await getProjectSwipe();
+}
 
 export async function createProject(formData: FormData) {
     const { userId } = await auth();
@@ -56,12 +114,30 @@ export async function getUserProjects(userId: string) {
 }
 
 export async function likeProject(projectId: string) {
+    const { userId } = await auth();
+    const likeCount = await prisma.likedProject.count({
+        where: {
+            userId: userId!,
+            projectId,
+        },
+    });
+
+    if (likeCount > 0) {
+        return;
+    }
+
+    await prisma.likedProject.create({
+        data: {
+            userId: userId!,
+            projectId,
+        },
+    });
     const updatedProject = await prisma.project.update({
         where: {
             id: projectId,
         },
         data: {
-            likes: {
+            likeCount: {
                 increment: 1,
             },
         },
@@ -76,7 +152,7 @@ export async function getMostLikedProjects() {
 
     const projects = await prisma.project.findMany({
         orderBy: {
-            likes: "desc",
+            likeCount: "desc",
         },
         where: {
             dateCreated: {
@@ -88,10 +164,7 @@ export async function getMostLikedProjects() {
     return projects;
 }
 
-export async function editProject(
-    originalProjectTitle: string,
-    formData: FormData
-) {
+export async function editProject(originalProjectTitle: string, formData: FormData) {
     const { userId } = await auth();
 
     const images = formData.getAll("images") as File[];
@@ -127,6 +200,32 @@ export async function editProject(
             images: imageUrls,
             technologies: formDataObject.technologies.toString().split(","),
         } as Project,
+    });
+    return project;
+}
+
+export async function addMember(projectId: string, userId: string) {
+    await prisma.projectMember.create({
+        data: {
+            memberId: userId,
+            projectId: projectId,
+        },
+    });
+
+    const project = await prisma.project.update({
+        where: {
+            id: projectId,
+        },
+        data: {
+            members: {
+                connect: {
+                    projectId_memberId: {
+                        projectId: projectId,
+                        memberId: userId,
+                    },
+                },
+            },
+        },
     });
     return project;
 }

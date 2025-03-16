@@ -147,7 +147,7 @@ export async function editProject(originalProjectTitle: string, formData: FormDa
 }
 
 export async function addMember(projectId: string, userId: string) {
-    const user = await prisma.projectMember.create({
+    await prisma.projectMember.create({
         data: {
             memberId: userId,
             projectId: projectId,
