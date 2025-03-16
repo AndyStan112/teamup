@@ -27,7 +27,7 @@ export default function ProjCard({ project }: { project: Project }): React.React
     };
 
     const gotoProject = () => {
-        router.push(`/profile/projects/${project.id}`);
+        router.push(`/projects/${project.id}`);
     };
 
     return (
