@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 import { getCurrentUserProjects } from "./actions";
 import {
     Typography,
@@ -29,7 +29,7 @@ export type Project = {
 export default function Page() {
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
-    const router = useRouter(); 
+    const router = useRouter();
 
     useEffect(() => {
         async function fetchProjects() {

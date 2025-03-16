@@ -69,10 +69,10 @@ export default function SwipeProjects() {
                             {project.images.length > 0 && (
                                 <CardMedia
                                     component="img"
-                                    height="100"
+                                    height="auto"
                                     image={project.images[0]}
                                     alt="Project image"
-                                    sx={{ objectFit: "cover", maxHeight: "50%" }}
+                                    sx={{ objectFit: "cover", maxHeight: "45vh" }}
                                 />
                             )}
                             <Stack flex={1} p={2} gap={1}>

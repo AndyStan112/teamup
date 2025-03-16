@@ -152,9 +152,11 @@ export default function Page() {
                             <CardActionArea onClick={() => router.push(`/projects/${project.id}`)}>
                                 <CardMedia
                                     component="img"
-                                    height="140"
+                                    height="auto"
+                                    sx={{ maxHeight: "45vh" }}
                                     image={project.images?.[0] || "/images/default-project.png"}
                                     alt="Project Image"
+
                                 />
                             </CardActionArea>
                         ) : (
