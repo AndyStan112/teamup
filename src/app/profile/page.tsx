@@ -20,6 +20,8 @@ import { addOrUpdateUser, getCurrentUser } from "./actions";
 import MultiChipSelect from "@/components/inputs/MultiChipSelect";
 import { languages, technologies } from "@/constants/interests";
 import GitHubIcon from "@mui/icons-material/GitHub";
+import { urlToFile } from "@/utils";
+import { useClerk, useUser } from "@clerk/nextjs";
 
 interface ProfileFormValues {
     name: string;
@@ -53,7 +55,7 @@ export default function ProfilePage(): React.ReactElement {
     const [formValues, setFormValues] = useState<ProfileFormValues>({ ...defaultState });
     const [formPrevValues, setFormPrevValues] = useState<ProfileFormValues>({ ...defaultState });
     const [loading, setLoading] = useState(true);
-
+    const {user }= useClerk()
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -62,7 +64,7 @@ export default function ProfilePage(): React.ReactElement {
                     const values = {
                         name: userData.name || "",
                         profileImage: userData.profileImage
-                            ? new File([], userData.profileImage)
+                            ? ( await urlToFile( user?.imageUrl ? user?.imageUrl : userData.profileImage))
                             : undefined,
                         age: userData.age || 0,
                         gender: userData.gender || "",
@@ -94,10 +96,8 @@ export default function ProfilePage(): React.ReactElement {
         const { name, value, type, files } = event.target;
         console.log(event.target);
         if (type === "file" && files && files.length > 0) {
-            // For file input, set the file object
             setFormValues((prev) => ({ ...prev, [name]: files[0] }));
         } else {
-            // For other inputs, update the state normally
             setFormValues((prev) => ({ ...prev, [name]: value }));
         }
     };

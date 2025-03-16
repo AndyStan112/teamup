@@ -3,6 +3,7 @@ import { talk } from "./action";
 import MultiChipSelect from "@/components/inputs/MultiChipSelect";
 import { technologies } from "@/constants/interests";
 import { useState } from "react";
+import MuiMarkdown from "mui-markdown";
 
 export default function Page() {
     const [formValues, setFormValues] = useState({
@@ -10,6 +11,8 @@ export default function Page() {
         focus: [],
         giveImplementationSteps: false,
     });
+
+    const [response, setResponse] = useState<string | null>(null); // State to store response
 
     const focusValues = [
         "Frontend",
@@ -33,7 +36,8 @@ export default function Page() {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        await talk(formValues);
+        const result = await talk(formValues);
+        setResponse(result);
     };
 
     return (
@@ -67,15 +71,13 @@ export default function Page() {
                         }))
                     }
                 />
-                <br></br>
-                <button
-                    className="bg-blue-500 p-2 rounded-2xl"
-                    type="submit"
-                    name="giveImplementationSteps"
-                >
+                <br />
+                <button className="bg-blue-500 p-2 rounded-2xl" type="submit">
                     Generate project idea
                 </button>
             </form>
+
+            <MuiMarkdown>{response}</MuiMarkdown>
         </div>
     );
 }
