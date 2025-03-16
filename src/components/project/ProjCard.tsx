@@ -13,13 +13,22 @@ import {
 } from "@mui/material";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import { Project } from "@/app/profile/projects/page";
-import { likeProject } from "@/app/profile/projects/actions";
+import { likeProject, checkIfUserLiked } from "@/app/profile/projects/actions";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function ProjCard({ project }: { project: Project }): React.ReactElement {
     const router = useRouter();
     const [isButtonDisabled, setIsButtonDisabled] = React.useState<boolean>(false);
+
+    React.useEffect(() => {
+        const checkIfLiked = async () => {
+            const isLiked = await checkIfUserLiked(project.id);
+            setIsButtonDisabled(isLiked);
+        };
+
+        checkIfLiked();
+    }, [project.id]);
 
     const handleLike = async (projectId: string) => {
         await likeProject(projectId);
@@ -67,7 +76,7 @@ export default function ProjCard({ project }: { project: Project }): React.React
                         </Button>
 
                         <Button
-                            disabled={true}
+                            // disabled={true}
                             variant="outlined"
                             color="primary"
                             LinkComponent={Link}
