@@ -33,6 +33,7 @@ export async function getUserSwipe() {
                 technologies: true,
                 githubLink: true,
                 codingTimePreference: true,
+                description: true,
             },
         });
         return user;
