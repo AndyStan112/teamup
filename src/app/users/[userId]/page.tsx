@@ -2,9 +2,26 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getSpecificUser } from "./actions";
-import { Avatar, Box, Button, Chip, Container, Stack, Typography, Card, Grid2 as Grid } from "@mui/material";
+import {
+    Avatar,
+    Box,
+    Button,
+    Chip,
+    Container,
+    Stack,
+    Typography,
+    Card,
+    Grid2 as Grid,
+} from "@mui/material";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import ProjCard from "@/components/project/ProjCard";
+
+const genderMapping: { [key: string]: string } = {
+    MALE: "Male",
+    FEMALE: "Female",
+    OTHER: "Other",
+    DONOTWANTTOSAY: "",
+};
 
 export default function Page() {
     const params = useParams();
@@ -27,14 +44,20 @@ export default function Page() {
                         sx={{ width: 100, height: 100 }}
                     />
 
-                    <Typography variant="h4" fontWeight="bold">
-                        {user?.name}
-                    </Typography>
+                    <Stack>
+                        <Typography variant="h4" fontWeight="bold" textAlign="center">
+                            {user?.name}
+                        </Typography>
+                        <Typography variant="body2" textAlign="center">
+                            {[user.age, genderMapping[user.gender]].join(", ")}
+                        </Typography>
+                    </Stack>
 
                     <Button
                         variant="outlined"
                         startIcon={<GitHubIcon />}
                         component="a"
+                        color="inherit"
                         href={user?.githubLink}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -54,7 +77,7 @@ export default function Page() {
                         <Typography variant="h6" fontWeight="bold" mb={1} textAlign="center">
                             Technologies:
                         </Typography>
-                        <Stack direction="row"gap={1} flexWrap="wrap" justifyContent="center">
+                        <Stack direction="row" gap={1} flexWrap="wrap" justifyContent="center">
                             {user?.technologies?.map((tech, index) => (
                                 <Chip key={index} label={tech} />
                             ))}
@@ -68,16 +91,11 @@ export default function Page() {
                     </Typography>
 
                     {user?.createdProjects?.length > 0 ? (
-                        <Grid 
-                            container 
-                            spacing={3} 
-                            columns={{ xs: 1, sm: 2, md: 2, lg:2}} 
-                            justifyContent="center"
-                        >
+                        <Grid container spacing={3} columns={{ xs: 1, sm: 2, md: 2, lg: 2 }}>
                             {user.createdProjects.map((project, index) => (
-                                <Box key={index}>
+                                <Grid key={index} size={1}>
                                     <ProjCard project={project} />
-                                </Box>
+                                </Grid>
                             ))}
                         </Grid>
                     ) : (
