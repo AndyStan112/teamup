@@ -39,7 +39,7 @@ export default function MessagesPage({ children }: { children: React.ReactNode }
             justifyContent="stretch"
             maxHeight={{ xs: "calc(100vh - 56px)", md: "calc(100vh - 64px)" }}
         >
-            {!isChatPage && <Box flex={1} />}
+            {!isChatPage && <Box flex={{ xs: 0, sm: 1 }} />}
             <Stack
                 flex={1}
                 minWidth={300}
@@ -65,7 +65,7 @@ export default function MessagesPage({ children }: { children: React.ReactNode }
                     </List>
                 </Box>
             </Stack>
-            {!isChatPage && <Box flex={1} />}
+            {!isChatPage && <Box flex={{ xs: 0, sm: 1 }} />}
             {children}
         </Stack>
     );

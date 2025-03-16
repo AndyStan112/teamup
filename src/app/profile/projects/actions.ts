@@ -41,6 +41,9 @@ export async function getCurrentUserProjects() {
         where: {
             originalCreatorId: userId!,
         },
+        include: {
+            originalCreator: true,
+        },
     });
 
     return projects;

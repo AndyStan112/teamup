@@ -3,7 +3,18 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getFriends } from "./actions";
-import { Avatar, Button, List, ListItem, ListItemAvatar, ListItemText, Typography, Divider, Container, Stack } from "@mui/material";
+import {
+    Avatar,
+    Button,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    Typography,
+    Divider,
+    Container,
+    Stack,
+} from "@mui/material";
 import { createChat, Friend } from "../messages/actions";
 
 export default function FriendsList() {
@@ -24,21 +35,30 @@ export default function FriendsList() {
                 My Friends
             </Typography>
 
-            <List sx={{ width: "100%", maxWidth: 500, bgcolor: "background.paper", borderRadius: 2, boxShadow: 3 }}>
+            <List
+                sx={{
+                    width: "100%",
+                    maxWidth: 500,
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                    boxShadow: 3,
+                }}
+            >
                 {friends.map((friend, index) => (
                     <div key={index}>
                         <ListItem alignItems="flex-start">
                             <ListItemAvatar>
-                                <Avatar 
-                                    src={friend.profileImage || "/"} 
-                                    alt={friend.name} 
-                                />
+                                <Avatar src={friend.profileImage || "/"} alt={friend.name} />
                             </ListItemAvatar>
-                            
+
                             <ListItemText
                                 primary={friend.name}
                                 secondary={
-                                    <Typography component="span" variant="body2" sx={{ color: "text.secondary", display: "inline" }}>
+                                    <Typography
+                                        component="span"
+                                        variant="body2"
+                                        sx={{ color: "text.secondary", display: "inline" }}
+                                    >
                                         {friend.bio || "No bio available."}
                                     </Typography>
                                 }
@@ -58,7 +78,7 @@ export default function FriendsList() {
                                     variant="contained"
                                     size="small"
                                     onClick={async () => {
-                                        const chatId = await createChat(friend.id);
+                                        const chatId = await createChat({ userId: friend.id });
                                         router.push(`/messages?activeId=${chatId}`);
                                     }}
                                 >
