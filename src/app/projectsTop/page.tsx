@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { Project } from "@prisma/client";
 import { getMostLikedProjects } from "./actions";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import MuiMarkdown from "mui-markdown";
 
 export interface ProjectWithCreator extends Project {
     originalCreator: {
@@ -156,7 +157,6 @@ export default function Page() {
                                     sx={{ maxHeight: "45vh" }}
                                     image={project.images?.[0] || "/images/default-project.png"}
                                     alt="Project Image"
-
                                 />
                             </CardActionArea>
                         ) : (
@@ -164,8 +164,8 @@ export default function Page() {
                         )}
 
                         <CardContent>
-                            <Typography variant="body2" color="white">
-                                {project.description}
+                            <Typography variant="body2" component="div" color="white">
+                                <MuiMarkdown>{project.description}</MuiMarkdown>
                             </Typography>
                             <Stack direction="row" spacing={1} mt="5px">
                                 {project.technologies.map((tech, index) => (
