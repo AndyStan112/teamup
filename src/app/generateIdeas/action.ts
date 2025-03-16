@@ -13,6 +13,9 @@ export async function talk(formData) {
     } else {
         prompt += " Do not provide implementation steps.";
     }
+    if (formData.extraDetails) {
+        prompt += " Take these extra details into consideration: " + formData.extraDetails;
+    }
 
     const completion = await openai.chat.completions.create({
         model: "gpt-4o-mini",

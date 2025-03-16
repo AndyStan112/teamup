@@ -8,6 +8,7 @@ import {
     Button,
     Divider,
     FormControlLabel,
+    Skeleton,
     Stack,
     Switch,
     TextField,
@@ -53,7 +54,23 @@ export default function Page() {
         setResponse(result);
     };
 
-    if (loading) return <>Loda...</>;
+    if (loading)
+        return (
+            <Stack gap={2} p={3}>
+                <Typography variant="h5" align="center">
+                    Hang on, we&apos;re finding an idea
+                </Typography>
+
+                <Divider />
+                <Stack gap={2}>
+                    <Skeleton variant="text" width="100%" />
+                    <Skeleton variant="text" width="100%" />
+                    <Skeleton variant="text" width="100%" />
+                    <Skeleton variant="text" width="100%" />
+                    <Skeleton variant="text" width="40%" />
+                </Stack>
+            </Stack>
+        );
 
     if (response)
         return (
@@ -64,6 +81,18 @@ export default function Page() {
 
                 <Divider />
                 <MuiMarkdown>{response}</MuiMarkdown>
+
+                <Divider />
+                <Button
+                    type="button"
+                    variant="outlined"
+                    sx={{ flex: 1 }}
+                    onClick={() => {
+                        setResponse(null);
+                    }}
+                >
+                    Make another idea
+                </Button>
             </Stack>
         );
 
@@ -122,11 +151,9 @@ export default function Page() {
             />
 
             <Divider />
-            <Stack direction="row" gap={1}>
-                <Button type="submit" variant="contained" sx={{ flex: 1 }}>
-                    Generate me an idea
-                </Button>
-            </Stack>
+            <Button type="submit" variant="contained" sx={{ flex: 1 }}>
+                Generate me an idea
+            </Button>
         </Stack>
     );
 
