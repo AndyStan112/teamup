@@ -6,8 +6,15 @@ import { Project } from '@prisma/client';
 import { getMostLikedProjects } from './actions';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 
+export interface ProjectWithCreator extends Project{
+  originalCreator:{
+    name: string
+    profileImage: string
+  }
+}
+
 export default function Page() {
-    const [projects, setProjects] = React.useState<Project[]>([]);
+    const [projects, setProjects] = React.useState<ProjectWithCreator[]>([]);
     const [loading, setLoading] = React.useState(true);
     const router = useRouter(); 
 
@@ -52,13 +59,16 @@ export default function Page() {
                             <Grid container alignItems="center" spacing={1}>
                                 <Grid>
                                     <Avatar
-                                        src="/images/profile-avatar-1.png"
+                                        src=""
                                         alt="Profile Avatar"
                                         sx={{ width: 40, height: 40, cursor: "pointer" }}
                                         onClick={() => router.push(`/profile/${project.originalCreatorId}`)}
                                     />
                                 </Grid>
                                 <Grid>
+                                    <Typography variant="body2" component="div" color="white" marginTop={0.8} marginBottom={-1}>
+                                        {project.originalCreator.name}
+                                    </Typography>
                                     <Typography variant="body2" component="div" color="white" marginTop={0.8} marginBottom={-1}>
                                         {project.title}
                                     </Typography>
