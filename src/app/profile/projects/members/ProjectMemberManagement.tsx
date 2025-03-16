@@ -10,6 +10,9 @@ import {
     ListItemText,
     Stack,
     Typography,
+    Divider,
+    Container,
+    CircularProgress
 } from "@mui/material";
 
 type User = {
@@ -36,81 +39,111 @@ export default function ProjectMemberManagement({ projectId }: { projectId: stri
 
     const handleAccept = async (userId: string) => {
         await addMember(projectId, userId);
-        setPendingRequests(pendingRequests.filter((user) => user.id !== userId));
+        setPendingRequests((prev) => prev.filter((user) => user.id !== userId));
     };
 
     const handleReject = async (userId: string) => {
         await rejectMemberRequest(projectId, userId);
-        setPendingRequests(pendingRequests.filter((user) => user.id !== userId));
+        setPendingRequests((prev) => prev.filter((user) => user.id !== userId));
     };
 
     const handleAddFriend = async (userId: string) => {
         await addMember(projectId, userId);
-        setFriends(friends.filter((user) => user.id !== userId));
+        setFriends((prev) => prev.filter((user) => user.id !== userId));
     };
 
     return (
-        <Stack spacing={4}>
-            <Typography variant="h6">Pending Requests</Typography>
-            <List>
-                {pendingRequests.length > 0 ? (
-                    pendingRequests.map((user, index) => (
-                        <ListItem
-                            key={user.id + index}
-                            secondaryAction={
-                                <Stack direction="row" spacing={2}>
-                                    <Button
-                                        variant="contained"
-                                        onClick={() => handleAccept(user.id)}
-                                    >
-                                        Accept
-                                    </Button>
-                                    <Button
-                                        variant="outlined"
-                                        color="error"
-                                        onClick={() => handleReject(user.id)}
-                                    >
-                                        Reject
-                                    </Button>
-                                </Stack>
-                            }
-                        >
-                            <ListItemAvatar>
-                                <Avatar src={user.profileImage || "/default_avatar.png"} />
-                            </ListItemAvatar>
-                            <ListItemText primary={user.name} />
-                        </ListItem>
-                    ))
-                ) : (
-                    <Typography>No pending requests.</Typography>
-                )}
-            </List>
+        <Container maxWidth="sm" sx={{ mt: 5 }}>
+            <Typography variant="h4" fontWeight="bold" textAlign="center" mb={3}>
+                Manage Project Members
+            </Typography>
 
-            <Typography variant="h6">Friends</Typography>
-            <List>
-                {friends.length > 0 ? (
-                    friends.map((user, index) => (
-                        <ListItem
-                            key={user.id + index}
-                            secondaryAction={
-                                <Button
-                                    variant="contained"
-                                    onClick={() => handleAddFriend(user.id)}
-                                >
-                                    Add to Project
-                                </Button>
-                            }
-                        >
-                            <ListItemAvatar>
-                                <Avatar src={user.profileImage || "/default_avatar.png"} />
-                            </ListItemAvatar>
-                            <ListItemText primary={user.name} />
-                        </ListItem>
-                    ))
-                ) : (
-                    <Typography>No available friends to add.</Typography>
-                )}
-            </List>
-        </Stack>
+            {loading ? (
+                <Stack alignItems="center">
+                    <CircularProgress />
+                </Stack>
+            ) : (
+                <Stack spacing={4}>
+                    
+
+                    <Typography variant="h6" fontWeight="bold">
+                        Pending Requests
+                    </Typography>
+                    <List sx={{ width: "100%", bgcolor: "background.paper", borderRadius: 2, boxShadow: 2 }}>
+                        {pendingRequests.length > 0 ? (
+                            pendingRequests.map((user, index) => (
+                                <div key={index}>
+                                    <ListItem
+                                        secondaryAction={
+                                            <Stack direction="row" spacing={1}>
+                                                <Button
+                                                    variant="contained"
+                                                    size="small"
+                                                    onClick={() => handleAccept(user.id)}
+                                                >
+                                                    Accept
+                                                </Button>
+                                                <Button
+                                                    variant="outlined"
+                                                    size="small"
+                                                    color="error"
+                                                    onClick={() => handleReject(user.id)}
+                                                >
+                                                    Reject
+                                                </Button>
+                                            </Stack>
+                                        }
+                                    >
+                                        <ListItemAvatar>
+                                            <Avatar src={user.profileImage || "/default_avatar.png"} />
+                                        </ListItemAvatar>
+                                        <ListItemText primary={user.name} />
+                                    </ListItem>
+                                    {index !== pendingRequests.length - 1 && <Divider />}
+                                </div>
+                            ))
+                        ) : (
+                            <Typography textAlign="center" color="text.secondary">
+                                No pending requests.
+                            </Typography>
+                        )}
+                    </List>
+
+
+                    <Typography variant="h6" fontWeight="bold">
+                        Friends
+                    </Typography>
+                    <List sx={{ width: "100%", bgcolor: "background.paper", borderRadius: 2, boxShadow: 2 }}>
+                        {friends.length > 0 ? (
+                            friends.map((user, index) => (
+                                <div key={index}>
+                                    <ListItem
+                                        secondaryAction={
+                                            <Button
+                                                variant="contained"
+                                                size="small"
+                                                onClick={() => handleAddFriend(user.id)}
+                                            >
+                                                Add to Project
+                                            </Button>
+                                        }
+                                    >
+                                        <ListItemAvatar>
+                                            <Avatar src={user.profileImage || "/default_avatar.png"} />
+                                        </ListItemAvatar>
+                                        <ListItemText primary={user.name} />
+                                    </ListItem>
+                                    {index !== friends.length - 1 && <Divider />}
+                                </div>
+                            ))
+                        ) : (
+                            <Typography textAlign="center" color="text.secondary">
+                                No available friends to add.
+                            </Typography>
+                        )}
+                    </List>
+                </Stack>
+            )}
+        </Container>
     );
 }
