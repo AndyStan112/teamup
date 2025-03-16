@@ -139,6 +139,12 @@ export default function ChatBox({ chatId }: ChatBoxProps) {
                         value={messageText}
                         placeholder="Type a message..."
                         onChange={(e) => setMessageText(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
+                                e.preventDefault();
+                                sendChatMessage();
+                            }
+                        }}
                         variant="outlined"
                         fullWidth
                         multiline
