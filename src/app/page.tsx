@@ -30,9 +30,8 @@ export default function LandingPage() {
                             Welcome to TeamUp!
                         </Typography>
                         <Typography variant="h6" fontWeight="normal" lineHeight={1.6}>
-                            Find partners, discover new projects, and generate ideas
-                            with like-minded developers. Join the future of collaborative
-                            innovation.
+                        Find fellow students, explore exciting projects, and spark innovative ideas with like-minded peers. 
+                        Join a community of future-driven students and shape the next generation of collaboration!
                         </Typography>
                     </Stack>
 
