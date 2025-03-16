@@ -1,6 +1,16 @@
 "use client";
 import React from "react";
-import { Box, Button, Card, CardContent, CardMedia, Chip, Stack, Typography } from "@mui/material";
+import {
+    Box,
+    Button,
+    Card,
+    CardActionArea,
+    CardContent,
+    CardMedia,
+    Chip,
+    Stack,
+    Typography,
+} from "@mui/material";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import { Project } from "@/app/profile/projects/page";
 import { likeProject } from "@/app/profile/projects/actions";
@@ -23,13 +33,14 @@ export default function ProjCard({ project }: { project: Project }): React.React
     return (
         <Card sx={{ backgroundColor: "#131d4c", color: "white", borderRadius: 2 }}>
             {project.images.length > 0 && (
-                <CardMedia
-                    component="img"
-                    image={project.images[0]}
-                    alt="Project image"
-                    sx={{ objectFit: "cover", maxHeight: "45vh" }}
-                    onClick={gotoProject}
-                />
+                <CardActionArea onClick={gotoProject}>
+                    <CardMedia
+                        component="img"
+                        image={project.images[0]}
+                        alt="Project image"
+                        sx={{ objectFit: "cover", maxHeight: "45vh" }}
+                    />
+                </CardActionArea>
             )}
             <CardContent sx={{ p: 1.8, pb: "16px !important" }}>
                 <Stack gap={1}>
