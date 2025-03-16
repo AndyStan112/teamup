@@ -14,29 +14,29 @@ import {
     Typography,
 } from "@mui/material";
 
+const scopeValues = [
+    "Frontend",
+    "Backend",
+    "Fullstack",
+    "Mobile development",
+    "Embedded development",
+    "Web development",
+    "Data Science",
+    "Machine Learning",
+    "AI",
+    "Game development",
+];
+
 export default function Page() {
     const [formValues, setFormValues] = useState({
         technologies: [],
-        focus: [],
+        scope: [],
         extraDetails: "",
         giveImplementationSteps: false,
     });
 
     const [response, setResponse] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-
-    const focusValues = [
-        "Frontend",
-        "Backend",
-        "Fullstack",
-        "Mobile development",
-        "Embedded development",
-        "Web development",
-        "Data Science",
-        "Machine Learning",
-        "AI",
-        "Game development",
-    ];
 
     const handleSelectChange = (name: string, values: string[]) => {
         setFormValues((prev) => ({
@@ -84,10 +84,10 @@ export default function Page() {
             />
             <MultiChipSelect
                 label="Focus"
-                name="focus"
-                options={focusValues}
+                name="scope"
+                options={scopeValues}
                 required
-                value={formValues.focus}
+                value={formValues.scope}
                 onSelect={handleSelectChange}
             />
 
