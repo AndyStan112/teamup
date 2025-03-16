@@ -5,7 +5,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return (
         <Box minHeight="80vh" position="relative">
             <Box
-                height="40vh"
+                height="45vh"
                 width="100%"
                 position="absolute"
                 top={0}
