@@ -14,9 +14,8 @@ export async function talk(formData) {
         prompt += " Do not provide implementation steps.";
     }
 
-    const completion = openai.chat.completions.create({
+    const completion = await openai.chat.completions.create({
         model: "gpt-4o-mini",
-        store: true,
         messages: [
             {
                 role: "user",
@@ -25,5 +24,5 @@ export async function talk(formData) {
         ],
     });
 
-    completion.then((result) => console.log(result.choices[0].message));
+    return completion.choices[0].message.content;
 }
