@@ -38,7 +38,7 @@ export default function ProjCard({ project }: { project: Project }): React.React
     };
 
     const gotoProject = () => {
-        router.push(`/projects/${project.id}`);
+        if (project.id) router.push(`/projects/${project.id}`);
     };
 
     const myOwnProject = user?.id === project.originalCreatorId;
