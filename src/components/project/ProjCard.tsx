@@ -23,7 +23,7 @@ export default function ProjCard({ project }: { project: Project }): React.React
                     component="img"
                     image={project.images[0]}
                     alt="Project image"
-                    sx={{ objectFit: "cover", maxHeight:"45vh" }}
+                    sx={{ objectFit: "cover", maxHeight: "45vh" }}
                 />
             )}
             <CardContent sx={{ p: 1.8, pb: "16px !important" }}>
