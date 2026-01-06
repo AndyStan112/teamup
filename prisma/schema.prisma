@@ -25,6 +25,7 @@ datasource db {
     city                 String
     languages            String[]
     technologies         String[]
+    credits              Int                    @default(5)
     description          String?
     createdProjects      Project[]
     joinedProjects       ProjectMember[]

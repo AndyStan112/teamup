@@ -1,3 +1,4 @@
 {
-    "workbench.colorTheme": "Hack The Box"
+    "workbench.colorTheme": "Hack The Box",
+    "prisma.pinToPrisma6": true
 }

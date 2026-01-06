@@ -1,8 +1,8 @@
 "use client";
-import { talk } from "./action";
+import { getCredits, talk } from "./action";
 import MultiChipSelect from "@/components/inputs/MultiChipSelect";
 import { technologies } from "@/constants/interests";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MuiMarkdown from "mui-markdown";
 import {
     Button,
@@ -36,8 +36,13 @@ export default function Page() {
         giveImplementationSteps: false,
     });
 
+    const [credits, setCredits] = useState<number | null>(null);
     const [response, setResponse] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        getCredits().then(setCredits);
+    }, []);
 
     const handleSelectChange = (name: string, values: string[]) => {
         setFormValues((prev) => ({
@@ -49,152 +54,130 @@ export default function Page() {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         setLoading(true);
-        const result = await talk(formValues);
-        setLoading(false);
-        setResponse(result);
+
+        try {
+            const result = await talk(formValues);
+            setResponse(result);
+            setCredits((c) => (c !== null ? c - 1 : c));
+        } catch (e: any) {
+            if (e.message === "NO_CREDITS") {
+                alert("You have no credits left.");
+            } else {
+                alert("Something went wrong.");
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
-    if (loading)
-        return (
-            <Stack gap={2} p={3}>
-                <Typography variant="h5" align="center">
-                    Hang on, we&apos;re finding an idea
-                </Typography>
+    return (
+        <Stack gap={2} p={3}>
+            <Typography variant="h5" align="center">
+                Generate Ideas
+            </Typography>
 
-                <Divider />
+            {credits !== null && (
+                <Typography
+                    variant="body2"
+                    align="center"
+                    color={credits > 0 ? "text.secondary" : "error"}
+                >
+                    Remaining credits: <b>{credits}</b>
+                </Typography>
+            )}
+
+            <Divider />
+
+            {loading && (
                 <Stack gap={2}>
-                    <Skeleton variant="text" width="100%" />
+                    <Typography variant="h6" align="center">
+                        Hang on, we&apos;re finding an idea
+                    </Typography>
                     <Skeleton variant="text" width="100%" />
                     <Skeleton variant="text" width="100%" />
                     <Skeleton variant="text" width="100%" />
                     <Skeleton variant="text" width="40%" />
                 </Stack>
-            </Stack>
-        );
+            )}
 
-    if (response)
-        return (
-            <Stack gap={2} p={3}>
-                <Typography variant="h5" align="center">
-                    Here&apos;s your idea
-                </Typography>
+            {!loading && response && (
+                <>
+                    <MuiMarkdown>{response}</MuiMarkdown>
+                    <Divider />
+                    <Button
+                        variant="outlined"
+                        onClick={() => setResponse(null)}
+                    >
+                        Make another idea
+                    </Button>
+                </>
+            )}
 
-                <Divider />
-                <MuiMarkdown>{response}</MuiMarkdown>
+            {!loading && !response && (
+                <Stack component="form" onSubmit={handleSubmit} gap={2}>
+                    <MultiChipSelect
+                        label="Technologies"
+                        name="technologies"
+                        options={technologies}
+                        required
+                        value={formValues.technologies}
+                        onSelect={handleSelectChange}
+                    />
 
-                <Divider />
-                <Button
-                    type="button"
-                    variant="outlined"
-                    sx={{ flex: 1 }}
-                    onClick={() => {
-                        setResponse(null);
-                    }}
-                >
-                    Make another idea
-                </Button>
-            </Stack>
-        );
+                    <MultiChipSelect
+                        label="Focus"
+                        name="scope"
+                        options={scopeValues}
+                        required
+                        value={formValues.scope}
+                        onSelect={handleSelectChange}
+                    />
 
-    return (
-        <Stack component="form" onSubmit={handleSubmit} gap={2} p={3}>
-            <Typography variant="h5" align="center">
-                Generate Ideas
-            </Typography>
+                    <Divider />
 
-            <Divider />
-            <MultiChipSelect
-                label="Technologies"
-                name="technologies"
-                options={technologies}
-                required
-                value={formValues.technologies}
-                onSelect={handleSelectChange}
-            />
-            <MultiChipSelect
-                label="Focus"
-                name="scope"
-                options={scopeValues}
-                required
-                value={formValues.scope}
-                onSelect={handleSelectChange}
-            />
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={formValues.giveImplementationSteps}
+                                onChange={(e) =>
+                                    setFormValues((prev) => ({
+                                        ...prev,
+                                        giveImplementationSteps: e.target.checked,
+                                    }))
+                                }
+                            />
+                        }
+                        label="Give implementation steps"
+                    />
 
-            <Divider />
-            <FormControlLabel
-                control={
-                    <Switch
-                        checked={formValues.giveImplementationSteps}
+                    <Divider />
+
+                    <TextField
+                        value={formValues.extraDetails}
+                        label="Any extra details?"
                         onChange={(e) =>
                             setFormValues((prev) => ({
                                 ...prev,
-                                giveImplementationSteps: e.target.checked,
+                                extraDetails: e.target.value,
                             }))
                         }
+                        variant="outlined"
+                        fullWidth
+                        multiline
+                        rows={3}
                     />
-                }
-                label="Give implementation steps"
-            />
 
-            <Divider />
-            <TextField
-                value={formValues.extraDetails}
-                label="Any extra details?"
-                onChange={(e) =>
-                    setFormValues((prev) => ({ ...prev, extraDetails: e.target.value }))
-                }
-                variant="outlined"
-                fullWidth
-                multiline
-                rows={3}
-                sx={{ flex: 1 }}
-            />
+                    <Divider />
 
-            <Divider />
-            <Button type="submit" variant="contained" sx={{ flex: 1 }}>
-                Generate me an idea
-            </Button>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        disabled={credits !== null && credits <= 0}
+                    >
+                        Generate me an idea
+                    </Button>
+                </Stack>
+            )}
         </Stack>
     );
-
-    // return (
-    //     <div>
-    //         <h1 className="mb-4">Generate project idea</h1>
-    // <form onSubmit={handleSubmit}>
-    //     <MultiChipSelect
-    //         label="Technologies"
-    //         name="technologies"
-    //         options={technologies}
-    //         required
-    //         value={formValues.technologies}
-    //         onSelect={handleSelectChange}
-    //     />
-    //     <MultiChipSelect
-    //         label="Focus"
-    //         name="focus"
-    //         options={focusValues}
-    //         required
-    //         value={formValues.focus}
-    //         onSelect={handleSelectChange}
-    //     />
-    //             <label htmlFor="giveImplementationSteps">Give implementation steps </label>
-    //             <input
-    //                 type="checkbox"
-    //                 checked={formValues.giveImplementationSteps}
-    //                 onChange={(e) =>
-    //                     setFormValues((prev) => ({
-    //                         ...prev,
-    //                         giveImplementationSteps: e.target.checked,
-    //                     }))
-    //                 }
-    //             />
-    //             <br />
-    //             <button className="bg-blue-500 p-2 rounded-2xl" type="submit">
-    //                 Generate project idea
-    //             </button>
-    //         </form>
-
-    //         <MuiMarkdown>{response}</MuiMarkdown>
-    //     </div>
-    // );
 }
