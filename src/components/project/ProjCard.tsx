@@ -14,6 +14,8 @@ import {
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import { Project } from "@/app/profile/projects/page";
 import { likeProject, checkIfUserLiked } from "@/app/profile/projects/actions";
+import { publishSuccessStory } from "@/app/projects/actions";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
@@ -42,6 +44,26 @@ export default function ProjCard({ project }: { project: Project }): React.React
     };
 
     const myOwnProject = user?.id === project.originalCreatorId;
+
+    const ownProjectButtonSx = myOwnProject
+    ? {
+          fontSize: "0.75rem",
+          px: 1.5,
+          py: 0.5,
+          minHeight: "32px",
+      }
+    : {};
+
+    const [isPublishing, setIsPublishing] = React.useState(false);
+    const [isPublished, setIsPublished] = React.useState(false);
+    const handlePublishSuccess = async () => {
+    setIsPublishing(true);
+    await publishSuccessStory(project.id, project.description);
+    setIsPublished(true);
+    setIsPublishing(false);
+};
+
+
 
     return (
         <Card sx={{ backgroundColor: "#131d4c", color: "white", borderRadius: 2, flex: 1 }}>
@@ -85,11 +107,25 @@ export default function ProjCard({ project }: { project: Project }): React.React
                                 variant="outlined"
                                 color="primary"
                                 LinkComponent={Link}
+                                sx={ownProjectButtonSx}
                                 href={`/profile/projects/members/${project.id}`}
                             >
                                 Add Member
                             </Button>
+                            
                         )}
+                        {myOwnProject && (
+                            <Button
+                                disabled={isPublished || isPublishing}
+                                variant="contained"
+                                color="primary"
+                                sx={ownProjectButtonSx}
+                                onClick={handlePublishSuccess}
+                            >
+                                {isPublished ? "Pending Review" : "Publish Success"}
+                            </Button>
+                        )}
+
                     </Stack>
                 </Stack>
             </CardContent>
