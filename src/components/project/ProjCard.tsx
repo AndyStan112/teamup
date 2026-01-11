@@ -140,14 +140,28 @@ const theme = useTheme();
                     </Stack>
                 </Stack>
             </CardContent>
-            <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
-            <Box
-                sx={{
-                    backgroundColor: "#17235c",
-                    p: 3,
-                    borderRadius: 2,
+
+        <Dialog
+            open={open}
+            onClose={() => setOpen(false)}
+            maxWidth="sm"
+            fullWidth
+            slotProps={{
+                    paper: {
+                        elevation: 0,
+                        sx: {
+                            backgroundColor: "#17235c",
+                            borderRadius: 2,
+                        },
+                    },
+                    backdrop: {
+                        sx: {
+                            backgroundColor: "rgba(0,0,0,0.75)",
+                        },
+                    },
                 }}
             >
+            <Box sx={{ p: 3 }}>
                 <Stack spacing={2}>
                     <Typography variant="h6" color="white">
                         Share your success
@@ -187,6 +201,7 @@ const theme = useTheme();
                 </Stack>
             </Box>
         </Dialog>
+
 
         </Card>
     );
