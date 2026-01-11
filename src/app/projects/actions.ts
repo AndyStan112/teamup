@@ -23,7 +23,6 @@ export async function getSpecificProject(projectId: string) {
     return project;
 }
 
-
 export async function publishSuccessStory(projectId: string, content: string) {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");

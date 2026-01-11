@@ -10,6 +10,10 @@ import {
     Chip,
     Stack,
     Typography,
+    Dialog,
+    TextField,
+     useTheme,
+
 } from "@mui/material";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import { Project } from "@/app/profile/projects/page";
@@ -54,14 +58,21 @@ export default function ProjCard({ project }: { project: Project }): React.React
       }
     : {};
 
+    const [open, setOpen] = React.useState(false);
+    const [storyContent, setStoryContent] = React.useState("");
+    const [submitting, setSubmitting] = React.useState(false);
+
     const [isPublishing, setIsPublishing] = React.useState(false);
     const [isPublished, setIsPublished] = React.useState(false);
     const handlePublishSuccess = async () => {
-    setIsPublishing(true);
-    await publishSuccessStory(project.id, project.description);
-    setIsPublished(true);
-    setIsPublishing(false);
+    setSubmitting(true);
+    await publishSuccessStory(project.id, storyContent);
+    setSubmitting(false);
+    setOpen(false);
 };
+
+const theme = useTheme();
+
 
 
 
@@ -116,19 +127,67 @@ export default function ProjCard({ project }: { project: Project }): React.React
                         )}
                         {myOwnProject && (
                             <Button
-                                disabled={isPublished || isPublishing}
                                 variant="contained"
                                 color="primary"
                                 sx={ownProjectButtonSx}
-                                onClick={handlePublishSuccess}
+                                onClick={() => setOpen(true)}
                             >
-                                {isPublished ? "Pending Review" : "Publish Success"}
+                                Publish Success
                             </Button>
                         )}
+
 
                     </Stack>
                 </Stack>
             </CardContent>
+            <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
+            <Box
+                sx={{
+                    backgroundColor: "#17235c",
+                    p: 3,
+                    borderRadius: 2,
+                }}
+            >
+                <Stack spacing={2}>
+                    <Typography variant="h6" color="white">
+                        Share your success
+                    </Typography>
+
+                    <Typography variant="body2" color="rgba(255,255,255,0.75)">
+                        Please share your success story for the admin to review.
+                    </Typography>
+
+                    <TextField
+                        multiline
+                        minRows={4}
+                        fullWidth
+                        placeholder="Please share your success..."
+                        value={storyContent}
+                        onChange={(e) => setStoryContent(e.target.value)}
+                    />
+
+                    <Stack direction="row" spacing={1} justifyContent="flex-end">
+                        <Button
+                            variant="outlined"
+                            onClick={() => setOpen(false)}
+                            color="primary"
+                        >
+                            Cancel
+                        </Button>
+
+                        <Button
+                            variant="contained"
+                            disabled={!storyContent.trim() || submitting}
+                            onClick={handlePublishSuccess}
+                            color="primary"
+                        >
+                            Submit
+                        </Button>
+                    </Stack>
+                </Stack>
+            </Box>
+        </Dialog>
+
         </Card>
     );
 }
