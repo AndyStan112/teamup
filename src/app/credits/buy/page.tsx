@@ -29,13 +29,7 @@ export default function BuyCredits() {
                 background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
             }}
         >
-            <Card
-                sx={{
-                    width: { xs: "90%", sm: 420 },
-                    backgroundColor: "#",
-                    borderRadius: 4,
-                }}
-            >
+            <Card>
                 <CardContent>
                     <Stack spacing={3}>
                         <Typography variant="h5" color="white" textAlign="center">
