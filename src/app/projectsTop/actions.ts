@@ -155,3 +155,23 @@ export async function editProject(originalProjectTitle: string, formData: FormDa
     });
     return project;
 }
+
+
+export async function getApprovedSuccessProjects() {
+    return prisma.successStory.findMany({
+        where: { status: "APPROVED" },
+        orderBy: { createdAt: "desc" },
+        include: {
+            project: {
+                include: {
+                    originalCreator: {
+                        select: {
+                            name: true,
+                            profileImage: true,
+                        },
+                    },
+                },
+            },
+        },
+    });
+}
