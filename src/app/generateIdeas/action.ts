@@ -48,7 +48,6 @@ export async function talk(formData) {
     return completion.choices[0].message.content;
 }
 
-
 export async function getCredits() {
     const { userId } = await auth();
     if (!userId) return null;
