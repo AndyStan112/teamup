@@ -71,7 +71,8 @@ export default function Page() {
     };
 
     return (
-        <Stack gap={2} p={3}>
+        
+        <Stack gap={2} p={3} >
             <Typography variant="h5" align="center">
                 Generate Ideas
             </Typography>
