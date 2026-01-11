@@ -16,7 +16,9 @@ export async function getSpecificUser(userId: string) {
             languages: true,
             technologies: true,
             description: true,
-            createdProjects: true,
+            createdProjects: {include:{
+                originalCreator:true
+            }},
             githubLink: true,
             codingTimePreference: true,
             joinedProjects: true,
