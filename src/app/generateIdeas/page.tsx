@@ -85,6 +85,15 @@ export default function Page() {
                     Remaining credits: <b>{credits}</b>
                 </Typography>
             )}
+          
+                <Button
+                    variant="contained"
+                    href="/credits/buy"
+                    fullWidth
+                >
+                    Buy credits
+                </Button>
+            
 
             <Divider />
 
