@@ -10,10 +10,16 @@ import {
     Chip,
     Stack,
     Typography,
+    Dialog,
+    TextField,
+     useTheme,
+
 } from "@mui/material";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import { Project } from "@/app/profile/projects/page";
 import { likeProject, checkIfUserLiked } from "@/app/profile/projects/actions";
+import { publishSuccessStory } from "@/app/projects/actions";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
@@ -42,6 +48,33 @@ export default function ProjCard({ project }: { project: Project }): React.React
     };
 
     const myOwnProject = user?.id === project.originalCreatorId;
+
+    const ownProjectButtonSx = myOwnProject
+    ? {
+          fontSize: "0.75rem",
+          px: 1.5,
+          py: 0.5,
+          minHeight: "32px",
+      }
+    : {};
+
+    const [open, setOpen] = React.useState(false);
+    const [storyContent, setStoryContent] = React.useState("");
+    const [submitting, setSubmitting] = React.useState(false);
+
+    const [isPublishing, setIsPublishing] = React.useState(false);
+    const [isPublished, setIsPublished] = React.useState(false);
+    const handlePublishSuccess = async () => {
+    setSubmitting(true);
+    await publishSuccessStory(project.id, storyContent);
+    setSubmitting(false);
+    setOpen(false);
+};
+
+const theme = useTheme();
+
+
+
 
     return (
         <Card sx={{ backgroundColor: "#131d4c", color: "white", borderRadius: 2, flex: 1 }}>
@@ -85,14 +118,91 @@ export default function ProjCard({ project }: { project: Project }): React.React
                                 variant="outlined"
                                 color="primary"
                                 LinkComponent={Link}
+                                sx={ownProjectButtonSx}
                                 href={`/profile/projects/members/${project.id}`}
                             >
                                 Add Member
                             </Button>
+                            
                         )}
+                        {myOwnProject && (
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                sx={ownProjectButtonSx}
+                                onClick={() => setOpen(true)}
+                            >
+                                Publish Success
+                            </Button>
+                        )}
+
+
                     </Stack>
                 </Stack>
             </CardContent>
+
+        <Dialog
+            open={open}
+            onClose={() => setOpen(false)}
+            maxWidth="sm"
+            fullWidth
+            slotProps={{
+                    paper: {
+                        elevation: 0,
+                        sx: {
+                            backgroundColor: "#17235c",
+                            borderRadius: 2,
+                        },
+                    },
+                    backdrop: {
+                        sx: {
+                            backgroundColor: "rgba(0,0,0,0.75)",
+                        },
+                    },
+                }}
+            >
+            <Box sx={{ p: 3 }}>
+                <Stack spacing={2}>
+                    <Typography variant="h6" color="white">
+                        Share your success
+                    </Typography>
+
+                    <Typography variant="body2" color="rgba(255,255,255,0.75)">
+                        Please share your success story for the admin to review.
+                    </Typography>
+
+                    <TextField
+                        multiline
+                        minRows={4}
+                        fullWidth
+                        placeholder="Please share your success..."
+                        value={storyContent}
+                        onChange={(e) => setStoryContent(e.target.value)}
+                    />
+
+                    <Stack direction="row" spacing={1} justifyContent="flex-end">
+                        <Button
+                            variant="outlined"
+                            onClick={() => setOpen(false)}
+                            color="primary"
+                        >
+                            Cancel
+                        </Button>
+
+                        <Button
+                            variant="contained"
+                            disabled={!storyContent.trim() || submitting}
+                            onClick={handlePublishSuccess}
+                            color="primary"
+                        >
+                            Submit
+                        </Button>
+                    </Stack>
+                </Stack>
+            </Box>
+        </Dialog>
+
+
         </Card>
     );
 }

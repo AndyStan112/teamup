@@ -15,6 +15,7 @@ import {
     SelectChangeEvent,
     Container,
     Box,
+    Avatar,
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { addOrUpdateUser, getCurrentUser } from "./actions";
@@ -142,6 +143,22 @@ export default function ProfilePage(): React.ReactElement {
         setEdit(false);
     };
 
+    const profileImageUrl = React.useMemo(() => {
+    const image = formValues.profileImage as unknown;
+
+    if (
+        image &&
+        typeof image === "object" &&
+        "size" in image &&
+        "type" in image
+    ) {
+        return URL.createObjectURL(image as Blob);
+    }
+
+    return user?.imageUrl;
+}, [formValues.profileImage, user?.imageUrl]);
+
+
     if (loading) {
         return (
             <Container maxWidth="sm">
@@ -189,6 +206,28 @@ export default function ProfilePage(): React.ReactElement {
                         My Profile
                     </Typography>
                     <Divider />
+
+                    <Stack alignItems="center" spacing={1}>
+                        <Avatar
+                            src={profileImageUrl}
+                            sx={{ width: 96, height: 96 }}
+                        />
+
+                        <Button
+                            variant="outlined"
+                            component="label"
+                            disabled={!edit}
+                        >
+                            Choose profile picture
+                            <input
+                                type="file"
+                                name="profileImage"
+                                hidden
+                                accept="image/*"
+                                onChange={handleChange}
+                            />
+                        </Button>
+                    </Stack>
 
                     <TextField
                         label="Name"
@@ -317,14 +356,6 @@ export default function ProfilePage(): React.ReactElement {
                         value={formValues.codingTimePreference}
                         onSelect={handleMultiSelectChange}
                     />
-
-                    <input
-                        type="file"
-                        name="profileImage"
-                        disabled={!edit}
-                        onChange={handleChange}
-                    />
-
                     <Divider />
                     <Stack direction="row" gap={1}>
                         {edit ? (

@@ -23,6 +23,7 @@ export type Project = {
     githubLink: string;
     technologies: string[];
     images: string[];
+    originalCreatorId: string;
     likeCount: number;
 };
 
