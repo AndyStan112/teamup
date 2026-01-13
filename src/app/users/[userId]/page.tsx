@@ -20,6 +20,7 @@ import ProjCard from "@/components/project/ProjCard";
 import ReportButton from "./ReportButton";
 import { Project } from "@/app/profile/projects/page";
 import { User } from "@prisma/client";
+import MuiMarkdown from "mui-markdown";
 
 const genderMapping: { [key: string]: string } = {
     MALE: "Male",
@@ -148,7 +149,7 @@ export default function Page() {
                     </Typography>
 
                     <Typography variant="body1" sx={{ textAlign: "center" }}>
-                        {user?.description}
+                        <MuiMarkdown>{user?.description}</MuiMarkdown>
                     </Typography>
 
                     <Box>
