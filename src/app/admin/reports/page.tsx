@@ -18,7 +18,8 @@ import {
     Divider,
     Stack,
 } from "@mui/material";
-import { CheckCircle, Cancel } from "@mui/icons-material";
+import { CheckCircle, Cancel, OpenInNew } from "@mui/icons-material";
+import Link from "next/link";
 
 interface User {
     id: string;
@@ -255,9 +256,26 @@ export default function AdminReportsPage() {
                                         src={selectedReport.reportedUser.profileImage || ""}
                                         alt={selectedReport.reportedUser.name}
                                     />
-                                    <Typography variant="body1">
-                                        {selectedReport.reportedUser.name}
-                                    </Typography>
+                                    <Link
+                                        href={`/users/${selectedReport.reportedUserId}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{ textDecoration: "none" }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: 0.5,
+                                                "&:hover": { textDecoration: "underline" },
+                                            }}
+                                        >
+                                            <Typography variant="body1" color="primary">
+                                                {selectedReport.reportedUser.name}
+                                            </Typography>
+                                            <OpenInNew fontSize="small" color="primary" />
+                                        </Box>
+                                    </Link>
                                 </Box>
                             </Box>
 
@@ -271,9 +289,26 @@ export default function AdminReportsPage() {
                                         src={selectedReport.reporter.profileImage || ""}
                                         alt={selectedReport.reporter.name}
                                     />
-                                    <Typography variant="body1">
-                                        {selectedReport.reporter.name}
-                                    </Typography>
+                                    <Link
+                                        href={`/users/${selectedReport.reporterId}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{ textDecoration: "none" }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: 0.5,
+                                                "&:hover": { textDecoration: "underline" },
+                                            }}
+                                        >
+                                            <Typography variant="body1" color="primary">
+                                                {selectedReport.reporter.name}
+                                            </Typography>
+                                            <OpenInNew fontSize="small" color="primary" />
+                                        </Box>
+                                    </Link>
                                 </Box>
                             </Box>
 
