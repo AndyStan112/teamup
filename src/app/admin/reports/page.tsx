@@ -140,7 +140,7 @@ export default function AdminReportsPage() {
     }
 
     return (
-        <Box sx={{ display: "flex", height: "100vh", p: 3, gap: 2 }}>
+        <Box sx={{ display: "flex", height: "calc(100vh - 64px)", p: 3, gap: 2 }}>
             {/* Left Column - Reports List */}
             <Paper sx={{ width: "400px", overflow: "auto" }}>
                 <Box sx={{ p: 2, borderBottom: 1, borderColor: "divider" }}>
@@ -164,6 +164,10 @@ export default function AdminReportsPage() {
                                 }}
                             >
                                 <ListItemText
+                                    slotProps={{
+                                        primary: { component: "div" },
+                                        secondary: { component: "div" },
+                                    }}
                                     primary={
                                         <Box
                                             sx={{
@@ -172,7 +176,7 @@ export default function AdminReportsPage() {
                                                 gap: 1,
                                             }}
                                         >
-                                            <Typography variant="body1" noWrap>
+                                            <Typography component="span" variant="body1" noWrap>
                                                 {report.reportedUser.name}
                                             </Typography>
                                             <Chip
@@ -183,14 +187,22 @@ export default function AdminReportsPage() {
                                         </Box>
                                     }
                                     secondary={
-                                        <>
-                                            <Typography variant="body2" color="text.secondary">
+                                        <Stack spacing={0.5} direction="row">
+                                            <Typography
+                                                component="span"
+                                                variant="body2"
+                                                color="text.secondary"
+                                            >
                                                 {report.reason}
                                             </Typography>
-                                            <Typography variant="caption" color="text.secondary">
+                                            <Typography
+                                                component="span"
+                                                variant="caption"
+                                                color="text.secondary"
+                                            >
                                                 {new Date(report.createdAt).toLocaleDateString()}
                                             </Typography>
-                                        </>
+                                        </Stack>
                                     }
                                 />
                             </ListItemButton>
