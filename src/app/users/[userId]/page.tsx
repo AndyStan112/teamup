@@ -2,6 +2,7 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getSpecificUser } from "./actions";
+import { useUser } from "@clerk/nextjs";
 import {
     Avatar,
     Box,
@@ -35,6 +36,7 @@ export default function Page() {
     const params = useParams();
     const userId = params?.userId as string;
     const [user, setUser] = useState<UserWithProjects | null>(null);
+    const { user: currentUser } = useUser();
 
     useEffect(() => {
         getSpecificUser(userId).then((user) => {
@@ -111,7 +113,7 @@ export default function Page() {
         );
 
     return (
-        <Container maxWidth="md" sx={{ mt: 5 }}>
+        <Container maxWidth="md" sx={{ my: 5 }}>
             <Card sx={{ p: 4, borderRadius: 2 }}>
                 <Stack spacing={2} alignItems="center">
                     <Avatar
@@ -161,7 +163,7 @@ export default function Page() {
                     </Box>
                 </Stack>
 
-                <Box sx={{ my: 4 }}>
+                <Box mt={4}>
                     <Typography variant="h5" fontWeight="bold" mb={2} textAlign="center">
                         Created Projects
                     </Typography>
@@ -181,9 +183,11 @@ export default function Page() {
                     )}
                 </Box>
 
-                <Stack spacing={2} alignItems="center">
-                    <ReportButton userId={userId} />
-                </Stack>
+                {currentUser?.id !== userId && (
+                    <Stack spacing={2} mt={4} alignItems="center">
+                        <ReportButton userId={userId} />
+                    </Stack>
+                )}
             </Card>
         </Container>
     );
