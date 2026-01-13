@@ -10,7 +10,7 @@ import {
     ListItemIcon,
     ListItemText,
 } from "@mui/material";
-import { Flag, ChevronRight } from "@mui/icons-material";
+import { Flag, ChevronRight, EmojiEvents } from "@mui/icons-material";
 import Link from "next/link";
 
 export default function AdminDashboard() {
@@ -32,6 +32,18 @@ export default function AdminDashboard() {
                                 <ListItemText
                                     primary="User Reports"
                                     secondary="Review and manage user-reported content"
+                                />
+                                <ChevronRight />
+                            </ListItemButton>
+                        </ListItem>
+                        <ListItem disablePadding>
+                            <ListItemButton component={Link} href="/admin/stories">
+                                <ListItemIcon>
+                                    <EmojiEvents />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary="Success Stories"
+                                    secondary="Review and approve success stories"
                                 />
                                 <ChevronRight />
                             </ListItemButton>
