@@ -14,7 +14,6 @@ import {
     InputAdornment,
     SelectChangeEvent,
     Container,
-    Box,
     Avatar,
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
@@ -23,7 +22,7 @@ import MultiChipSelect from "@/components/inputs/MultiChipSelect";
 import { languages, technologies } from "@/constants/interests";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import { urlToFile } from "@/utils";
-import { useClerk, useUser } from "@clerk/nextjs";
+import { useClerk } from "@clerk/nextjs";
 
 interface ProfileFormValues {
     name: string;
@@ -144,20 +143,14 @@ export default function ProfilePage(): React.ReactElement {
     };
 
     const profileImageUrl = React.useMemo(() => {
-    const image = formValues.profileImage as unknown;
+        const image = formValues.profileImage as unknown;
 
-    if (
-        image &&
-        typeof image === "object" &&
-        "size" in image &&
-        "type" in image
-    ) {
-        return URL.createObjectURL(image as Blob);
-    }
+        if (image && typeof image === "object" && "size" in image && "type" in image) {
+            return URL.createObjectURL(image as Blob);
+        }
 
-    return user?.imageUrl;
-}, [formValues.profileImage, user?.imageUrl]);
-
+        return user?.imageUrl;
+    }, [formValues.profileImage, user?.imageUrl]);
 
     if (loading) {
         return (
@@ -208,16 +201,9 @@ export default function ProfilePage(): React.ReactElement {
                     <Divider />
 
                     <Stack alignItems="center" spacing={1}>
-                        <Avatar
-                            src={profileImageUrl}
-                            sx={{ width: 96, height: 96 }}
-                        />
+                        <Avatar src={profileImageUrl} sx={{ width: 96, height: 96 }} />
 
-                        <Button
-                            variant="outlined"
-                            component="label"
-                            disabled={!edit}
-                        >
+                        <Button variant="outlined" component="label" disabled={!edit}>
                             Choose profile picture
                             <input
                                 type="file"
