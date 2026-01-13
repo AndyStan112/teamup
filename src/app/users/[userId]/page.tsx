@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import ProjCard from "@/components/project/ProjCard";
+import ReportButton from "./ReportButton";
 
 const genderMapping: { [key: string]: string } = {
     MALE: "Male",
@@ -154,7 +155,7 @@ export default function Page() {
                     </Box>
                 </Stack>
 
-                <Box sx={{ mt: 4 }}>
+                <Box sx={{ my: 4 }}>
                     <Typography variant="h5" fontWeight="bold" mb={2} textAlign="center">
                         Created Projects
                     </Typography>
@@ -173,6 +174,10 @@ export default function Page() {
                         </Typography>
                     )}
                 </Box>
+
+                <Stack spacing={2} alignItems="center">
+                    <ReportButton userId={userId} />
+                </Stack>
             </Card>
         </Container>
     );
