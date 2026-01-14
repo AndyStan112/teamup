@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
 import { Menu as MenuIcon, Message as MessageIcon } from "@mui/icons-material";
 import {
@@ -28,7 +28,7 @@ const pages = [
     { label: "Projects of the month", href: "/projectsTop" },
 ];
 
-const settings = [
+const baseSettings = [
     { label: "My Profile", href: "/profile" },
     { label: "My Projects", href: "/profile/projects" },
     { label: "My Friends", href: "/friends" },
@@ -54,6 +54,13 @@ export default function Navbar(): React.ReactElement {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+
+    const settings = useMemo(() => {
+        if (user?.publicMetadata?.role === "admin") {
+            return [...baseSettings, { label: "Admin Dashboard", href: "/admin" }];
+        }
+        return baseSettings;
+    }, [user]);
 
     return (
         <AppBar
