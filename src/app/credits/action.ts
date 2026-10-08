@@ -5,9 +5,18 @@ import { auth } from "@clerk/nextjs/server";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
+const packagePrices = new Map([
+    [1, 300],
+    [5, 500],
+    [10, 1000],
+]);
+
 export async function createCheckoutSession(credits: number) {
     const { userId } = await auth();
     if (!userId) throw new Error("Not authenticated");
+
+    const unitAmount = packagePrices.get(credits);
+    if (unitAmount === undefined) throw new Error("Invalid credit package");
 
     const session = await stripe.checkout.sessions.create({
         mode: "payment",
@@ -16,7 +25,7 @@ export async function createCheckoutSession(credits: number) {
             {
                 price_data: {
                     currency: "ron",
-                    unit_amount: credits * 100,
+                    unit_amount: unitAmount,
                     product_data: {
                         name: `${credits} credit${credits > 1 ? "s" : ""}`,
                     },
